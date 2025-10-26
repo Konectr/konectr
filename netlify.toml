@@ -4,11 +4,14 @@
 [build]
   # Base directory where Netlify should look for the site
   base = "apps/web"
-  
+
+  # Build command - empty because this is a static HTML site (no build needed)
+  command = ""
+
   # Publish directory (relative to base directory)
   # This tells Netlify to publish the contents of apps/web/
   publish = "."
-  
+
   # Functions directory (relative to base directory)
   functions = "netlify/functions"
 
