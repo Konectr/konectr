@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konectr - Real Adventures, Real People, Right Now</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Satoshi:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --sunset-orange: #FF774D;
+            --solar-amber: #FFC845;
+            --graphite-grey: #1F1F1F;
+            --cloud-white: #FAFAFA;
+            --gradient-primary: linear-gradient(135deg, var(--sunset-orange) 0%, #ff5722 100%);
+            --gradient-secondary: linear-gradient(135deg, var(--solar-amber) 0%, #fbbf24 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--graphite-grey);
+            overflow-x: hidden;
+            background: var(--cloud-white);
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--gradient-primary);
+            padding: 12px 20px;
+            z-index: 1001;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .announcement-bar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg) translateY(-100%);
+            transition: transform 0.6s;
+        }
+
+        .announcement-bar:hover::before {
+            transform: rotate(45deg) translateY(100%);
+        }
+
+        .announcement-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .announcement-text {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .announcement-text .emoji {
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+
+        .announcement-cta {
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.3s ease;
+        }
+
+        .announcement-bar:hover .announcement-cta {
+            gap: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 16px 32px;
+            border-radius: 100px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .navigation.scrolled {
+            padding: 12px 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-img {
+            height: 42px;
+        }
+
+        .nav-links {
+            display: none;
+            list-style: none;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--graphite-grey);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--sunset-orange);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--sunset-orange);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 119, 77, 0.3);
+        }
+
+        .mobile-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-menu:hover {
+            background: rgba(255, 119, 77, 0.1);
+        }
+
+        .mobile-menu span {
+            width: 24px;
+            height: 2px;
+            background: var(--graphite-grey);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 20px 80px;
+            background: var(--gradient-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-50px, -50px) rotate(180deg); }
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-logo {
+            max-width: 400px;
+            margin: 0 auto 24px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-logo img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-badge .badge-icon {
+            font-size: 1.1rem;
+        }
+
+        .hero-title {
+            font-family: 'Satoshi', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 600;
+            opacity: 0.95;
+            margin-bottom: 48px;
+            line-height: 1.4;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--sunset-orange);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+
+        /* Venue Showcase */
+        .venue-showcase {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .venue-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .venue-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        .venue-card:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .venue-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .venue-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .venue-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Revised Trust Indicators */
+        .trust-section {
+            padding: 120px 20px 100px;
+            background: white;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .trust-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .trust-title {
+            font-family: 'Satoshi', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 800;
+            color: var(--graphite-grey);
+            margin-bottom: 48px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+        }
+
+        .trust-item {
+            padding: 32px;
+            background: var(--cloud-white);
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .trust-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .trust-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: var(--sunset-orange);
+            display: block;
+        }
+
+        .trust-label {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--graphite-grey);
+            margin-bottom: 12px;
+        }
+
+        .trust-description {
+            font-size: 1rem;
+            color: var(--graphite-grey);
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* How It Works */
+        .how-section {
+            padding: 100px 20px;
+            background: var(--solar-amber);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff774d' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .how-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .how-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .how-title {
+            font-family: 'Satoshi', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: var(--graphite-grey);
+            margin-bottom: 16px;
+            line-height: 1.2;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .how-subtitle {
+            font-size: 1.2rem;
+            color: var(--graphite-grey);
+            opacity: 0.8;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .step-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .step-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .step-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0 auto 24px;
+        }
+
+        .step-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--graphite-grey);
+            margin-bottom: 12px;
+        }
+
+        .step-desc {
+            color: var(--graphite-grey);
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        /* Vibes Section */
+        .vibes-section {
+            padding: 100px 20px;
+            background: white;
+        }
+
+        .vibes-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .vibes-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .vibes-title {
+            font-family: 'Satoshi', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: var(--graphite-grey);
+            margin-bottom: 16px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .vibes-subtitle {
+            font-size: 1.2rem;
+            color: var(--graphite-grey);
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .vibes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .vibe-item {
+            background: var(--cloud-white);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            border: 2px solid transparent;
+        }
+
+        .vibe-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+            border-color: var(--sunset-orange);
+        }
+
+        .vibe-emoji {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .vibe-item:hover .vibe-emoji {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .vibe-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--graphite-grey);
+            margin-bottom: 8px;
+        }
+
+        .vibe-activities {
+            font-size: 0.9rem;
+            color: var(--graphite-grey);
+            opacity: 0.7;
+            margin-bottom: 16px;
+        }
+
+        .vibe-tag {
+            display: inline-block;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Testimonial Section */
+        .testimonial-section {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, var(--graphite-grey) 0%, #2d3748 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .testimonial-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .testimonial-title {
+            font-family: 'Satoshi', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 48px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 48px 40px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .quote-icon {
+            font-size: 3rem;
+            color: var(--sunset-orange);
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+
+        .testimonial-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 32px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--solar-amber);
+        }
+
+        /* CTA Section with Tally Form */
+        .cta-section {
+            padding: 100px 20px;
+            background: white;
+        }
+
+        .cta-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            background: var(--gradient-primary);
+            border-radius: 32px;
+            padding: 80px 40px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .cta-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-family: 'Satoshi', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .cta-text {
+            font-size: 1.2rem;
+            color: white;
+            opacity: 0.9;
+            margin-bottom: 32px;
+        }
+
+        .tally-form-container {
+            max-width: 700px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .tally-form-container iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .form-note {
+            margin-top: 24px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--graphite-grey);
+            color: white;
+            padding: 80px 20px 40px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand h3 {
+            font-family: 'Satoshi', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--sunset-orange);
+            margin-bottom: 16px;
+        }
+
+        .footer-brand .footer-logo {
+            display: block;
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .footer-brand p {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 119, 77, 0.1);
+            border: 1px solid rgba(255, 119, 77, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--sunset-orange);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--sunset-orange);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(255, 119, 77, 0.3);
+        }
+
+        .footer-links h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--solar-amber);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--sunset-orange);
+            transform: translateX(4px);
+            display: inline-block;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 32px;
+            text-align: center;
+            opacity: 0.6;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .navigation {
+                top: 60px;
+                left: 20px;
+                right: 20px;
+                transform: none;
+                padding: 12px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto 60px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .venue-showcase {
+                max-width: 350px;
+            }
+
+            .steps-grid,
+            .vibes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .cta-container {
+                padding: 60px 30px;
+            }
+
+            .tally-form-container iframe {
+                height: 400px;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+        }
+
+        /* Desktop Enhancements */
+        @media (min-width: 769px) {
+            .nav-links {
+                display: flex;
+            }
+
+            .nav-cta {
+                display: inline-block;
+            }
+
+            .mobile-menu {
+                display: none;
+            }
+
+            .hero-content {
+                max-width: 900px;
+            }
+
+            .venue-showcase {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 800px;
+            }
+
+            .tally-form-container {
+                max-width: 440px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Announcement Bar -->
+    <div class="announcement-bar" onclick="scrollToForm()">
+        <div class="announcement-content">
+            <div class="announcement-text">
+                <span class="emoji">🚀</span>
+                <span>Early adopters are ditching the scroll for real adventures</span>
+            </div>
+            <div class="announcement-cta">
+                <span>Join the movement</span>
+                <span>→</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation with Logo -->
+    <nav class="navigation" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo">
+                <img src="https://cdn.prod.website-files.com/6857df346d4e4bd260786fbd/686328457e3945d8a146fbaf_Konectr_Orange_SSVG_2.avif" 
+                     alt="Konectr Logo" class="logo-img">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#how">How it Works</a></li>
+                <li><a href="#vibes">Find Your Vibe</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#cta" class="nav-cta">Get Early Access</a></li>
+            </ul>
+            <div class="mobile-menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Text Logo -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-logo">
+                    <img src="https://cdn.prod.website-files.com/6857df346d4e4bd260786fbd/68632845dc59b4147eb517f6_Konectr_NoBG_Logo.svg" 
+                         alt="Konectr Text Logo">
+                </div>
+                <div class="hero-badge">
+                    <span class="badge-icon">✨</span>
+                    <span>Launching November 2025</span>
+                </div>
+                <h1 class="hero-title">Real adventures with real people, right now.</h1>
+                <p class="hero-subtitle">Stop scrolling. Start living. Connect with people who share your vibe.</p>
+                <div class="hero-buttons">
+                    <a href="#cta" class="btn btn-primary">
+                        <span>Reserve Your Spot</span>
+                        <span>→</span>
+                    </a>
+                    <a href="#how" class="btn btn-secondary">
+                        <span>See How It Works</span>
+                    </a>
+                </div>
+                <div class="venue-showcase">
+                    <div class="venue-card">
+                        <span class="venue-icon">🏋️‍♀️</span>
+                        <span class="venue-label">Fitness</span>
+                    </div>
+                    <div class="venue-card">
+                        <span class="venue-icon">🍽️</span>
+                        <span class="venue-label">Restaurants</span>
+                    </div>
+                    <div class="venue-card">
+                        <span class="venue-icon">🌳</span>
+                        <span class="venue-label">Parks</span>
+                    </div>
+                    <div class="venue-card">
+                        <span class="venue-icon">☕</span>
+                        <span class="venue-label">Cafes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Revised Trust Indicators -->
+    <section class="trust-section">
+        <div class="trust-container">
+            <h2 class="trust-title">Join the Movement</h2>
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <div class="trust-icon">🌟</div>
+                    <h3 class="trust-label">Early Adopters</h3>
+                    <p class="trust-description">Be part of our founding community and help shape Konectr</p>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">🏢</div>
+                    <h3 class="trust-label">Partner Venues</h3>
+                    <p class="trust-description">Discover hand-picked locations for authentic connections</p>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">⏱️</div>
+                    <h3 class="trust-label">Real Moments</h3>
+                    <p class="trust-description">Create genuine experiences with like-minded people</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section" id="how">
+        <div class="how-container">
+            <div class="how-header">
+                <h2 class="how-title">Connection made simple</h2>
+                <p class="how-subtitle">Three steps to your next adventure</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <span class="step-emoji">📍</span>
+                    <h3 class="step-title">Pick the place</h3>
+                    <p class="step-desc">Choose from curated local spots - cozy cafes, scenic parks, or energetic gyms. Every venue is vetted for vibe.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <span class="step-emoji">⏰</span>
+                    <h3 class="step-title">Drop a slot</h3>
+                    <p class="step-desc">Set when you're free and what you're up for. Your availability goes live instantly for others to see and join.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <span class="step-emoji">✨</span>
+                    <h3 class="step-title">Meet your crew</h3>
+                    <p class="step-desc">Connect with 2-4 like-minded people. Small groups, big impact. Every meetup is a chance for genuine friendship.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vibes Section -->
+    <section class="vibes-section" id="vibes">
+        <div class="vibes-container">
+            <div class="vibes-header">
+                <h2 class="vibes-title">Find your tribe by vibe</h2>
+                <p class="vibes-subtitle">Whatever moves you, we'll match you with people who get it</p>
+            </div>
+            <div class="vibes-grid">
+                <div class="vibe-item">
+                    <span class="vibe-emoji">🎮</span>
+                    <h3 class="vibe-name">Social Games</h3>
+                    <p class="vibe-activities">Board games • Trivia • Video games</p>
+                    <span class="vibe-tag">Playful Connections</span>
+                </div>
+                <div class="vibe-item">
+                    <span class="vibe-emoji">🏃‍♀️</span>
+                    <h3 class="vibe-name">Fitness & Wellness</h3>
+                    <p class="vibe-activities">Yoga • Running • Gym buddies</p>
+                    <span class="vibe-tag">Active Living</span>
+                </div>
+                <div class="vibe-item">
+                    <span class="vibe-emoji">🎨</span>
+                    <h3 class="vibe-name">Arts & Culture</h3>
+                    <p class="vibe-activities">Museums • Galleries • Workshops</p>
+                    <span class="vibe-tag">Creative Minds</span>
+                </div>
+                <div class="vibe-item">
+                    <span class="vibe-emoji">☕</span>
+                    <h3 class="vibe-name">Cafe Culture</h3>
+                    <p class="vibe-activities">Coffee chats • Co-working • Book clubs</p>
+                    <span class="vibe-tag">Cozy Vibes</span>
+                </div>
+                <div class="vibe-item">
+                    <span class="vibe-emoji">🌳</span>
+                    <h3 class="vibe-name">Nature & Adventure</h3>
+                    <p class="vibe-activities">Hiking • Parks • Outdoor sports</p>
+                    <span class="vibe-tag">Fresh Air Friends</span>
+                </div>
+                <div class="vibe-item">
+                    <span class="vibe-emoji">🍜</span>
+                    <h3 class="vibe-name">Foodie Adventures</h3>
+                    <p class="vibe-activities">Restaurant hopping • Cooking • Food tours</p>
+                    <span class="vibe-tag">Taste Explorers</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial -->
+    <section class="testimonial-section" id="about">
+        <div class="testimonial-container">
+            <h2 class="testimonial-title">Why we're building Konectr</h2>
+            <div class="testimonial-card">
+                <div class="quote-icon">"</div>
+                <p class="testimonial-text">
+                    We're tired of likes that don't lead to real laughs, of followers who'll never follow you on a real adventure. Konectr isn't another app to scroll through — it's your ticket out of the digital loop and into real life.
+                </p>
+                <p class="testimonial-author">— The Konectr Team</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section with Tally Form -->
+    <section class="cta-section" id="cta">
+        <div class="cta-container">
+            <div class="cta-content">
+                <h2 class="cta-title">Be part of the first 1,000</h2>
+                <p class="cta-text">Lock in your slot, shape the app, and get exclusive perks</p>
+                <div class="tally-form-container">
+                    <iframe data-tally-src="https://tally.so/embed/mY1xRq?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Konectr Waitlist Verified Profiles Only ✅ "></iframe>
+                </div>
+                <p class="form-note">We respect your inbox. No spam, just updates on launch.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer with Logo -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <img src="https://cdn.prod.website-files.com/6857df346d4e4bd260786fbd/686328457e3945d8a146fbaf_Konectr_Orange_SSVG_2.avif" 
+                         alt="Konectr Logo" class="footer-logo">
+                    <p>Real adventures with real people, right now. Join the movement to bring authentic connection back to social.</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/Konectr/about" target="_blank" rel="noopener noreferrer" class="social-icon">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/konectrapp/" target="_blank" rel="noopener noreferrer" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.x.com/konectrapp?s=21" target="_blank" rel="noopener noreferrer" class="social-icon">
+                            <i class="fab fa-x-twitter"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/company/konectr/" target="_blank" rel="noopener noreferrer" class="social-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@konectrapp" target="_blank" rel="noopener noreferrer" class="social-icon">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#about">Our Story</a></li>
+                        <li><a href="#how">How It Works</a></li>
+                        <li><a href="#vibes">Find Your Vibe</a></li>
+                        <li><a href="mailto:hello@konectr.app">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Partner With Us</a></li>
+                        <li><a href="#">Community Guidelines</a></li>
+                        <li><a href="#">Safety First</a></li>
+                        <li><a href="#">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Konectr. Made with ❤️ for real connections.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Tally Script -->
+    <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+
+    <script>
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Navigation scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Hero animations
+        gsap.timeline()
+            .to('.hero-logo', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+            .to('.hero-badge', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3')
+            .to('.hero-title', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.4')
+            .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4')
+            .to('.hero-buttons', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3')
+            .to('.venue-showcase', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.3')
+            .to('.venue-card', { 
+                opacity: 1, 
+                scale: 1,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: 'back.out(1.7)'
+            }, '-=0.5');
+
+        // Scroll animations
+        const animateOnScroll = (selector, delay = 0) => {
+            gsap.to(selector, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                delay: delay,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: selector,
+                    start: 'top 80%',
+                    once: true
+                }
+            });
+        };
+
+        // Apply animations
+        animateOnScroll('.trust-title');
+        animateOnScroll('.trust-item', 0.1);
+        animateOnScroll('.how-title');
+        animateOnScroll('.how-subtitle', 0.1);
+        animateOnScroll('.step-card', 0.1);
+        animateOnScroll('.vibes-title');
+        animateOnScroll('.vibes-subtitle', 0.1);
+        animateOnScroll('.vibe-item', 0.05);
+        animateOnScroll('.testimonial-title');
+        animateOnScroll('.testimonial-card', 0.2);
+        animateOnScroll('.cta-container');
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll to form
+        function scrollToForm() {
+            document.getElementById('cta').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Mobile menu toggle
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        // Parallax effect for hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const hero = document.querySelector('.hero');
+            if (hero && scrolled < window.innerHeight) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
