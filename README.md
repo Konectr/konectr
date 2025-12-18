@@ -1,70 +1,81 @@
-# Konectr Landing Page
+# Konectr Web
 
-Public marketing website for Konectr - Real adventures with real people, right now.
+Official website for Konectr - Real adventures with real people, right now.
 
 ## Tech Stack
 
-- **HTML5** - Semantic markup
-- **CSS3** - Custom styles with CSS variables
-- **JavaScript** - Vanilla JS for interactions
-- **GSAP** - Scroll-triggered animations
-- **Tally.so** - Embedded waitlist form
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type safety
+- **Tailwind CSS v4** - Utility-first styling
+- **shadcn/ui** - Component library
+- **GSAP** - Scroll animations (planned)
 
 ## Project Structure
 
 ```
-konectr-landing/
-├── index.html              # Main landing page
-├── package.json            # NPM configuration
-├── netlify/                # Netlify deployment config
-└── README.md
+konectr-web/
+├── src/
+│   ├── app/              # Next.js App Router pages
+│   │   ├── layout.tsx    # Root layout
+│   │   ├── page.tsx      # Homepage
+│   │   └── globals.css   # Global styles + brand colors
+│   ├── components/
+│   │   └── ui/           # shadcn/ui components
+│   ├── config/
+│   │   └── brand.ts      # Brand constants (colors, social, etc.)
+│   └── lib/
+│       └── utils.ts      # Utility functions
+├── public/               # Static assets
+├── _reference/           # Original HTML landing page (reference only)
+└── package.json
 ```
 
 ## Brand Colors
 
-| Color | Hex | Usage |
-|-------|-----|-------|
-| Sunset Orange | `#FF774D` | Primary CTA, accents |
-| Solar Amber | `#FFC845` | Secondary highlights |
-| Graphite Grey | `#1F1F1F` | Text, dark sections |
-| Cloud White | `#FAFAFA` | Backgrounds |
+| Color | Hex | CSS Variable | Usage |
+|-------|-----|--------------|-------|
+| Sunset Orange | `#FF774D` | `--primary` | Primary CTA, accents |
+| Solar Amber | `#FFC845` | `--secondary` | Secondary highlights |
+| Graphite Grey | `#1F1F1F` | `--foreground` | Text, dark sections |
+| Cloud White | `#FAFAFA` | `--background` | Backgrounds |
 
-## Sections
-
-1. **Announcement Bar** - Clickable banner for early access
-2. **Navigation** - Floating pill-style navbar
-3. **Hero** - Main value proposition with venue showcase
-4. **Trust Indicators** - Early adopters, venues, real moments
-5. **How It Works** - 3-step process explanation
-6. **Find Your Vibe** - 6 activity categories
-7. **Testimonial** - Team mission statement
-8. **CTA** - Tally.so waitlist form embed
-9. **Footer** - Social links and company info
-
-## Local Development
-
-Simply open `index.html` in a browser, or use a local server:
+## Getting Started
 
 ```bash
-# Using Python
-python -m http.server 8000
+# Install dependencies
+npm install
 
-# Using Node.js (npx)
-npx serve .
+# Run development server
+npm run dev
 
-# Using PHP
-php -S localhost:8000
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-## Deployment
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-Currently configured for **Netlify** deployment.
+## Sections (Planned)
+
+1. **Hero** - Main value proposition with venue showcase
+2. **Trust Indicators** - Early adopters, partner venues, real moments
+3. **How It Works** - 3-step process explanation
+4. **Find Your Vibe** - 6 activity categories
+5. **Testimonial** - Team mission statement
+6. **CTA** - Waitlist form (Tally.so embed)
+7. **Footer** - Social links and company info
 
 ## Related Projects
 
 - [konectr-mobile](../konectr-mvp/konectr_mobile/) - Flutter mobile app
 - [konectr-analytics](../konectr-analytics/) - Admin dashboard (Next.js)
 
+## Deployment
+
+Configured for **Vercel** deployment.
+
 ## License
 
-Copyright © 2025 Konectr. All rights reserved.
+Copyright 2025 Konectr. All rights reserved.
