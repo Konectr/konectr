@@ -7,39 +7,40 @@ import Link from "next/link";
 const safetyFeatures = [
   {
     icon: "✅",
-    title: "Identity Verification",
+    title: "Phone Verified",
     description:
-      "All users verify their identity before joining. We confirm you're a real person.",
-  },
-  {
-    icon: "📸",
-    title: "Photo Verification",
-    description:
-      "Profile photos are verified to ensure they're actually you, not someone else.",
+      "Every member verifies their phone number before joining. Real people only.",
   },
   {
     icon: "📍",
-    title: "Vetted Venues",
+    title: "Public Venues Only",
     description:
-      "All meetups happen at safe, public venues that we've personally vetted.",
+      "All meetups happen at cafés, gyms, and public spaces—never private locations.",
   },
   {
     icon: "🚨",
     title: "Quick Reporting",
     description:
-      "Report concerning behavior instantly. Our team reviews reports within hours.",
+      "Flag concerning behavior in two taps. Reports trigger automatic review.",
   },
   {
-    icon: "🛡️",
-    title: "24/7 Safety Team",
+    icon: "⚖️",
+    title: "Three-Strike System",
     description:
-      "Dedicated safety team available around the clock to address concerns.",
+      "3 reports = warning. 6 = suspension. 9 = six-month ban. No exceptions.",
   },
   {
-    icon: "🚫",
-    title: "Zero Tolerance",
+    icon: "🔒",
+    title: "Private Messaging",
     description:
-      "Immediate action against harassment, discrimination, or unsafe behavior.",
+      "Chat in-app only. Your phone number is never shared.",
+  },
+  {
+    icon: "📸",
+    title: "Photo Verification",
+    description:
+      "AI-powered selfie matching to prevent catfishing.",
+    comingSoon: true,
   },
 ];
 
@@ -140,6 +141,11 @@ export function SafetyContent() {
                   style={{ fontFamily: "'Satoshi', sans-serif" }}
                 >
                   {feature.title}
+                  {feature.comingSoon && (
+                    <span className="ml-2 inline-block bg-[#FFC845] text-[#1F1F1F] text-[10px] font-semibold px-2 py-0.5 rounded uppercase">
+                      Coming Soon
+                    </span>
+                  )}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   {feature.description}
