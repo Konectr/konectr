@@ -1,0 +1,52 @@
+{
+  "navigation": {
+    "howItWorks": "How it Works",
+    "about": "About",
+    "safety": "Safety",
+    "blog": "Blog",
+    "getTheApp": "Get the App"
+  },
+  "footer": {
+    "tagline": "Real adventures with real people, right now. Join the movement.",
+    "company": "Company",
+    "resources": "Resources",
+    "legal": "Legal",
+    "copyright": "© {year} Konectr. Made with love for real connections.",
+    "links": {
+      "ourStory": "Our Story",
+      "howItWorks": "How It Works",
+      "findYourVibe": "Find Your Vibe",
+      "contact": "Contact",
+      "partnerWithUs": "Partner With Us",
+      "communityGuidelines": "Community Guidelines",
+      "safetyFirst": "Safety First",
+      "faqs": "FAQs",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "cookiePolicy": "Cookie Policy"
+    },
+    "social": {
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "tiktok": "TikTok",
+      "linkedin": "LinkedIn"
+    }
+  },
+  "cta": {
+    "notifyMe": "Notify Me",
+    "learnMore": "Learn More",
+    "getEarlyAccess": "Get Early Access",
+    "sendMessage": "Send Message",
+    "viewFaqs": "View FAQs",
+    "contactSupport": "Contact Support",
+    "readMore": "Read more"
+  },
+  "language": {
+    "selectLanguage": "Select language",
+    "currentLanguage": "Current language"
+  },
+  "metadata": {
+    "title": "Konectr - Real Adventures with Real People",
+    "description": "Stop scrolling. Start living. Connect with people who share your interests and meet up for real adventures."
+  }
+}

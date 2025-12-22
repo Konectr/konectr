@@ -1,0 +1,102 @@
+{
+  "pageHeader": {
+    "title": "How Konectr Works",
+    "subtitle": "Find your people in three simple steps",
+    "badge": "Simple & Spontaneous"
+  },
+  "steps": {
+    "step1": {
+      "number": "01",
+      "title": "Pick Your Vibe",
+      "description": "Choose what you're in the mood for. Coffee chat? Trail run? Board game night? Browse activities happening near you or create your own.",
+      "details": [
+        "Browse by category: Fitness, Food, Games, Outdoors, Arts & more",
+        "See what's happening right now or later today",
+        "Filter by location, time, and group size"
+      ]
+    },
+    "step2": {
+      "number": "02",
+      "title": "See Who's Free",
+      "description": "No more back-and-forth scheduling. See real people who are available at the same time as you, matched by shared interests and vibe.",
+      "details": [
+        "Real-time availability – see who's free NOW",
+        "Vibe-based matching for better connections",
+        "Small groups (2-4 people) for quality conversations"
+      ]
+    },
+    "step3": {
+      "number": "03",
+      "title": "Meet at the Spot",
+      "description": "Show up at a vetted venue, connect with like-minded people, and make it happen. No pressure, no awkwardness – just real moments.",
+      "details": [
+        "All meetups at safe, public venues",
+        "Arrive, connect, and enjoy",
+        "Rate your experience to help the community"
+      ]
+    }
+  },
+  "features": {
+    "title": "Why People Love Konectr",
+    "items": {
+      "realTime": {
+        "title": "Real-Time",
+        "description": "See who's free right now, not next week"
+      },
+      "activityFirst": {
+        "title": "Activity-First",
+        "description": "Connect over shared interests, not profiles"
+      },
+      "smallGroups": {
+        "title": "Small Groups",
+        "description": "2-4 people for genuine conversations"
+      },
+      "vettedVenues": {
+        "title": "Vetted Venues",
+        "description": "All meetups at safe, public locations"
+      },
+      "verifiedUsers": {
+        "title": "Verified Users",
+        "description": "Every member is identity verified"
+      },
+      "noPressure": {
+        "title": "No Pressure",
+        "description": "Casual meetups, no commitment required"
+      }
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": {
+      "free": {
+        "question": "Is Konectr free to use?",
+        "answer": "Yes! Konectr is free to join and use. We may offer premium features in the future, but the core experience of connecting with people will always be free."
+      },
+      "safety": {
+        "question": "How do I know the people I meet are safe?",
+        "answer": "All users go through identity verification. All meetups happen at vetted public venues. We have a dedicated safety team and zero-tolerance policy for inappropriate behavior."
+      },
+      "introvert": {
+        "question": "What if I'm shy or introverted?",
+        "answer": "Konectr is perfect for introverts! Since you're connecting over shared activities, there's always something to focus on besides small talk. Plus, small group sizes (2-4 people) keep things comfortable."
+      },
+      "createMeetups": {
+        "question": "Can I create my own meetups?",
+        "answer": "Absolutely! You can either join existing activities or create your own. Pick a venue, set a time, and let others join you."
+      },
+      "cities": {
+        "question": "What cities is Konectr available in?",
+        "answer": "We're launching in select cities first and expanding quickly. Join the waitlist to be notified when we launch in your area!"
+      },
+      "difference": {
+        "question": "How is this different from Meetup or Bumble BFF?",
+        "answer": "Konectr focuses on real-time, spontaneous connections. No scheduling weeks ahead or swiping through profiles. See who's free now and meet up today."
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to find your people?",
+    "subtitle": "Join thousands of others who are ditching the scroll for real adventures.",
+    "button": "Get Early Access"
+  }
+}

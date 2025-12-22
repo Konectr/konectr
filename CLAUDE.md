@@ -1,0 +1,324 @@
+# CLAUDE.md - Konectr Website
+
+**Last Updated**: 2025-12-22 | **Status**: Production Live | **FAQ**: v1 (46 questions)
+
+---
+
+## Project Overview
+
+Konectr's official marketing website and landing page. Built with Next.js 16 and deployed on Vercel.
+
+**Live URL**: https://konectr.app
+
+---
+
+## Tech Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Next.js | 16.0.10 | React framework with App Router |
+| React | 19.2.1 | UI library |
+| TypeScript | 5.x | Type safety |
+| Tailwind CSS | 4.x | Styling |
+| next-intl | 4.6.1 | Internationalization (8 locales) |
+| Framer Motion | 12.x | Animations |
+
+---
+
+## Project Structure
+
+```
+konectr-web/
+├── src/
+│   ├── app/
+│   │   ├── [locale]/        # Locale-specific pages
+│   │   │   ├── page.tsx     # Homepage
+│   │   │   ├── about/       # About page
+│   │   │   ├── blog/        # Blog pages
+│   │   │   ├── contact/     # Contact page
+│   │   │   ├── faq/         # FAQ page (46 questions)
+│   │   │   ├── how-it-works/# How it works
+│   │   │   └── safety/      # Safety page
+│   │   ├── globals.css      # Global styles
+│   │   ├── layout.tsx       # Root layout
+│   │   └── sitemap.ts       # Dynamic sitemap
+│   ├── components/
+│   │   ├── ui/              # shadcn/ui components
+│   │   ├── Navigation.tsx   # Global navigation
+│   │   └── Footer.tsx       # Global footer
+│   ├── i18n/                # Internationalization config
+│   └── lib/
+│       └── utils.ts         # Utility functions
+├── public/                  # Static assets
+├── messages/                # Translation files (JSON)
+├── vercel.json              # Vercel config + redirects
+└── next.config.ts           # Next.js config
+```
+
+---
+
+## Deployment
+
+### Production Domains
+
+| Domain | Purpose | Platform |
+|--------|---------|----------|
+| **konectr.app** | Primary website | Vercel |
+| **www.konectr.app** | WWW variant | Vercel (redirects to apex) |
+| **konectrapp.com** | Legacy/alternate | Vercel (301 → konectr.app) |
+| **www.konectrapp.com** | Legacy WWW | Vercel (301 → konectr.app) |
+
+### Vercel Configuration
+
+- **Project**: `konectr-web`
+- **Team**: `konectr`
+- **Region**: Auto (Edge)
+- **Build**: `next build`
+- **Install**: `npm install`
+
+### DNS Records (Namecheap)
+
+Both domains use identical DNS configuration:
+
+```
+A     @     76.76.21.21
+CNAME www   cname.vercel-dns.com
+```
+
+### Domain Redirects (vercel.json)
+
+```json
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{"type": "host", "value": "konectrapp.com"}],
+      "destination": "https://konectr.app/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{"type": "host", "value": "www.konectrapp.com"}],
+      "destination": "https://konectr.app/:path*",
+      "permanent": true
+    }
+  ]
+}
+```
+
+---
+
+## Internationalization
+
+### Supported Locales
+
+| Code | Language | Status |
+|------|----------|--------|
+| en | English | Default |
+| ms | Malay (Bahasa Malaysia) | Active |
+| zh-HK | Chinese Traditional (Hong Kong) | Active |
+| zh-CN | Chinese Simplified | Active |
+| ja | Japanese | Active |
+| ko | Korean | Active |
+| th | Thai | Active |
+| vi | Vietnamese | Active |
+
+### Adding Translations
+
+1. Add translation file: `messages/{locale}.json`
+2. Update `src/i18n/request.ts` if needed
+3. Translations auto-generate static pages at build time
+
+---
+
+## Brand Colors
+
+| Name | Hex | CSS Variable | Usage |
+|------|-----|--------------|-------|
+| Sunset Orange | `#FF774D` | `--primary` | Primary CTA, accents |
+| Solar Amber | `#FFC845` | `--secondary` | Secondary highlights |
+| Graphite Grey | `#1F1F1F` | `--foreground` | Text, dark sections |
+| Cloud White | `#FAFAFA` | `--background` | Backgrounds |
+
+---
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run dev server (http://localhost:3000)
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+```
+
+---
+
+## Deployment Commands
+
+```bash
+# Deploy to production
+vercel --prod
+
+# Deploy preview (generates unique URL)
+vercel
+
+# List all domains
+vercel domains ls
+
+# Inspect domain status
+vercel domains inspect konectr.app
+
+# Check SSL certificates
+vercel certs ls
+```
+
+---
+
+## FAQ Page (v2)
+
+**Live URL**: https://konectr.app/faq
+
+### Content Summary
+
+| Category | Icon | Questions |
+|----------|------|-----------|
+| Getting Started | 🚀 | 6 |
+| How Konectr Works | 💡 | 10 |
+| Safety & Trust | 🛡️ | 7 |
+| Activities & Meetups | 🎯 | 8 |
+| Badges & Gamification | 🏆 | 3 |
+| Account & Settings | ⚙️ | 5 |
+| Premium & Future Features | ✨ | 3 |
+| Troubleshooting & Support | 🔧 | 4 |
+| **Total** | | **46** |
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/app/[locale]/faq/page.tsx` | FAQ page component |
+| `src/app/[locale]/faq/FAQContent.tsx` | FAQ content with 46 questions |
+
+### Emoji Reference (Synced with Mobile)
+
+Emojis in FAQ content match `konectr_mobile/lib/constants/category_reference.dart`:
+
+**Venue Categories:**
+| Emoji | Category |
+|-------|----------|
+| ☕ | Cafe |
+| 🍽️ | Restaurant |
+| 🍻 | Bar |
+| 💪 | Fitness |
+| 🌳 | Outdoors |
+| 🎭 | Entertainment |
+
+**Activity Categories:**
+| Emoji | Category |
+|-------|----------|
+| ☕ | Chill |
+| 💪 | Active |
+| 🎯 | Focus |
+| 🎨 | Creative |
+| ⛰️ | Adventure |
+| 🎉 | Social |
+| 📌 | Default |
+
+### Components Used
+
+- `shadcn/ui Accordion` - Collapsible FAQ items
+- `Framer Motion` - Fade-in animations
+- `Next.js Link` - Internal navigation
+
+---
+
+## Related Projects
+
+| Project | Path | Description |
+|---------|------|-------------|
+| konectr-mobile | `../konectr-mvp/konectr_mobile/` | Flutter mobile app |
+| konectr-analytics | `../konectr-analytics/` | Admin dashboard |
+
+---
+
+## Quick Reference
+
+### Key Files
+
+- `src/app/[locale]/page.tsx` - Homepage
+- `src/app/[locale]/faq/FAQContent.tsx` - FAQ page (46 questions, 8 categories)
+- `src/app/[locale]/layout.tsx` - Locale layout (includes Navigation + Footer)
+- `src/components/Navigation.tsx` - Global navigation header
+- `src/components/Footer.tsx` - Global footer
+- `src/app/globals.css` - Global styles + brand colors
+- `vercel.json` - Domain redirects
+- `next.config.ts` - Next.js + next-intl config
+- `messages/*.json` - Translation files
+
+### Common Tasks
+
+| Task | Command/Location |
+|------|------------------|
+| Add new page | Create folder in `src/app/[locale]/` |
+| Update FAQ content | Edit `src/app/[locale]/faq/FAQContent.tsx` |
+| Update translations | Edit `messages/{locale}.json` |
+| Change redirects | Edit `vercel.json` |
+| Add component | Use `npx shadcn@latest add {component}` |
+
+---
+
+## How It Works Page
+
+**Live URL**: https://konectr.app/how-it-works
+
+### Steps with Local Images
+
+| Step | Title | Image |
+|------|-------|-------|
+| 01 | Pick Your Vibe | `/images/homepage/step-1.jpg` |
+| 02 | See Who's Free | `/images/homepage/step-2.jpg` |
+| 03 | Meet at the Spot | `/images/homepage/step-3.jpg` |
+
+### Key Details
+- Small groups: 2-5 people for quality conversations
+- All images stored locally in `public/images/homepage/`
+
+---
+
+## Static Images
+
+All website images stored in `public/images/homepage/`:
+
+| File | Usage |
+|------|-------|
+| `hero.jpg` | Homepage hero section |
+| `before.jpg` | The Shift section (before) |
+| `after.jpg` | The Shift section (after) |
+| `step-1.jpg` | How It Works - Step 1 |
+| `step-2.jpg` | How It Works - Step 2 |
+| `step-3.jpg` | How It Works - Step 3 |
+
+---
+
+## Version History
+
+| Date | Version | Changes |
+|------|---------|---------|
+| 2025-12-22 | Images v1 | Local images for How It Works (step-1, step-2, step-3), updated before.jpg |
+| 2025-12-22 | FAQ v1 | 46 questions, 8 categories, concise answers, emoji sync with mobile |
+| 2025-12-22 | Launch | Website deployed to konectr.app |
+
+---
+
+**Last Deployed**: 2025-12-22
+**Deployment Method**: Vercel CLI (`vercel --prod`)

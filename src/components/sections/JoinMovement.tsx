@@ -1,12 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { fadeInUp, viewportOnce, defaultTransition } from "@/lib/animations";
+import { Heading } from "@/components/shared";
+
+// Community member photos
+const communityPhotos = [
+  "/images/avatars/avatar-1.jpg",
+  "/images/avatars/avatar-2.jpg",
+  "/images/avatars/avatar-3.jpg",
+  "/images/avatars/avatar-4.jpg",
+  "/images/avatars/avatar-5.jpg",
+];
 
 export function JoinMovement() {
+  const t = useTranslations("home.joinMovement");
+
   return (
     <section
       id="about"
-      className="py-24 md:py-32 bg-gradient-to-b from-foreground to-gray-900 dark:from-gray-900 dark:to-black text-white relative overflow-hidden"
+      className="py-24 md:py-32 bg-gradient-to-b from-foreground to-foreground dark:from-foreground dark:to-background text-white relative overflow-hidden"
     >
       {/* Floating background elements */}
       <motion.div
@@ -29,26 +44,24 @@ export function JoinMovement() {
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          variants={fadeInUp}
           className="text-center mb-12"
         >
-          <h2
-            className="text-3xl md:text-5xl font-black mb-4"
-            style={{ fontFamily: "'Satoshi', sans-serif" }}
-          >
-            Why we&apos;re building Konectr
-          </h2>
+          <Heading level={2} size="xl" animated={false} className="text-white mb-4">
+            {t("title")}
+          </Heading>
         </motion.div>
 
         {/* Quote card */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          variants={fadeInUp}
+          custom={0.2}
           className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12"
         >
           {/* Quote icon */}
@@ -56,65 +69,71 @@ export function JoinMovement() {
 
           {/* Quote text */}
           <p className="text-xl md:text-2xl leading-relaxed text-white/90 mb-8">
-            We&apos;re tired of likes that don&apos;t lead to real laughs, of followers
-            who&apos;ll never follow you on a real adventure.
+            {t("quote")}
             <span className="text-primary font-semibold">
-              {" "}Konectr isn&apos;t another app to scroll through
+              {" "}{t("quoteHighlight")}
             </span>{" "}
-            — it&apos;s your ticket out of the digital loop and into real life.
+            {t("quoteEnd")}
           </p>
 
           {/* Author */}
-          <p className="text-secondary font-semibold">— The Konectr Team</p>
+          <p className="text-secondary font-semibold">{t("author")}</p>
         </motion.div>
 
         {/* Stats / Social proof */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          variants={fadeInUp}
           className="grid grid-cols-3 gap-4 mt-12"
         >
           {[
-            { number: "🌟", label: "Early Adopters" },
-            { number: "🏢", label: "Partner Venues" },
-            { number: "⏱️", label: "Real Moments" },
+            { emoji: "🌟", labelKey: "earlyAdopters" },
+            { emoji: "🏢", labelKey: "partnerVenues" },
+            { emoji: "⏱️", labelKey: "realMoments" },
           ].map((stat, index) => (
             <motion.div
-              key={stat.label}
+              key={stat.labelKey}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5 + index * 0.1 }}
               className="text-center p-4 rounded-2xl bg-white/5"
             >
-              <span className="text-3xl mb-2 block">{stat.number}</span>
-              <span className="text-white/60 text-sm">{stat.label}</span>
+              <span className="text-3xl mb-2 block">{stat.emoji}</span>
+              <span className="text-white/60 text-sm">{t(`stats.${stat.labelKey}`)}</span>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Community avatars placeholder */}
+        {/* Community avatars */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={viewportOnce}
           transition={{ delay: 0.6 }}
           className="flex justify-center items-center gap-2 mt-12"
         >
           <div className="flex -space-x-3">
-            {[...Array(5)].map((_, i) => (
+            {communityPhotos.map((photo, i) => (
               <div
                 key={i}
-                className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-foreground flex items-center justify-center text-sm"
+                className="w-12 h-12 rounded-full border-2 border-foreground overflow-hidden relative"
               >
-                {["😊", "🙌", "💪", "✨", "🎯"][i]}
+                <Image
+                  src={photo}
+                  alt={`Community member ${i + 1}`}
+                  fill
+                  className="object-cover"
+                  quality={100}
+                  unoptimized
+                />
               </div>
             ))}
           </div>
-          <span className="text-white/60 text-sm ml-3">
-            Join the founding community
+          <span className="text-white/60 text-sm ml-4">
+            {t("joinCommunity")}
           </span>
         </motion.div>
       </div>

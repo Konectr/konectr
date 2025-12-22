@@ -1,0 +1,69 @@
+{
+  "pageHeader": {
+    "title": "About Konectr",
+    "subtitle": "We're on a mission to get people off their phones and into real life.",
+    "badge": "Our Story"
+  },
+  "story": {
+    "title": "Our Story",
+    "paragraph1": "It started with a simple observation: we're more connected than ever, yet lonelier than ever before.",
+    "paragraph2": "Every day, millions of people scroll through social media, collecting likes and followers, but feeling increasingly isolated. We've traded real conversations for comments, genuine friendships for follower counts.",
+    "paragraph3": "We asked ourselves: What if there was a better way?",
+    "paragraph4": "What if technology could be a bridge to real-world connection, not a replacement for it? What if instead of showing you what others are doing, an app could help you do things with others?",
+    "paragraph5": "That's why we built Konectr."
+  },
+  "mission": {
+    "label": "Our Mission",
+    "title": "Get people off their phones and into real life",
+    "subtitle": "We're building the anti-social network. An app designed to be used less, so you can live more."
+  },
+  "values": {
+    "title": "What We Believe",
+    "subtitle": "These values guide everything we build",
+    "items": {
+      "realConnection": {
+        "title": "Real Connection",
+        "description": "We believe genuine friendships happen face-to-face, not through screens."
+      },
+      "spontaneity": {
+        "title": "Spontaneity",
+        "description": "Life's best moments are unplanned. We make it easy to be spontaneous."
+      },
+      "safetyFirst": {
+        "title": "Safety First",
+        "description": "Every user is verified. Every venue is vetted. Your safety is our priority."
+      },
+      "inclusiveCommunity": {
+        "title": "Inclusive Community",
+        "description": "Everyone belongs. We're building a space where all people can find their tribe."
+      }
+    }
+  },
+  "team": {
+    "title": "Meet the Team",
+    "subtitle": "The humans behind Konectr",
+    "members": {
+      "founder": {
+        "name": "Founder",
+        "role": "CEO & Visionary"
+      },
+      "cofounder": {
+        "name": "Co-Founder",
+        "role": "CTO & Builder"
+      },
+      "communityLead": {
+        "name": "Team Member",
+        "role": "Community Lead"
+      },
+      "designLead": {
+        "name": "Team Member",
+        "role": "Design Lead"
+      }
+    }
+  },
+  "cta": {
+    "title": "Join the Movement",
+    "subtitle": "Be part of the community that's bringing real connection back.",
+    "button": "Get Early Access"
+  }
+}

@@ -3,14 +3,21 @@
 import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "./ui/button";
 import { brand } from "@/config/brand";
 
 export function Navigation() {
+  const t = useTranslations("navigation");
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const { scrollY } = useScroll();
+
+  // Check if on homepage (pathname is "/" after locale is stripped by next-intl)
+  const isHomepage = pathname === "/";
 
   // Transform values based on scroll
   const backgroundColor = useTransform(
@@ -44,33 +51,37 @@ export function Navigation() {
       }}
     >
       <div className="flex items-center gap-6">
-        {/* Logo */}
-        <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-          <Image
-            src={brand.assets.logoOrange}
-            alt="Konectr"
-            width={120}
-            height={40}
-            className="h-8 w-auto"
-            priority
-          />
-        </Link>
+        {/* Logo - Only show when not on homepage */}
+        {!isHomepage && (
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <Image
+              src={brand.assets.logoOrange}
+              alt="Konectr"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
+          </Link>
+        )}
 
         {/* Nav Links - Hidden on mobile */}
         <div className="hidden md:flex items-center gap-6">
-          <NavLink href="#how">How it Works</NavLink>
-          <NavLink href="#vibes">Find Your Vibe</NavLink>
-          <NavLink href="#about">About</NavLink>
+          <NavLink href="/how-it-works">{t("howItWorks")}</NavLink>
+          <NavLink href="/about">{t("about")}</NavLink>
+          <NavLink href="/safety">{t("safety")}</NavLink>
+          <NavLink href="/blog">{t("blog")}</NavLink>
         </div>
 
         {/* Right side actions */}
         <div className="flex items-center gap-3">
+          <LanguageSwitcher />
           <ThemeToggle />
           <Button
             size="sm"
             className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold hidden sm:inline-flex"
           >
-            Get the App
+            {t("getTheApp")}
           </Button>
         </div>
       </div>

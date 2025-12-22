@@ -1,0 +1,26 @@
+{
+  "pageHeader": {
+    "title": "Stories & Insights",
+    "subtitle": "Tips, stories, and thoughts on real-world connection",
+    "badge": "Blog"
+  },
+  "list": {
+    "readMore": "Read more",
+    "minRead": "min read",
+    "publishedOn": "Published on"
+  },
+  "post": {
+    "backToBlog": "Back to Blog",
+    "sharePost": "Share this post",
+    "relatedPosts": "Related Posts",
+    "writtenBy": "Written by"
+  },
+  "categories": {
+    "all": "All Posts",
+    "connection": "Connection",
+    "lifestyle": "Lifestyle",
+    "tips": "Tips",
+    "community": "Community",
+    "wellness": "Wellness"
+  }
+}

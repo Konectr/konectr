@@ -74,7 +74,67 @@ Open [http://localhost:3000](http://localhost:3000) to view the site.
 
 ## Deployment
 
-Configured for **Vercel** deployment.
+Deployed on **Vercel** with automatic builds from git.
+
+### Production URLs
+
+| Domain | Purpose | Status |
+|--------|---------|--------|
+| **https://konectr.app** | Primary domain | ✅ Live |
+| **https://www.konectr.app** | WWW redirect | ✅ Live |
+| **https://konectrapp.com** | Redirect to konectr.app | ✅ Live |
+| **https://www.konectrapp.com** | Redirect to konectr.app | ✅ Live |
+
+### Vercel Project
+
+- **Project**: `konectr-web`
+- **Team**: `konectr`
+- **Framework**: Next.js (auto-detected)
+- **Build Command**: `next build`
+
+### DNS Configuration
+
+#### konectr.app (Namecheap)
+| Type | Host | Value |
+|------|------|-------|
+| A | @ | `76.76.21.21` |
+| CNAME | www | `cname.vercel-dns.com` |
+
+#### konectrapp.com (Namecheap)
+| Type | Host | Value |
+|------|------|-------|
+| A | @ | `76.76.21.21` |
+| CNAME | www | `cname.vercel-dns.com` |
+
+### Deployment Commands
+
+```bash
+# Deploy to production
+vercel --prod
+
+# Deploy preview
+vercel
+
+# Check domain status
+vercel domains ls
+vercel domains inspect konectr.app
+```
+
+### SSL Certificates
+
+Automatically provisioned by Vercel (Let's Encrypt). Auto-renews every 90 days.
+
+## Internationalization
+
+Supports 8 locales via `next-intl`:
+- English (en) - Default
+- Malay (ms)
+- Chinese Traditional (zh-HK)
+- Chinese Simplified (zh-CN)
+- Japanese (ja)
+- Korean (ko)
+- Thai (th)
+- Vietnamese (vi)
 
 ## License
 

@@ -2,14 +2,28 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
 
 export function Hero() {
+  const t = useTranslations("home.hero");
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background gradient - will be replaced with image */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-orange-600">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/homepage/hero.jpg"
+          alt="Friends laughing together"
+          fill
+          className="object-cover"
+          priority
+          quality={100}
+          unoptimized
+        />
+        {/* Gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/70 to-primary/60" />
         {/* Animated background elements */}
         <motion.div
           className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-white/10 blur-3xl"
@@ -65,7 +79,7 @@ export function Hero() {
         >
           <span className="text-lg">✨</span>
           <span className="text-white font-semibold text-sm">
-            Launching {brand.launchDate}
+            {t("launching", { date: brand.launchDate })}
           </span>
         </motion.div>
 
@@ -74,12 +88,10 @@ export function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="font-heading text-4xl sm:text-5xl md:text-7xl font-black text-white leading-tight mb-6"
+          className="font-heading text-4xl sm:text-5xl md:text-7xl font-black text-white leading-tight mb-6 whitespace-pre-line"
           style={{ fontFamily: "'Satoshi', sans-serif" }}
         >
-          Stop scrolling.
-          <br />
-          Start living.
+          {t("headline")}
         </motion.h1>
 
         {/* Subtext */}
@@ -89,7 +101,7 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-xl md:text-2xl text-white/90 font-medium mb-10 max-w-2xl mx-auto"
         >
-          Real adventures with real people, right now.
+          {t("subtext")}
         </motion.p>
 
         {/* CTA Buttons */}
@@ -103,7 +115,7 @@ export function Hero() {
             size="lg"
             className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1"
           >
-            Get the App
+            {t("getTheApp")}
             <span className="ml-2">→</span>
           </Button>
           <Button
@@ -111,7 +123,7 @@ export function Hero() {
             variant="outline"
             className="rounded-full border-2 border-white/80 text-white hover:bg-white/10 font-semibold text-lg px-8 py-6 bg-transparent"
           >
-            See How It Works
+            {t("seeHowItWorks")}
           </Button>
         </motion.div>
 
@@ -123,13 +135,13 @@ export function Hero() {
           className="mt-16 flex flex-wrap items-center justify-center gap-3"
         >
           {[
-            { emoji: "🏋️‍♀️", label: "Fitness" },
-            { emoji: "☕", label: "Cafes" },
-            { emoji: "🌳", label: "Parks" },
-            { emoji: "🎮", label: "Games" },
+            { emoji: "🏋️‍♀️", labelKey: "fitness" },
+            { emoji: "☕", labelKey: "cafes" },
+            { emoji: "🌳", labelKey: "parks" },
+            { emoji: "🎮", labelKey: "games" },
           ].map((item, index) => (
             <motion.div
-              key={item.label}
+              key={item.labelKey}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
@@ -137,7 +149,7 @@ export function Hero() {
               className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-5 py-3 rounded-2xl cursor-pointer hover:bg-white/25 transition-colors"
             >
               <span className="text-2xl">{item.emoji}</span>
-              <span className="text-white font-semibold">{item.label}</span>
+              <span className="text-white font-semibold">{t(`activities.${item.labelKey}`)}</span>
             </motion.div>
           ))}
         </motion.div>

@@ -1,0 +1,69 @@
+{
+  "pageHeader": {
+    "title": "Get in Touch",
+    "subtitle": "We'd love to hear from you",
+    "badge": "Contact Us"
+  },
+  "form": {
+    "title": "Send us a message",
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Your name"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "your@email.com"
+      },
+      "subject": {
+        "label": "Subject",
+        "placeholder": "Select a topic",
+        "options": {
+          "general": "General Inquiry",
+          "partnership": "Partnership",
+          "venue": "Venue Partnership",
+          "press": "Press & Media",
+          "support": "Support",
+          "feedback": "Feedback"
+        }
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "How can we help?"
+      }
+    },
+    "submit": "Send Message",
+    "success": {
+      "title": "Message Sent!",
+      "message": "Thanks for reaching out. We'll get back to you soon."
+    }
+  },
+  "otherMethods": {
+    "title": "Other ways to reach us",
+    "email": {
+      "title": "Email"
+    },
+    "social": {
+      "title": "Social Media",
+      "value": "@konectrapp"
+    },
+    "community": {
+      "title": "Community",
+      "value": "Join our Discord"
+    }
+  },
+  "followUs": {
+    "title": "Follow us",
+    "platforms": {
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "tiktok": "TikTok",
+      "linkedin": "LinkedIn"
+    }
+  },
+  "faqPrompt": {
+    "title": "Looking for answers?",
+    "subtitle": "Check our FAQ section for quick answers to common questions.",
+    "button": "View FAQs"
+  }
+}

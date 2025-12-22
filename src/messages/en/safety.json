@@ -1,0 +1,102 @@
+{
+  "pageHeader": {
+    "title": "Your Safety Matters",
+    "subtitle": "Building trust so you can focus on connection",
+    "badge": "Safety First"
+  },
+  "features": {
+    "title": "How We Keep You Safe",
+    "subtitle": "Multiple layers of protection so you can focus on making real connections",
+    "items": {
+      "identityVerification": {
+        "title": "Identity Verification",
+        "description": "All users verify their identity before joining. We confirm you're a real person."
+      },
+      "photoVerification": {
+        "title": "Photo Verification",
+        "description": "Profile photos are verified to ensure they're actually you, not someone else."
+      },
+      "vettedVenues": {
+        "title": "Vetted Venues",
+        "description": "All meetups happen at safe, public venues that we've personally vetted."
+      },
+      "quickReporting": {
+        "title": "Quick Reporting",
+        "description": "Report concerning behavior instantly. Our team reviews reports within hours."
+      },
+      "safetyTeam": {
+        "title": "24/7 Safety Team",
+        "description": "Dedicated safety team available around the clock to address concerns."
+      },
+      "zeroTolerance": {
+        "title": "Zero Tolerance",
+        "description": "Immediate action against harassment, discrimination, or unsafe behavior."
+      }
+    }
+  },
+  "guidelines": {
+    "title": "Community Guidelines",
+    "subtitle": "The standards that keep our community great",
+    "beRespectful": {
+      "title": "Be Respectful",
+      "points": [
+        "Treat everyone with kindness and respect",
+        "No harassment, bullying, or hate speech",
+        "Respect boundaries and consent"
+      ]
+    },
+    "beHonest": {
+      "title": "Be Honest",
+      "points": [
+        "Use accurate photos and information",
+        "Be upfront about your intentions",
+        "Don't mislead others about who you are"
+      ]
+    },
+    "beSafe": {
+      "title": "Be Safe",
+      "points": [
+        "Meet only at public venues",
+        "Trust your instincts",
+        "Report anything that feels wrong"
+      ]
+    }
+  },
+  "tips": {
+    "title": "Safety Tips",
+    "subtitle": "Best practices for safe and enjoyable meetups",
+    "beforeMeeting": {
+      "title": "Before Meeting",
+      "items": [
+        "Review the profiles of people you'll meet",
+        "Choose meetups at familiar venues",
+        "Tell a friend your plans",
+        "Have your own transportation"
+      ]
+    },
+    "duringMeetup": {
+      "title": "During the Meetup",
+      "items": [
+        "Meet at the venue, not before",
+        "Stay in public areas",
+        "Keep your belongings with you",
+        "Trust your instincts – leave if uncomfortable"
+      ]
+    },
+    "afterMeetup": {
+      "title": "After the Meetup",
+      "items": [
+        "Share feedback to help the community",
+        "Report any concerning behavior",
+        "Block users you don't want to see again",
+        "Celebrate the good connections!"
+      ]
+    }
+  },
+  "support": {
+    "title": "Need Help?",
+    "subtitle": "If you ever feel unsafe or need to report something, we're here for you.",
+    "contactSupport": "Contact Support",
+    "emergencyNote": "In case of emergency, always contact local authorities first."
+  }
+}
