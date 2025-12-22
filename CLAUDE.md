@@ -1,6 +1,6 @@
 # CLAUDE.md - Konectr Website
 
-**Last Updated**: 2025-12-22 | **Status**: Production Live | **FAQ**: v1 (46 questions)
+**Last Updated**: 2025-12-23 | **Status**: Production Live | **FAQ**: v1 (46 questions)
 
 ---
 
@@ -295,6 +295,44 @@ Emojis in FAQ content match `konectr_mobile/lib/constants/category_reference.dar
 
 ---
 
+## Safety Page
+
+**Live URL**: https://konectr.app/safety
+
+### Safety Features (6 cards)
+
+| Icon | Title | Description | Badge |
+|------|-------|-------------|-------|
+| ✅ | Phone Verified | Every member verifies their phone number before joining. Real people only. | - |
+| 📍 | Public Venues Only | All meetups happen at cafés, gyms, and public spaces—never private locations. | - |
+| 🚨 | Quick Reporting | Flag concerning behavior in two taps. Reports trigger automatic review. | - |
+| ⚖️ | Three-Strike System | 3 reports = warning. 6 = suspension. 9 = six-month ban. No exceptions. | - |
+| 🔒 | Private Messaging | Chat in-app only. Your phone number is never shared. | - |
+| 📸 | Photo Verification | AI-powered selfie matching to prevent catfishing. | COMING SOON |
+
+### Coming Soon Badge Styling
+
+```tsx
+<span className="ml-2 inline-block bg-[#FFC845] text-[#1F1F1F] text-[10px] font-semibold px-2 py-0.5 rounded uppercase">
+  Coming Soon
+</span>
+```
+
+### Key File
+
+| File | Purpose |
+|------|---------|
+| `src/app/[locale]/safety/SafetyContent.tsx` | Safety page with 6 feature cards |
+
+### Page Sections
+
+1. **How We Keep You Safe** - 6 feature cards (grid layout)
+2. **Community Guidelines** - Be Respectful, Be Honest, Be Safe
+3. **Safety Tips** - Before, During, After meetup tips
+4. **Need Help?** - Contact support CTA + safety@konectr.app
+
+---
+
 ## Static Images
 
 ### Homepage (`public/images/homepage/`)
@@ -344,10 +382,35 @@ All emojis match `konectr_mobile/lib/constants/category_reference.dart`:
 
 ---
 
+## Analytics (Contentsquare/Hotjar)
+
+**Dashboard**: https://app.contentsquare.com
+
+### Integration
+
+Script added to `src/app/layout.tsx`:
+```tsx
+<Script
+  src="https://t.contentsquare.net/uxa/10ec7463f1940.js"
+  strategy="afterInteractive"
+/>
+```
+
+### Features Available
+
+- Heatmaps (click, scroll, attention)
+- Session Replay
+- AI Frustration Score
+- User behavior analytics
+
+---
+
 ## Version History
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-23 | Safety v2 | Updated safety features to match deployed MVP (6 cards), added Coming Soon badge for Photo Verification |
+| 2025-12-23 | Analytics | Added Contentsquare (Hotjar) tracking for heatmaps and session replay |
 | 2025-12-23 | Emoji Sync | Homepage pills (6 venue categories), Vibes cards (6 activity emojis), "Download the app" CTA |
 | 2025-12-23 | About v1 | New "Our Story" image (landscape), local image storage |
 | 2025-12-22 | Images v1 | Local images for How It Works (step-1, step-2, step-3), updated before.jpg |
