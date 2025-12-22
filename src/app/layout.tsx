@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import {
   Noto_Sans_SC,
@@ -60,6 +61,11 @@ export default function RootLayout({
         <link
           href="https://api.fontshare.com/v2/css?f[]=satoshi@700,800,900&display=swap"
           rel="stylesheet"
+        />
+        {/* Contentsquare (Hotjar) Analytics */}
+        <Script
+          src="https://t.contentsquare.net/uxa/10ec7463f1940.js"
+          strategy="afterInteractive"
         />
       </head>
       <body
