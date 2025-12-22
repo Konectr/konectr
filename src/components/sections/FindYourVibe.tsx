@@ -15,25 +15,25 @@ const vibesMeta = [
   },
   {
     key: "fitnessWellness",
-    emoji: "🏃‍♀️",
+    emoji: "💪",
     image: "/images/activities/fitness.jpg",
     hoverColor: "group-hover:ring-primary/60",
   },
   {
     key: "socialGames",
-    emoji: "🎮",
+    emoji: "🎉",
     image: "/images/activities/games.jpg",
     hoverColor: "group-hover:ring-primary/40",
   },
   {
     key: "natureAdventure",
-    emoji: "🌳",
+    emoji: "⛰️",
     image: "/images/activities/nature.jpg",
     hoverColor: "group-hover:ring-secondary/60",
   },
   {
     key: "foodieAdventures",
-    emoji: "🍜",
+    emoji: "🍽️",
     image: "/images/activities/food.jpg",
     hoverColor: "group-hover:ring-primary",
   },
@@ -101,30 +101,30 @@ export function FindYourVibe() {
                   >
                     {t(`vibes.${vibe.key}.name`)}
                   </h3>
-                  <p className="text-white/80 text-sm mb-4">
+                  <p className="text-white/80 text-sm">
                     {t(`vibes.${vibe.key}.activities`)}
                   </p>
-
-                  {/* CTA tag */}
-                  <span className="inline-block bg-white text-foreground text-xs font-semibold px-4 py-2 rounded-full w-fit group-hover:bg-primary group-hover:text-white transition-colors">
-                    {t("findPeople")} →
-                  </span>
                 </div>
               </div>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* More vibes hint */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+        {/* Download CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
           transition={{ delay: 0.5 }}
-          className="text-center text-muted-foreground mt-10"
+          className="text-center mt-12"
         >
-          {t("moreVibes")}
-        </motion.p>
+          <a
+            href="#download"
+            className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-4 transition-all hover:-translate-y-1 hover:shadow-xl"
+          >
+            {t("downloadApp")}
+          </a>
+        </motion.div>
       </div>
     </section>
   );

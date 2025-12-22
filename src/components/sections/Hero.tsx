@@ -135,10 +135,12 @@ export function Hero() {
           className="mt-16 flex flex-wrap items-center justify-center gap-3"
         >
           {[
-            { emoji: "🏋️‍♀️", labelKey: "fitness" },
-            { emoji: "☕", labelKey: "cafes" },
-            { emoji: "🌳", labelKey: "parks" },
-            { emoji: "🎮", labelKey: "games" },
+            { emoji: "☕", labelKey: "cafe" },
+            { emoji: "🍽️", labelKey: "restaurant" },
+            { emoji: "🍻", labelKey: "bar" },
+            { emoji: "💪", labelKey: "fitness" },
+            { emoji: "🌳", labelKey: "outdoors" },
+            { emoji: "🎭", labelKey: "entertainment" },
           ].map((item, index) => (
             <motion.div
               key={item.labelKey}

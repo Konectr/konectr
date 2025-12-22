@@ -297,7 +297,7 @@ Emojis in FAQ content match `konectr_mobile/lib/constants/category_reference.dar
 
 ## Static Images
 
-All website images stored in `public/images/homepage/`:
+### Homepage (`public/images/homepage/`)
 
 | File | Usage |
 |------|-------|
@@ -308,17 +308,53 @@ All website images stored in `public/images/homepage/`:
 | `step-2.jpg` | How It Works - Step 2 |
 | `step-3.jpg` | How It Works - Step 3 |
 
+### About Page (`public/images/about/`)
+
+| File | Usage |
+|------|-------|
+| `our-story.jpg` | Our Story section (landscape) |
+
+---
+
+## Category Emojis (Synced with Mobile)
+
+All emojis match `konectr_mobile/lib/constants/category_reference.dart`:
+
+### Hero Section - Venue Categories (6 pills)
+
+| Emoji | Label | Key |
+|-------|-------|-----|
+| ☕ | Cafe | cafe |
+| 🍽️ | Restaurant | restaurant |
+| 🍻 | Bar | bar |
+| 💪 | Fitness | fitness |
+| 🌳 | Outdoors | outdoors |
+| 🎭 | Entertainment | entertainment |
+
+### Find Your Vibe - Activity Categories (6 cards)
+
+| Emoji | Card Title | Category |
+|-------|------------|----------|
+| ☕ | Cafe Culture | Chill |
+| 💪 | Fitness & Wellness | Active |
+| 🎉 | Social Games | Social |
+| ⛰️ | Nature & Adventure | Adventure |
+| 🍽️ | Foodie Adventures | Restaurant |
+| 🎨 | Arts & Culture | Creative |
+
 ---
 
 ## Version History
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-23 | Emoji Sync | Homepage pills (6 venue categories), Vibes cards (6 activity emojis), "Download the app" CTA |
+| 2025-12-23 | About v1 | New "Our Story" image (landscape), local image storage |
 | 2025-12-22 | Images v1 | Local images for How It Works (step-1, step-2, step-3), updated before.jpg |
 | 2025-12-22 | FAQ v1 | 46 questions, 8 categories, concise answers, emoji sync with mobile |
 | 2025-12-22 | Launch | Website deployed to konectr.app |
 
 ---
 
-**Last Deployed**: 2025-12-22
+**Last Deployed**: 2025-12-23
 **Deployment Method**: Vercel CLI (`vercel --prod`)

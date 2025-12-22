@@ -84,9 +84,9 @@ export function AboutContent() {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <ImagePlaceholder
-                aspectRatio="square"
-                src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&q=80"
-                alt="Friends connecting over coffee"
+                aspectRatio="video"
+                src="/images/about/our-story.jpg"
+                alt="Group of friends enjoying time together outdoors"
                 className="rounded-3xl"
               />
             </motion.div>

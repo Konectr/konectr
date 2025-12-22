@@ -6,10 +6,12 @@
     "getTheApp": "Get the App",
     "seeHowItWorks": "See How It Works",
     "activities": {
+      "cafe": "Cafe",
+      "restaurant": "Restaurant",
+      "bar": "Bar",
       "fitness": "Fitness",
-      "cafes": "Cafes",
-      "parks": "Parks",
-      "games": "Games"
+      "outdoors": "Outdoors",
+      "entertainment": "Entertainment"
     }
   },
   "theShift": {
@@ -46,8 +48,7 @@
   "findYourVibe": {
     "title": "Find your tribe by vibe",
     "subtitle": "Whatever moves you, we'll match you with people who get it",
-    "findPeople": "Find people",
-    "moreVibes": "And many more vibes to discover...",
+    "downloadApp": "Download the app",
     "vibes": {
       "cafeCulture": {
         "name": "Cafe Culture",
