@@ -1,6 +1,6 @@
 # CLAUDE.md - Konectr Website
 
-**Last Updated**: 2025-12-23 | **Status**: Production Live | **FAQ**: v1 (46 questions)
+**Last Updated**: 2025-12-27 | **Status**: Production Live | **FAQ**: v1 (46 questions)
 
 ---
 
@@ -37,8 +37,10 @@ konectr-web/
 │   │   │   ├── blog/        # Blog pages
 │   │   │   ├── contact/     # Contact page
 │   │   │   ├── faq/         # FAQ page (46 questions)
+│   │   │   ├── feedback/    # Feedback board
 │   │   │   ├── how-it-works/# How it works
 │   │   │   └── safety/      # Safety page
+│   │   ├── a/[code]/        # Activity share links (no locale)
 │   │   ├── globals.css      # Global styles
 │   │   ├── layout.tsx       # Root layout
 │   │   └── sitemap.ts       # Dynamic sitemap
@@ -48,8 +50,11 @@ konectr-web/
 │   │   └── Footer.tsx       # Global footer
 │   ├── i18n/                # Internationalization config
 │   └── lib/
-│       └── utils.ts         # Utility functions
-├── public/                  # Static assets
+│       ├── utils.ts         # Utility functions
+│       └── supabase.ts      # Supabase client + helpers
+├── public/
+│   ├── logos/               # Brand logos (SVG)
+│   └── .well-known/         # Universal Links config
 ├── messages/                # Translation files (JSON)
 ├── vercel.json              # Vercel config + redirects
 └── next.config.ts           # Next.js config
@@ -405,10 +410,59 @@ Script added to `src/app/layout.tsx`:
 
 ---
 
+## Activity Share Links (2025-12-27)
+
+**Live URL**: https://konectr.app/a/{shareCode}
+
+### Purpose
+
+Web fallback page for activity share links. When users share activities, recipients without the app see a preview page with download CTAs.
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/app/a/[code]/page.tsx` | Activity preview page (server-rendered) |
+| `src/lib/supabase.ts` | Supabase client + `getActivityByShareCode()` helper |
+| `public/logos/konectr-icon-orange.svg` | Orange Konectr icon for header |
+| `public/.well-known/apple-app-site-association` | iOS Universal Links |
+| `public/.well-known/assetlinks.json` | Android App Links |
+
+### Page States
+
+| State | Trigger | Content |
+|-------|---------|---------|
+| Active | Valid code, future activity | Activity card + "Download on App Store" + "Open in Konectr" deep link |
+| Ended | Valid code, past activity | "This activity has ended" + download CTA |
+| Not Found | Invalid code | "Activity not found" + download CTA |
+
+### Activity Card Content (Minimal)
+
+- 🏷️ Activity name with category emoji
+- 👤 Hosted by {creator_name}
+- 📅 Date & time of day
+- 📍 Venue name
+
+### Design
+
+| Element | Light Mode |
+|---------|------------|
+| Header BG | Solid Sunset Orange (#FF774D) |
+| Logo | White pill with orange Konectr icon |
+| Card | White with activity details |
+| Footer | "konectr.app · The Offline First App" |
+
+### Tagline (Short Form)
+
+**"The Offline First App"** - Use when character-limited.
+
+---
+
 ## Version History
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-27 | Share Links v1 | Activity share page with minimal card, iOS-only download, deep linking |
 | 2025-12-23 | Safety v2 | Updated safety features to match deployed MVP (6 cards), added Coming Soon badge for Photo Verification |
 | 2025-12-23 | Analytics | Added Contentsquare (Hotjar) tracking for heatmaps and session replay |
 | 2025-12-23 | Emoji Sync | Homepage pills (6 venue categories), Vibes cards (6 activity emojis), "Download the app" CTA |
@@ -419,7 +473,7 @@ Script added to `src/app/layout.tsx`:
 
 ---
 
-**Last Deployed**: 2025-12-23
+**Last Deployed**: 2025-12-27
 **Deployment Method**: Vercel CLI (`vercel --prod`)
 
 ---
@@ -427,7 +481,7 @@ Script added to `src/app/layout.tsx`:
 ## Konectr Ecosystem
 
 Full checkpoint documentation available at:
-**`/Users/devsmac/Konectr/Development/KONECTR_CHECKPOINT_2025-12-23.md`**
+**`/Users/devsmac/Konectr/Development/KONECTR_CHECKPOINT_2025-12-26.md`**
 
 | Project | Status |
 |---------|--------|
@@ -438,4 +492,4 @@ Full checkpoint documentation available at:
 
 ---
 
-**Last Updated**: 2025-12-23 by Claude Code
+**Last Updated**: 2025-12-27 by Claude Code

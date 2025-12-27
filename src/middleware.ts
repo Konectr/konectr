@@ -14,7 +14,8 @@ export const config = {
     // - /api routes
     // - /_next (Next.js internals)
     // - /_vercel (Vercel internals)
+    // - /a (activity share links - no locale prefix)
     // - Static files (images, etc.)
-    '/((?!api|_next|_vercel|.*\\..*).*)'
+    '/((?!api|_next|_vercel|a/|.*\\..*).*)'
   ]
 };
