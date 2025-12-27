@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "Papan Maklum Balas | Konectr",
+    "description": "Undi permintaan ciri dan bantu membentuk masa depan Konectr. Kongsi idea anda dan lihat apa yang komuniti mahukan."
+  },
+  "hero": {
+    "title": "Papan Maklum Balas",
+    "subtitle": "Undi ciri dan bantu membentuk masa depan Konectr"
+  },
+  "filters": {
+    "all": "Semua",
+    "sortNewest": "Terbaru",
+    "sortMostVoted": "Paling Diundi",
+    "sortTrending": "Trending"
+  },
+  "categories": {
+    "feature_request": "Permintaan Ciri",
+    "bug_report": "Laporan Pepijat",
+    "general_feedback": "Maklum Balas Umum"
+  },
+  "status": {
+    "open": "Terbuka",
+    "under_review": "Dalam Semakan",
+    "planned": "Dirancang",
+    "in_progress": "Sedang Dijalankan",
+    "completed": "Selesai",
+    "declined": "Ditolak"
+  },
+  "auth": {
+    "signIn": "Log masuk dengan Google",
+    "signOut": "Log Keluar",
+    "loading": "Memuatkan...",
+    "signInToVote": "Sila log masuk untuk mengundi"
+  },
+  "empty": {
+    "title": "Tiada maklum balas lagi",
+    "subtitle": "Jadilah yang pertama berkongsi idea anda!",
+    "filtered": "Tiada penghantaran {category} lagi.",
+    "viewAll": "Lihat semua maklum balas"
+  },
+  "error": {
+    "title": "Sesuatu tidak kena",
+    "tryAgain": "Cuba Lagi",
+    "notFound": "Tiket maklum balas tidak dijumpai",
+    "notFoundSubtitle": "Tiket maklum balas yang anda cari tidak wujud atau telah dipadamkan."
+  },
+  "detail": {
+    "back": "Kembali ke Papan Maklum Balas",
+    "attachments": "Lampiran",
+    "adminResponse": "Respons Rasmi",
+    "upvotes": "naik",
+    "downvotes": "turun"
+  },
+  "cta": {
+    "title": "Ada maklum balas untuk dikongsi?",
+    "subtitle": "Muat turun Konectr dan hantar permintaan ciri, laporan pepijat, atau maklum balas umum terus dari aplikasi.",
+    "appStore": "Muat Turun di App Store",
+    "email": "Emel feedback@konectr.app"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "フィードバックボード | Konectr",
+    "description": "機能リクエストに投票して、Konectrの未来を形作りましょう。アイデアを共有し、コミュニティが何を求めているかをご覧ください。"
+  },
+  "hero": {
+    "title": "フィードバックボード",
+    "subtitle": "機能に投票してKonectrの未来を形作りましょう"
+  },
+  "filters": {
+    "all": "すべて",
+    "sortNewest": "最新",
+    "sortMostVoted": "投票数順",
+    "sortTrending": "トレンド"
+  },
+  "categories": {
+    "feature_request": "機能リクエスト",
+    "bug_report": "バグ報告",
+    "general_feedback": "一般的なフィードバック"
+  },
+  "status": {
+    "open": "オープン",
+    "under_review": "レビュー中",
+    "planned": "計画中",
+    "in_progress": "進行中",
+    "completed": "完了",
+    "declined": "却下"
+  },
+  "auth": {
+    "signIn": "Googleでログイン",
+    "signOut": "ログアウト",
+    "loading": "読み込み中...",
+    "signInToVote": "投票するにはログインしてください"
+  },
+  "empty": {
+    "title": "フィードバックがありません",
+    "subtitle": "最初にアイデアを共有しましょう！",
+    "filtered": "{category}の投稿はまだありません。",
+    "viewAll": "すべてのフィードバックを見る"
+  },
+  "error": {
+    "title": "エラーが発生しました",
+    "tryAgain": "再試行",
+    "notFound": "フィードバックチケットが見つかりません",
+    "notFoundSubtitle": "お探しのフィードバックチケットは存在しないか、削除されました。"
+  },
+  "detail": {
+    "back": "フィードバックボードに戻る",
+    "attachments": "添付ファイル",
+    "adminResponse": "公式回答",
+    "upvotes": "賛成",
+    "downvotes": "反対"
+  },
+  "cta": {
+    "title": "共有したいフィードバックがありますか？",
+    "subtitle": "Konectrをダウンロードして、アプリから直接機能リクエスト、バグ報告、または一般的なフィードバックを送信してください。",
+    "appStore": "App Storeでダウンロード",
+    "email": "feedback@konectr.appにメール"
+  }
+}

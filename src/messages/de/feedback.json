@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "Feedback-Board | Konectr",
+    "description": "Stimmen Sie für Feature-Anfragen ab und helfen Sie, die Zukunft von Konectr zu gestalten. Teilen Sie Ihre Ideen und sehen Sie, was die Community möchte."
+  },
+  "hero": {
+    "title": "Feedback-Board",
+    "subtitle": "Stimmen Sie für Features ab und gestalten Sie die Zukunft von Konectr"
+  },
+  "filters": {
+    "all": "Alle",
+    "sortNewest": "Neueste",
+    "sortMostVoted": "Meiste Stimmen",
+    "sortTrending": "Trending"
+  },
+  "categories": {
+    "feature_request": "Feature-Anfrage",
+    "bug_report": "Fehlerbericht",
+    "general_feedback": "Allgemeines Feedback"
+  },
+  "status": {
+    "open": "Offen",
+    "under_review": "In Prüfung",
+    "planned": "Geplant",
+    "in_progress": "In Bearbeitung",
+    "completed": "Abgeschlossen",
+    "declined": "Abgelehnt"
+  },
+  "auth": {
+    "signIn": "Mit Google anmelden",
+    "signOut": "Abmelden",
+    "loading": "Laden...",
+    "signInToVote": "Bitte melden Sie sich an, um abzustimmen"
+  },
+  "empty": {
+    "title": "Noch kein Feedback",
+    "subtitle": "Seien Sie der Erste, der Ideen teilt!",
+    "filtered": "Noch keine {category} Einreichungen.",
+    "viewAll": "Alle Feedbacks anzeigen"
+  },
+  "error": {
+    "title": "Etwas ist schief gelaufen",
+    "tryAgain": "Erneut versuchen",
+    "notFound": "Feedback-Ticket nicht gefunden",
+    "notFoundSubtitle": "Das gesuchte Feedback-Ticket existiert nicht oder wurde entfernt."
+  },
+  "detail": {
+    "back": "Zurück zum Feedback-Board",
+    "attachments": "Anhänge",
+    "adminResponse": "Offizielle Antwort",
+    "upvotes": "dafür",
+    "downvotes": "dagegen"
+  },
+  "cta": {
+    "title": "Haben Sie Feedback zu teilen?",
+    "subtitle": "Laden Sie Konectr herunter und senden Sie Ihre Feature-Anfragen, Fehlerberichte oder allgemeines Feedback direkt aus der App.",
+    "appStore": "Im App Store herunterladen",
+    "email": "E-Mail an feedback@konectr.app"
+  }
+}

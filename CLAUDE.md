@@ -410,6 +410,81 @@ Script added to `src/app/layout.tsx`:
 
 ---
 
+## Feedback Board (2025-12-27)
+
+**Live URL**: https://konectr.app/feedback
+
+### Purpose
+
+Public feedback board for viewing feature requests, bug reports, and suggestions submitted through the mobile app. **View-only on web** - voting is only available in the Konectr mobile app.
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/app/[locale]/feedback/page.tsx` | Feedback board page wrapper |
+| `src/app/[locale]/feedback/FeedbackBoardContent.tsx` | Main board with filters, sorting, ticket list |
+| `src/app/[locale]/feedback/[id]/page.tsx` | Ticket detail page wrapper |
+| `src/app/[locale]/feedback/[id]/FeedbackTicketDetailContent.tsx` | Full ticket detail view |
+| `src/app/[locale]/feedback/components/FeedbackTicketCard.tsx` | View-only ticket card |
+| `src/app/[locale]/feedback/components/CategoryFilter.tsx` | Category filter chips |
+| `src/lib/feedback-api.ts` | API functions for fetching tickets |
+| `src/types/feedback.ts` | TypeScript types, category/status metadata |
+
+### Navigation
+
+- **NOT in top navigation** - kept minimal
+- **In footer** - Resources section (after FAQs)
+- Footer translations in all 8 locales (`footer.links.feedback`)
+
+### Features
+
+| Feature | Description |
+|---------|-------------|
+| Category Filter | Filter by: Feature Request, Bug Report, Improvement, General |
+| Sort Options | Newest, Most Voted, Trending |
+| Ticket Cards | Show vote count, title, category, status, submitter |
+| Detail View | Full description, attachments, admin response |
+| Lightbox | Click attachments to view full-size |
+
+### Category Metadata
+
+| Category | Emoji | Color |
+|----------|-------|-------|
+| feature_request | 💡 | Blue |
+| bug_report | 🐛 | Red |
+| improvement | ✨ | Purple |
+| general | 💬 | Gray |
+
+### Status Metadata
+
+| Status | Label | Color |
+|--------|-------|-------|
+| open | Open | Yellow |
+| in_progress | In Progress | Blue |
+| planned | Planned | Purple |
+| completed | Completed | Green |
+| declined | Declined | Red |
+
+### Web vs Mobile
+
+| Feature | Web | Mobile |
+|---------|-----|--------|
+| View tickets | ✅ | ✅ |
+| Submit feedback | ❌ | ✅ |
+| Vote on tickets | ❌ | ✅ |
+| View attachments | ✅ | ✅ |
+
+### Design Notes
+
+- Cards show vote count as read-only badge (no up/down buttons)
+- "Download Konectr App" CTA for voting
+- Framer Motion animations on ticket cards
+- Responsive grid for attachments
+- Lightbox modal for image viewing
+
+---
+
 ## Activity Share Links (2025-12-27)
 
 **Live URL**: https://konectr.app/a/{shareCode}
@@ -462,6 +537,7 @@ Web fallback page for activity share links. When users share activities, recipie
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-27 | Feedback Board v1 | Public view-only feedback board, category filters, vote display, footer navigation |
 | 2025-12-27 | Share Links v1 | Activity share page with minimal card, iOS-only download, deep linking |
 | 2025-12-23 | Safety v2 | Updated safety features to match deployed MVP (6 cards), added Coming Soon badge for Photo Verification |
 | 2025-12-23 | Analytics | Added Contentsquare (Hotjar) tracking for heatmaps and session replay |

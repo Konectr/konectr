@@ -4,6 +4,7 @@
     "about": "About",
     "safety": "Safety",
     "blog": "Blog",
+    "feedback": "意見回饋",
     "getTheApp": "Get the App"
   },
   "footer": {
@@ -23,7 +24,8 @@
       "faqs": "FAQs",
       "privacyPolicy": "Privacy Policy",
       "termsOfService": "Terms of Service",
-      "cookiePolicy": "Cookie Policy"
+      "cookiePolicy": "Cookie Policy",
+      "feedback": "意見回饋板"
     },
     "social": {
       "instagram": "Instagram",

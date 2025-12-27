@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "피드백 보드 | Konectr",
+    "description": "기능 요청에 투표하고 Konectr의 미래를 만들어 가세요. 아이디어를 공유하고 커뮤니티가 원하는 것을 확인하세요."
+  },
+  "hero": {
+    "title": "피드백 보드",
+    "subtitle": "기능에 투표하고 Konectr의 미래를 만들어 가세요"
+  },
+  "filters": {
+    "all": "전체",
+    "sortNewest": "최신순",
+    "sortMostVoted": "투표순",
+    "sortTrending": "인기"
+  },
+  "categories": {
+    "feature_request": "기능 요청",
+    "bug_report": "버그 신고",
+    "general_feedback": "일반 피드백"
+  },
+  "status": {
+    "open": "열림",
+    "under_review": "검토 중",
+    "planned": "계획됨",
+    "in_progress": "진행 중",
+    "completed": "완료됨",
+    "declined": "거절됨"
+  },
+  "auth": {
+    "signIn": "Google로 로그인",
+    "signOut": "로그아웃",
+    "loading": "로딩 중...",
+    "signInToVote": "투표하려면 로그인하세요"
+  },
+  "empty": {
+    "title": "아직 피드백이 없습니다",
+    "subtitle": "첫 번째로 아이디어를 공유하세요!",
+    "filtered": "아직 {category} 제출이 없습니다.",
+    "viewAll": "모든 피드백 보기"
+  },
+  "error": {
+    "title": "문제가 발생했습니다",
+    "tryAgain": "다시 시도",
+    "notFound": "피드백 티켓을 찾을 수 없습니다",
+    "notFoundSubtitle": "찾으시는 피드백 티켓이 존재하지 않거나 삭제되었습니다."
+  },
+  "detail": {
+    "back": "피드백 보드로 돌아가기",
+    "attachments": "첨부 파일",
+    "adminResponse": "공식 답변",
+    "upvotes": "찬성",
+    "downvotes": "반대"
+  },
+  "cta": {
+    "title": "공유할 피드백이 있으신가요?",
+    "subtitle": "Konectr를 다운로드하고 앱에서 직접 기능 요청, 버그 신고 또는 일반 피드백을 제출하세요.",
+    "appStore": "App Store에서 다운로드",
+    "email": "feedback@konectr.app으로 이메일"
+  }
+}

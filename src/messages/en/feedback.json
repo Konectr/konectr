@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "Feedback Board | Konectr",
+    "description": "Vote on feature requests and help shape the future of Konectr. Share your ideas and see what the community wants."
+  },
+  "hero": {
+    "title": "Feedback Board",
+    "subtitle": "Vote on features and help shape the future of Konectr"
+  },
+  "filters": {
+    "all": "All",
+    "sortNewest": "Newest",
+    "sortMostVoted": "Most Voted",
+    "sortTrending": "Trending"
+  },
+  "categories": {
+    "feature_request": "Feature Request",
+    "bug_report": "Bug Report",
+    "general_feedback": "General Feedback"
+  },
+  "status": {
+    "open": "Open",
+    "under_review": "Under Review",
+    "planned": "Planned",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "declined": "Declined"
+  },
+  "auth": {
+    "signIn": "Sign in with Google",
+    "signOut": "Sign Out",
+    "loading": "Loading...",
+    "signInToVote": "Please sign in to vote"
+  },
+  "empty": {
+    "title": "No feedback yet",
+    "subtitle": "Be the first to share your ideas!",
+    "filtered": "No {category} submissions yet.",
+    "viewAll": "View all feedback"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "tryAgain": "Try Again",
+    "notFound": "Feedback ticket not found",
+    "notFoundSubtitle": "The feedback ticket you're looking for doesn't exist or has been removed."
+  },
+  "detail": {
+    "back": "Back to Feedback Board",
+    "attachments": "Attachments",
+    "adminResponse": "Official Response",
+    "upvotes": "up",
+    "downvotes": "down"
+  },
+  "cta": {
+    "title": "Have feedback to share?",
+    "subtitle": "Download Konectr and submit your feature requests, bug reports, or general feedback directly from the app.",
+    "appStore": "Download on App Store",
+    "email": "Email feedback@konectr.app"
+  }
+}

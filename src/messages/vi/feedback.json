@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "Bảng phản hồi | Konectr",
+    "description": "Bình chọn các yêu cầu tính năng và giúp định hình tương lai của Konectr. Chia sẻ ý tưởng của bạn và xem cộng đồng muốn gì."
+  },
+  "hero": {
+    "title": "Bảng phản hồi",
+    "subtitle": "Bình chọn các tính năng và giúp định hình tương lai của Konectr"
+  },
+  "filters": {
+    "all": "Tất cả",
+    "sortNewest": "Mới nhất",
+    "sortMostVoted": "Nhiều bình chọn nhất",
+    "sortTrending": "Thịnh hành"
+  },
+  "categories": {
+    "feature_request": "Yêu cầu tính năng",
+    "bug_report": "Báo lỗi",
+    "general_feedback": "Phản hồi chung"
+  },
+  "status": {
+    "open": "Mở",
+    "under_review": "Đang xem xét",
+    "planned": "Đã lên kế hoạch",
+    "in_progress": "Đang tiến hành",
+    "completed": "Hoàn thành",
+    "declined": "Từ chối"
+  },
+  "auth": {
+    "signIn": "Đăng nhập bằng Google",
+    "signOut": "Đăng xuất",
+    "loading": "Đang tải...",
+    "signInToVote": "Vui lòng đăng nhập để bình chọn"
+  },
+  "empty": {
+    "title": "Chưa có phản hồi",
+    "subtitle": "Hãy là người đầu tiên chia sẻ ý tưởng của bạn!",
+    "filtered": "Chưa có bài gửi {category} nào.",
+    "viewAll": "Xem tất cả phản hồi"
+  },
+  "error": {
+    "title": "Đã xảy ra lỗi",
+    "tryAgain": "Thử lại",
+    "notFound": "Không tìm thấy phiếu phản hồi",
+    "notFoundSubtitle": "Phiếu phản hồi bạn đang tìm kiếm không tồn tại hoặc đã bị xóa."
+  },
+  "detail": {
+    "back": "Quay lại Bảng phản hồi",
+    "attachments": "Tệp đính kèm",
+    "adminResponse": "Phản hồi chính thức",
+    "upvotes": "ủng hộ",
+    "downvotes": "phản đối"
+  },
+  "cta": {
+    "title": "Có phản hồi muốn chia sẻ?",
+    "subtitle": "Tải Konectr và gửi yêu cầu tính năng, báo lỗi hoặc phản hồi chung trực tiếp từ ứng dụng.",
+    "appStore": "Tải trên App Store",
+    "email": "Email feedback@konectr.app"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "意見回饋板 | Konectr",
+    "description": "為功能請求投票，幫助塑造 Konectr 的未來。分享您的想法，看看社區想要什麼。"
+  },
+  "hero": {
+    "title": "意見回饋板",
+    "subtitle": "為功能投票，幫助塑造 Konectr 的未來"
+  },
+  "filters": {
+    "all": "全部",
+    "sortNewest": "最新",
+    "sortMostVoted": "最多投票",
+    "sortTrending": "熱門"
+  },
+  "categories": {
+    "feature_request": "功能請求",
+    "bug_report": "錯誤報告",
+    "general_feedback": "一般意見"
+  },
+  "status": {
+    "open": "開放",
+    "under_review": "審核中",
+    "planned": "已計劃",
+    "in_progress": "進行中",
+    "completed": "已完成",
+    "declined": "已拒絕"
+  },
+  "auth": {
+    "signIn": "使用 Google 登入",
+    "signOut": "登出",
+    "loading": "載入中...",
+    "signInToVote": "請登入以投票"
+  },
+  "empty": {
+    "title": "暫無意見回饋",
+    "subtitle": "成為第一個分享想法的人！",
+    "filtered": "暫無 {category} 提交。",
+    "viewAll": "查看所有意見回饋"
+  },
+  "error": {
+    "title": "發生錯誤",
+    "tryAgain": "重試",
+    "notFound": "找不到意見回饋票",
+    "notFoundSubtitle": "您要找的意見回饋票不存在或已被刪除。"
+  },
+  "detail": {
+    "back": "返回意見回饋板",
+    "attachments": "附件",
+    "adminResponse": "官方回應",
+    "upvotes": "贊成",
+    "downvotes": "反對"
+  },
+  "cta": {
+    "title": "有意見要分享？",
+    "subtitle": "下載 Konectr 並直接從應用程式提交您的功能請求、錯誤報告或一般意見。",
+    "appStore": "在 App Store 下載",
+    "email": "發送電郵至 feedback@konectr.app"
+  }
+}
