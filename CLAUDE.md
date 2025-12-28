@@ -1,6 +1,6 @@
 # CLAUDE.md - Konectr Website
 
-**Last Updated**: 2025-12-27 | **Status**: Production Live | **FAQ**: v1 (46 questions)
+**Last Updated**: 2025-12-28 | **Status**: Production Live | **FAQ**: v1 (46 questions)
 
 ---
 
@@ -144,6 +144,36 @@ CNAME www   cname.vercel-dns.com
 | Solar Amber | `#FFC845` | `--secondary` | Secondary highlights |
 | Graphite Grey | `#1F1F1F` | `--foreground` | Text, dark sections |
 | Cloud White | `#FAFAFA` | `--background` | Backgrounds |
+
+---
+
+## Favicon
+
+Branded favicon set using the Konectr "K" symbol in Sunset Orange (#FF774D).
+
+### Files (`public/`)
+
+| File | Size | Purpose |
+|------|------|---------|
+| `favicon.ico` | 32x32 | Legacy browsers |
+| `favicon-16x16.png` | 16x16 | Small browser tabs |
+| `favicon-32x32.png` | 32x32 | Standard browser tabs |
+| `apple-touch-icon.png` | 180x180 | iOS home screen |
+| `android-chrome-192x192.png` | 192x192 | Android home screen |
+| `android-chrome-512x512.png` | 512x512 | Android splash/PWA |
+
+### Source
+
+Generated from `/public/logos/konectr-icon-orange.svg`
+
+### Head Tags (`src/app/layout.tsx`)
+
+```tsx
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+```
 
 ---
 
@@ -537,6 +567,7 @@ Web fallback page for activity share links. When users share activities, recipie
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-28 | Favicon v1 | Branded favicon set (6 files), Vercel badge removal script |
 | 2025-12-27 | Feedback Board v1 | Public view-only feedback board, category filters, vote display, footer navigation |
 | 2025-12-27 | Share Links v1 | Activity share page with minimal card, iOS-only download, deep linking |
 | 2025-12-23 | Safety v2 | Updated safety features to match deployed MVP (6 cards), added Coming Soon badge for Photo Verification |
@@ -549,7 +580,7 @@ Web fallback page for activity share links. When users share activities, recipie
 
 ---
 
-**Last Deployed**: 2025-12-27
+**Last Deployed**: 2025-12-28
 **Deployment Method**: Vercel CLI (`vercel --prod`)
 
 ---
@@ -568,4 +599,4 @@ Full checkpoint documentation available at:
 
 ---
 
-**Last Updated**: 2025-12-27 by Claude Code
+**Last Updated**: 2025-12-28 by Claude Code
