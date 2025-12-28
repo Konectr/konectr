@@ -72,6 +72,27 @@ export default function RootLayout({
         className={`${inter.variable} ${notoSansTC.variable} ${notoSansJP.variable} ${notoSansKR.variable} ${notoSansThai.variable} font-sans antialiased`}
       >
         {children}
+        <Script
+          id="remove-vercel-badge"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              function removeVercelBadge() {
+                var selectors = [
+                  'a[href*="vercel.com"][target="_blank"]',
+                  'a[href*="vercel.com/home"]',
+                  '[data-testid="vercel-badge"]',
+                  'a[aria-label*="Vercel"]'
+                ];
+                selectors.forEach(function(sel) {
+                  document.querySelectorAll(sel).forEach(function(el) { el.remove(); });
+                });
+              }
+              document.addEventListener('DOMContentLoaded', removeVercelBadge);
+              setTimeout(removeVercelBadge, 1000);
+            `,
+          }}
+        />
       </body>
     </html>
   );
