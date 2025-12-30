@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { staggerContainer, scaleIn, viewportOnce } from "@/lib/animations";
 import { SectionHeader } from "@/components/shared";
 
+// Activity category emojis - synced with mobile app (Dec 2025)
 const vibesMeta = [
   {
     key: "cafeCulture",
