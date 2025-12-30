@@ -139,7 +139,7 @@ export function Hero() {
             { emoji: "🍽️", labelKey: "restaurant" },
             { emoji: "🍻", labelKey: "bar" },
             { emoji: "💪", labelKey: "fitness" },
-            { emoji: "🌳", labelKey: "outdoors" },
+            { emoji: "⛰️", labelKey: "outdoors" },
             { emoji: "🎭", labelKey: "entertainment" },
           ].map((item, index) => (
             <motion.div

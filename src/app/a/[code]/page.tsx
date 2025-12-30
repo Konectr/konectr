@@ -15,7 +15,7 @@ const categoryEmojis: Record<string, string> = {
   restaurant: '🍽️',
   bar: '🍻',
   fitness: '💪',
-  outdoors: '🌳',
+  outdoors: '⛰️',
   entertainment: '🎭',
   chill: '☕',
   active: '💪',

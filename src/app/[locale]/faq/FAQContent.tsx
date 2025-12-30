@@ -13,7 +13,7 @@ import Link from "next/link";
 // ============================================
 // EMOJI REFERENCE (synced with mobile: lib/constants/category_reference.dart)
 // ============================================
-// VENUE: ☕ Cafe | 🍽️ Restaurant | 🍻 Bar | 💪 Fitness | 🌳 Outdoors | 🎭 Entertainment
+// VENUE: ☕ Cafe | 🍽️ Restaurant | 🍻 Bar | 💪 Fitness | ⛰️ Outdoors | 🎭 Entertainment
 // ACTIVITY: ☕ Chill | 💪 Active | 🎯 Focus | 🎨 Creative | ⛰️ Adventure | 🎉 Social | 📌 Default
 
 const faqCategories = [
@@ -43,7 +43,7 @@ const faqCategories = [
       },
       {
         question: "I'm new in KL. Can Konectr help me make friends?",
-        answer: "This is exactly what we built Konectr for. Create an activity you'd enjoy—hiking at 🌳 Outdoors spots, brunch at a 🍽️ Restaurant, or coffee at a ☕ Cafe. Meet people who share your interests."
+        answer: "This is exactly what we built Konectr for. Create an activity you'd enjoy—hiking at ⛰️ Outdoors spots, brunch at a 🍽️ Restaurant, or coffee at a ☕ Cafe. Meet people who share your interests."
       }
     ]
   },
@@ -103,7 +103,7 @@ const faqCategories = [
       },
       {
         question: "What are vetted venues?",
-        answer: "Every venue is personally visited and approved. We check for safety (well-lit, accessible, easy exits), conversation-friendly atmosphere, and consistent quality. Categories: ☕ Cafe, 🍽️ Restaurant, 🍻 Bar, 💪 Fitness, 🌳 Outdoors, 🎭 Entertainment."
+        answer: "Every venue is personally visited and approved. We check for safety (well-lit, accessible, easy exits), conversation-friendly atmosphere, and consistent quality. Categories: ☕ Cafe, 🍽️ Restaurant, 🍻 Bar, 💪 Fitness, ⛰️ Outdoors, 🎭 Entertainment."
       },
       {
         question: "What if someone makes me uncomfortable?",

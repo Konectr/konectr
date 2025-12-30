@@ -255,7 +255,7 @@ Emojis in FAQ content match `konectr_mobile/lib/constants/category_reference.dar
 | 🍽️ | Restaurant |
 | 🍻 | Bar |
 | 💪 | Fitness |
-| 🌳 | Outdoors |
+| ⛰️ | Outdoors |
 | 🎭 | Entertainment |
 
 **Activity Categories:**
@@ -401,7 +401,7 @@ All emojis match `konectr_mobile/lib/constants/category_reference.dart`:
 | 🍽️ | Restaurant | restaurant |
 | 🍻 | Bar | bar |
 | 💪 | Fitness | fitness |
-| 🌳 | Outdoors | outdoors |
+| ⛰️ | Outdoors | outdoors |
 | 🎭 | Entertainment | entertainment |
 
 ### Find Your Vibe - Activity Categories (6 cards)
