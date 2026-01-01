@@ -508,7 +508,7 @@ Public feedback board for viewing feature requests, bug reports, and suggestions
 ### Design Notes
 
 - Cards show vote count as read-only badge (no up/down buttons)
-- "Download Konectr App" CTA for voting
+- "Join the Waitlist" CTA (pre-launch) → "Download Konectr App" (post-launch)
 - Framer Motion animations on ticket cards
 - Responsive grid for attachments
 - Lightbox modal for image viewing
@@ -537,9 +537,11 @@ Web fallback page for activity share links. When users share activities, recipie
 
 | State | Trigger | Content |
 |-------|---------|---------|
-| Active | Valid code, future activity | Activity card + "Download on App Store" + "Open in Konectr" deep link |
-| Ended | Valid code, past activity | "This activity has ended" + download CTA |
-| Not Found | Invalid code | "Activity not found" + download CTA |
+| Active | Valid code, future activity | Activity card + App Store CTA + "Open in Konectr" deep link |
+| Ended | Valid code, past activity | "This activity has ended" + waitlist/download CTA |
+| Not Found | Invalid code | "Activity not found" + waitlist/download CTA |
+
+**Note**: Activity share pages currently show App Store links. These will work once the app is live. For pre-launch, users see the CTA but the link won't work until published.
 
 ### Activity Card Content (Minimal)
 
@@ -585,10 +587,16 @@ Until the app is live on the App Store, use these guidelines:
 ### Post-Launch Checklist
 
 When the app launches on App Store:
-1. Update `home.json` in all locales: `"downloadApp": "Download the App"`
-2. Update `FindYourVibe.tsx`: Change `href="#waitlist"` to App Store URL
-3. Consider replacing Tally form with App Store badges
-4. Update activity share pages with real App Store links
+
+**Homepage:**
+1. Update `src/messages/*/home.json` in all 8 locales: `"downloadApp": "Download the App"`
+2. Update `src/components/sections/FindYourVibe.tsx`: Change `href="#waitlist"` to App Store URL
+3. Replace Tally form in `CTAFooter.tsx` with App Store badges
+
+**Other Pages:**
+4. Update `src/app/[locale]/feedback/FeedbackBoardContent.tsx`: Update CTA text and links
+5. Update `src/app/a/[code]/page.tsx`: Verify App Store links work
+6. Update `src/app/[locale]/faq/FAQContent.tsx`: Update any download references
 
 ---
 
@@ -602,7 +610,7 @@ When the app launches on App Store:
 | 2025-12-27 | Share Links v1 | Activity share page with minimal card, iOS-only download, deep linking |
 | 2025-12-23 | Safety v2 | Updated safety features to match deployed MVP (6 cards), added Coming Soon badge for Photo Verification |
 | 2025-12-23 | Analytics | Added Contentsquare (Hotjar) tracking for heatmaps and session replay |
-| 2025-12-23 | Emoji Sync | Homepage pills (6 venue categories), Vibes cards (6 activity emojis), "Download the app" CTA |
+| 2025-12-23 | Emoji Sync | Homepage pills (6 venue categories), Vibes cards (6 activity emojis), CTA button |
 | 2025-12-23 | About v1 | New "Our Story" image (landscape), local image storage |
 | 2025-12-22 | Images v1 | Local images for How It Works (step-1, step-2, step-3), updated before.jpg |
 | 2025-12-22 | FAQ v1 | 46 questions, 8 categories, concise answers, emoji sync with mobile |

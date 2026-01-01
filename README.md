@@ -57,15 +57,19 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-## Sections (Planned)
+## Sections
 
 1. **Hero** - Main value proposition with venue showcase
-2. **Trust Indicators** - Early adopters, partner venues, real moments
+2. **The Shift** - Before/after comparison (scrolling vs living)
 3. **How It Works** - 3-step process explanation
-4. **Find Your Vibe** - 6 activity categories
-5. **Testimonial** - Team mission statement
+4. **Find Your Vibe** - 6 activity categories with "Join the Waitlist" CTA
+5. **Join Movement** - Team mission statement + stats
 6. **CTA** - Waitlist form (Tally.so embed)
 7. **Footer** - Social links and company info
+
+## Pre-Launch Status
+
+The mobile app is not yet on the App Store. CTAs currently say "Join the Waitlist" and link to the Tally waitlist form. See `CLAUDE.md` for the post-launch checklist.
 
 ## Related Projects
 
