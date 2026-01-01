@@ -563,10 +563,40 @@ Web fallback page for activity share links. When users share activities, recipie
 
 ---
 
+## Pre-Launch Notes
+
+**App Status**: Not yet on App Store (launching soon)
+
+Until the app is live on the App Store, use these guidelines:
+
+| Element | Pre-Launch Text | Post-Launch Text |
+|---------|-----------------|------------------|
+| CTA buttons | "Join the Waitlist" | "Download the App" |
+| App Store links | Link to `#waitlist` section | Link to App Store URL |
+| Download references | Redirect to waitlist form | Link to actual download |
+
+### Waitlist Form
+
+- **Location**: Homepage CTA section (`#waitlist`)
+- **Provider**: Tally (form ID: `mY1xRq`)
+- **Fields**: Name, Email
+- **Script**: `https://tally.so/widgets/embed.js`
+
+### Post-Launch Checklist
+
+When the app launches on App Store:
+1. Update `home.json` in all locales: `"downloadApp": "Download the App"`
+2. Update `FindYourVibe.tsx`: Change `href="#waitlist"` to App Store URL
+3. Consider replacing Tally form with App Store badges
+4. Update activity share pages with real App Store links
+
+---
+
 ## Version History
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-01-01 | Waitlist v1 | Added Tally waitlist form to CTA, changed "Download the app" to "Join the Waitlist" |
 | 2025-12-28 | Favicon v1 | Branded favicon set (6 files), Vercel badge removal script |
 | 2025-12-27 | Feedback Board v1 | Public view-only feedback board, category filters, vote display, footer navigation |
 | 2025-12-27 | Share Links v1 | Activity share page with minimal card, iOS-only download, deep linking |
@@ -599,4 +629,4 @@ Full checkpoint documentation available at:
 
 ---
 
-**Last Updated**: 2025-12-28 by Claude Code
+**Last Updated**: 2026-01-01 by Claude Code

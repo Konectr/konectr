@@ -120,7 +120,7 @@ export function FindYourVibe() {
           className="text-center mt-12"
         >
           <a
-            href="#download"
+            href="#waitlist"
             className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-4 transition-all hover:-translate-y-1 hover:shadow-xl"
           >
             {t("downloadApp")}
