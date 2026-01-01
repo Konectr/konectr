@@ -72,7 +72,7 @@ export default function FeedbackBoardContent() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-sm text-muted-foreground/70"
           >
-            Download the Konectr app to submit feedback and vote
+            Join the waitlist to be first to submit feedback and vote
           </motion.p>
         </div>
       </section>
@@ -167,19 +167,15 @@ export default function FeedbackBoardContent() {
             Have feedback to share?
           </h2>
           <p className="text-muted-foreground mb-6">
-            Download Konectr and submit your feature requests, bug reports, or general feedback directly from the app.
+            Join the waitlist to be first to submit feedback and vote when the app launches.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               asChild
               className="bg-primary hover:bg-primary/90"
             >
-              <a
-                href="https://apps.apple.com/app/konectr"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Download on App Store
+              <a href="/#waitlist">
+                Join the Waitlist
               </a>
             </Button>
             <Button variant="outline" asChild>

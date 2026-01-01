@@ -18,11 +18,34 @@ declare global {
 export function CTAFooter() {
   const tCta = useTranslations("home.cta");
 
-  // Load Tally embeds when component mounts
+  // Load Tally embeds when component mounts with retry and fallback
   useEffect(() => {
-    if (typeof window !== "undefined" && window.Tally) {
-      window.Tally.loadEmbeds();
-    }
+    const loadTallyForm = () => {
+      if (typeof window === "undefined") return;
+
+      if (window.Tally) {
+        window.Tally.loadEmbeds();
+      } else {
+        // Fallback: manually set src on iframes with data-tally-src
+        document.querySelectorAll<HTMLIFrameElement>("iframe[data-tally-src]:not([src])").forEach((iframe) => {
+          if (iframe.dataset.tallySrc) {
+            iframe.src = iframe.dataset.tallySrc;
+          }
+        });
+      }
+    };
+
+    // Try immediately
+    loadTallyForm();
+
+    // Retry after delays in case script hasn't loaded yet
+    const timer1 = setTimeout(loadTallyForm, 500);
+    const timer2 = setTimeout(loadTallyForm, 1500);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
   }, []);
 
   return (

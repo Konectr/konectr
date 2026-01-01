@@ -282,12 +282,8 @@ export default function FeedbackTicketDetailContent({ ticketId }: Props) {
                       Want to vote on this feature?
                     </p>
                     <Button asChild variant="outline">
-                      <a
-                        href="https://apps.apple.com/app/konectr"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Download Konectr App
+                      <a href="/#waitlist">
+                        Join the Waitlist
                       </a>
                     </Button>
                   </div>
