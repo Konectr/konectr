@@ -2,15 +2,31 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
 import { Heading } from "@/components/shared";
+
+// Declare Tally on window for TypeScript
+declare global {
+  interface Window {
+    Tally?: {
+      loadEmbeds: () => void;
+    };
+  }
+}
 
 export function CTAFooter() {
   const tCta = useTranslations("home.cta");
 
+  // Load Tally embeds when component mounts
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.Tally) {
+      window.Tally.loadEmbeds();
+    }
+  }, []);
+
   return (
-    <section className="py-24 md:py-32 bg-background">
+    <section id="waitlist" className="py-24 md:py-32 bg-background">
         <div className="max-w-4xl mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -37,22 +53,19 @@ export function CTAFooter() {
                 {tCta("subtitle")}
               </p>
 
-              {/* CTA buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  size="lg"
-                  className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl"
-                >
-                  {tCta("notifyMe")}
-                  <span className="ml-2">🔔</span>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="rounded-full border-2 border-white text-white hover:bg-white/10 font-semibold text-lg px-8 py-6 bg-transparent"
-                >
-                  {tCta("learnMore")}
-                </Button>
+              {/* Tally Waitlist Form */}
+              <div className="max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl">
+                <iframe
+                  data-tally-src="https://tally.so/embed/mY1xRq?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                  loading="lazy"
+                  width="100%"
+                  height="300"
+                  frameBorder="0"
+                  marginHeight={0}
+                  marginWidth={0}
+                  title="Konectr Waitlist"
+                  className="bg-white rounded-2xl"
+                />
               </div>
 
               <p className="text-white/60 text-sm mt-6">

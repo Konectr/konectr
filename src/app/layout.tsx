@@ -98,6 +98,12 @@ export default function RootLayout({
             `,
           }}
         />
+        {/* Tally Form Embed Script */}
+        <Script
+          id="tally-embed"
+          src="https://tally.so/widgets/embed.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
