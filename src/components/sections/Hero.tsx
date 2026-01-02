@@ -112,18 +112,22 @@ export function Hero() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Button
+            asChild
             size="lg"
             className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1"
           >
-            {t("getTheApp")}
-            <span className="ml-2">→</span>
+            <a href="#waitlist">
+              {t("getTheApp")}
+              <span className="ml-2">→</span>
+            </a>
           </Button>
           <Button
+            asChild
             size="lg"
             variant="outline"
             className="rounded-full border-2 border-white/80 text-white hover:bg-white/10 font-semibold text-lg px-8 py-6 bg-transparent"
           >
-            {t("seeHowItWorks")}
+            <a href="#how">{t("seeHowItWorks")}</a>
           </Button>
         </motion.div>
 

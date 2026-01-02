@@ -78,10 +78,11 @@ export function Navigation() {
           <LanguageSwitcher />
           <ThemeToggle />
           <Button
+            asChild
             size="sm"
             className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold hidden sm:inline-flex"
           >
-            {t("getTheApp")}
+            <a href="/#waitlist">{t("getTheApp")}</a>
           </Button>
         </div>
       </div>
