@@ -4,7 +4,7 @@
     "details": [
       {
         "appID": "7BYFW974J6.com.konectr.konectrMobile",
-        "paths": ["/a/*"]
+        "paths": ["/a/*", "/activity/*", "/join/*"]
       }
     ]
   }
