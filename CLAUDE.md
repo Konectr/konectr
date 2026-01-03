@@ -1,6 +1,6 @@
 # CLAUDE.md - Konectr Website
 
-**Last Updated**: 2025-12-28 | **Status**: Production Live | **FAQ**: v1 (46 questions)
+**Last Updated**: 2026-01-03 | **Status**: Production Live | **FAQ**: v1 (46 questions)
 
 ---
 
@@ -567,6 +567,7 @@ Web fallback page for activity share links. When users share activities, recipie
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-01-03 | Universal Links v2 | Added `/activity/*`, `/join/*` paths to AASA, updated assetlinks.json placeholder |
 | 2025-12-28 | Favicon v1 | Branded favicon set (6 files), Vercel badge removal script |
 | 2025-12-27 | Feedback Board v1 | Public view-only feedback board, category filters, vote display, footer navigation |
 | 2025-12-27 | Share Links v1 | Activity share page with minimal card, iOS-only download, deep linking |
@@ -580,7 +581,7 @@ Web fallback page for activity share links. When users share activities, recipie
 
 ---
 
-**Last Deployed**: 2025-12-28
+**Last Deployed**: 2026-01-03
 **Deployment Method**: Vercel CLI (`vercel --prod`)
 
 ---
