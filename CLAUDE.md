@@ -417,6 +417,57 @@ All emojis match `konectr_mobile/lib/constants/category_reference.dart`:
 
 ---
 
+## Waitlist (Tally Form)
+
+**Live URL**: https://konectr.app/#waitlist
+**Tally Form ID**: `mY1xRq`
+**Dashboard**: https://tally.so (manage form, view submissions)
+
+### Implementation
+
+The waitlist form is embedded via iframe in `CTAFooter.tsx`:
+
+```tsx
+<iframe
+  src="https://tally.so/embed/mY1xRq?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+  width="100%"
+  height="500"
+  frameBorder="0"
+  title="Konectr Waitlist"
+  style={{ minHeight: '500px' }}
+/>
+```
+
+### Form Fields (Collected by Tally)
+
+| Field | Type | Required |
+|-------|------|----------|
+| Email | Input | Yes |
+| First Name | Input | Yes |
+| Phone | Input (+60 Malaysia) | Yes |
+| Gender | Dropdown | Yes |
+| Areas | Multi-select (10 KL locations) | Yes |
+| Age Range | Dropdown (18-25, 26-35, 36-45, 45+) | Yes |
+| Activities/Sports | Text | No |
+| Consent Checkboxes | 3 checkboxes | Yes |
+| CAPTCHA | Verification | Yes |
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/components/sections/CTAFooter.tsx` | Waitlist form embed |
+| `src/config/brand.ts` | Tally form ID + embed URL config |
+
+### Webhook (Optional - Not Deployed)
+
+Reference code for syncing Tally submissions to Supabase:
+- **Location**: `_reference/netlify/functions/tally-webhook.js`
+- **Target Table**: `waitlist_users`
+- **Status**: Reference only - submissions currently stay in Tally dashboard
+
+---
+
 ## Analytics (Contentsquare/Hotjar)
 
 **Dashboard**: https://app.contentsquare.com
@@ -563,10 +614,48 @@ Web fallback page for activity share links. When users share activities, recipie
 
 ---
 
+## Lessons Learned
+
+### Third-Party Embeds in Dynamic Components (CRITICAL)
+
+**Problem**: Third-party embeds (Tally, Typeform, etc.) that use `data-*-src` attributes require JavaScript initialization. When the embed is inside a dynamically imported component (`dynamic()` in Next.js), there's a **race condition**:
+
+1. The third-party script loads and scans the DOM
+2. The dynamic component hasn't mounted yet (iframe not in DOM)
+3. Script finishes → iframe never activates
+4. OR component mounts, calls `loadEmbeds()` → script already ran
+
+**Solution**: Use direct `src` attribute instead of `data-*-src`:
+
+```tsx
+// ❌ WRONG - Requires JavaScript initialization (race condition risk)
+<iframe data-tally-src="https://tally.so/embed/xyz" />
+
+// ✅ CORRECT - Loads immediately, no JavaScript dependency
+<iframe src="https://tally.so/embed/xyz" />
+```
+
+**Applies to**: Tally, Typeform, Calendly, HubSpot forms, any embed using progressive enhancement.
+
+### iframe Height for Forms
+
+Forms with many fields need adequate height. A form with 9+ fields needs at least 500px:
+
+```tsx
+<iframe
+  src="..."
+  height="500"
+  style={{ minHeight: '500px' }}
+/>
+```
+
+---
+
 ## Version History
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-01-06 | Waitlist Fix | Fixed Tally form race condition - changed data-tally-src to direct src, increased height to 500px |
 | 2026-01-03 | Universal Links v2 | Added `/activity/*`, `/join/*` paths to AASA, updated assetlinks.json placeholder |
 | 2025-12-28 | Favicon v1 | Branded favicon set (6 files), Vercel badge removal script |
 | 2025-12-27 | Feedback Board v1 | Public view-only feedback board, category filters, vote display, footer navigation |
@@ -581,7 +670,7 @@ Web fallback page for activity share links. When users share activities, recipie
 
 ---
 
-**Last Deployed**: 2026-01-03
+**Last Deployed**: 2026-01-06
 **Deployment Method**: Vercel CLI (`vercel --prod`)
 
 ---
@@ -600,4 +689,4 @@ Full checkpoint documentation available at:
 
 ---
 
-**Last Updated**: 2025-12-28 by Claude Code
+**Last Updated**: 2026-01-06 by Claude Code
