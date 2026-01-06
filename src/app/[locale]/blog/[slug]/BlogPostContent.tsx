@@ -209,7 +209,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
                 className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
                 asChild
               >
-                <Link href="/#cta">Get the App</Link>
+                <Link href="/#waitlist">Join Waitlist</Link>
               </Button>
             </div>
           </motion.div>

@@ -80,8 +80,11 @@ export function Navigation() {
           <Button
             size="sm"
             className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold hidden sm:inline-flex"
+            asChild
           >
-            {t("getTheApp")}
+            <a href="/#waitlist">
+              {t("joinWaitlist")}
+            </a>
           </Button>
         </div>
       </div>
