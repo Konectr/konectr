@@ -2,28 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { useEffect } from "react";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
 import { Heading } from "@/components/shared";
 
-// Declare Tally on window for TypeScript
-declare global {
-  interface Window {
-    Tally?: {
-      loadEmbeds: () => void;
-    };
-  }
-}
-
 export function CTAFooter() {
   const tCta = useTranslations("home.cta");
-
-  // Load Tally embeds when component mounts
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.Tally) {
-      window.Tally.loadEmbeds();
-    }
-  }, []);
 
   return (
     <section id="waitlist" className="py-24 md:py-32 bg-background">
@@ -53,18 +36,16 @@ export function CTAFooter() {
                 {tCta("subtitle")}
               </p>
 
-              {/* Tally Waitlist Form */}
-              <div className="max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl">
+              {/* Tally Waitlist Form - Using direct src for reliable loading */}
+              <div className="max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white">
                 <iframe
-                  data-tally-src="https://tally.so/embed/mY1xRq?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-                  loading="lazy"
+                  src="https://tally.so/embed/mY1xRq?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
                   width="100%"
-                  height="300"
+                  height="500"
                   frameBorder="0"
-                  marginHeight={0}
-                  marginWidth={0}
                   title="Konectr Waitlist"
                   className="bg-white rounded-2xl"
+                  style={{ minHeight: '500px' }}
                 />
               </div>
 
