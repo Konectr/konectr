@@ -4,7 +4,7 @@
 export const brand = {
   name: "Konectr",
   tagline: "Real adventures with real people, right now.",
-  launchDate: "January 2026",
+  launchDate: "February 2026",
 
   colors: {
     // Primary palette
