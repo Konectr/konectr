@@ -459,12 +459,35 @@ The waitlist form is embedded via iframe in `CTAFooter.tsx`:
 | `src/components/sections/CTAFooter.tsx` | Waitlist form embed |
 | `src/config/brand.ts` | Tally form ID + embed URL config |
 
-### Webhook (Optional - Not Deployed)
+### Webhook Integration (ACTIVE - Fixed Feb 9, 2026)
 
-Reference code for syncing Tally submissions to Supabase:
-- **Location**: `_reference/netlify/functions/tally-webhook.js`
-- **Target Table**: `waitlist_users`
-- **Status**: Reference only - submissions currently stay in Tally dashboard
+Tally form submissions are synced to Supabase for conversion tracking:
+
+| Component | Details |
+|-----------|---------|
+| **Webhook URL** | `https://rsrplvdtbycqcxjlyeju.supabase.co/functions/v1/tally-webhook` |
+| **Edge Function** | `supabase/functions/tally-webhook/index.ts` (v2) |
+| **Target Table** | `waitlist_users` |
+| **Status** | Active - syncing to Supabase (fixed Feb 9, 2026) |
+| **Security** | HMAC-SHA256 signature verification via `tally-signature` header |
+| **Secret** | `TALLY_WEBHOOK_SECRET` (set in Supabase edge function secrets) |
+| **Backfill** | 24 historical signups imported (Sep 2025 - Feb 2026) |
+
+**Data Flow**:
+```
+Tally Form → Webhook → waitlist_users table → Auto-link on app signup
+```
+
+**Conversion Tracking**: When a waitlist user signs up for the app with the same email, triggers automatically:
+1. Link `profiles.waitlist_user_id` to waitlist record
+2. Set `waitlist_users.converted_at` timestamp
+3. Track `onboarding_completed_at` and `first_activity_at`
+
+**Analytics Queries** (run in Supabase):
+```sql
+SELECT * FROM get_waitlist_funnel_stats(90);
+SELECT * FROM v_waitlist_conversion_status;
+```
 
 ---
 
@@ -689,4 +712,4 @@ Full checkpoint documentation available at:
 
 ---
 
-**Last Updated**: 2026-01-06 by Claude Code
+**Last Updated**: 2026-02-09 by Claude Code
