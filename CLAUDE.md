@@ -550,7 +550,7 @@ Script added to `src/app/layout.tsx`:
 ```tsx
 <Script
   src="https://t.contentsquare.net/uxa/10ec7463f1940.js"
-  strategy="afterInteractive"
+  strategy="lazyOnload"
 />
 ```
 
@@ -686,6 +686,60 @@ Web fallback page for activity share links. When users share activities, recipie
 
 ---
 
+## SEO
+
+### Structured Data (JSON-LD)
+
+| Schema | Location | Purpose |
+|--------|----------|---------|
+| Organization | `src/app/[locale]/layout.tsx` | Company info + social links |
+| WebSite | `src/app/[locale]/layout.tsx` | Site name + URL |
+| FAQPage | `src/app/[locale]/faq/page.tsx` | 46 Q&As for Google Rich Results |
+| BlogPosting | `src/app/[locale]/blog/[slug]/page.tsx` | Per-post metadata |
+
+### Social Sharing
+
+| Feature | File | Details |
+|---------|------|---------|
+| OG Image | `public/og-image.jpg` | 1200x630, derived from hero.jpg |
+| Twitter Card | `src/app/[locale]/layout.tsx` | summary_large_image, @konectrapp |
+| theme-color | `src/app/layout.tsx` | Light: #FAFAFA, Dark: #1F1F1F |
+
+### Crawling
+
+| Feature | File | Details |
+|---------|------|---------|
+| robots.txt | `src/app/robots.ts` | Allow all + sitemap reference |
+| Sitemap | `src/app/sitemap.ts` | All pages + blog posts, 8 locales |
+
+---
+
+## Performance
+
+### Image Optimization
+
+All homepage images compressed with `sips` (82% JPEG quality, max 1920px wide):
+
+| Image | Before | After | Savings |
+|-------|--------|-------|---------|
+| step-3.jpg | 6.8MB | 678KB | 90% |
+| step-1.jpg | 4.6MB | 525KB | 89% |
+| before.jpg | 3.2MB | 298KB | 91% |
+| our-story.jpg | 3.2MB | 696KB | 78% |
+| step-2.jpg | 1.3MB | 390KB | 70% |
+
+Next.js image optimization enabled (AVIF/WebP formats, responsive sizes).
+
+### Font Self-Hosting
+
+Satoshi font self-hosted from `public/fonts/` (replaces Fontshare CDN). Eliminates render-blocking external request. `@font-face` declarations in `globals.css`.
+
+### Analytics Deferral
+
+Contentsquare script changed from `afterInteractive` to `lazyOnload` for faster TTI.
+
+---
+
 ## Lessons Learned
 
 ### Third-Party Embeds in Dynamic Components (CRITICAL)
@@ -727,6 +781,7 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-15 | SEO & Performance | JSON-LD structured data (Organization, WebSite, FAQPage, BlogPosting), OG image for social sharing, robots.txt, sitemap fix (+/faq, /feedback), theme-color meta. Image compression (~18MB savings), self-hosted Satoshi font, AVIF/WebP formats, deferred analytics. FAQ data extracted to shared file. |
 | 2026-02-14 | Gamification Page | Marketing showcase for mobile gamification system — 7 sections (tiers, badges, streaks, daily rewards, XP, stats, CTA). Footer navigation, all 8 locales, emoji/color/text design |
 | 2026-01-06 | Waitlist Fix | Fixed Tally form race condition - changed data-tally-src to direct src, increased height to 500px |
 | 2026-01-03 | Universal Links v2 | Added `/activity/*`, `/join/*` paths to AASA, updated assetlinks.json placeholder |
@@ -743,8 +798,8 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 ---
 
-**Last Deployed**: 2026-01-06
-**Deployment Method**: Vercel CLI (`vercel --prod`)
+**Last Deployed**: 2026-02-15
+**Deployment Method**: `git push origin main:nextjs-website` (Vercel auto-deploys)
 
 ---
 
