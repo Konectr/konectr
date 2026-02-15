@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   // Static pages
-  const staticPages = ["", "/about", "/how-it-works", "/safety", "/gamification", "/contact", "/blog"];
+  const staticPages = ["", "/about", "/how-it-works", "/safety", "/gamification", "/contact", "/blog", "/faq", "/feedback"];
 
   // Generate entries for all locales and static pages
   const staticEntries = staticPages.flatMap((page) =>

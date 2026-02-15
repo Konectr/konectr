@@ -43,10 +43,15 @@ const notoSansThai = Noto_Sans_Thai({
   display: "swap",
 });
 
+
 export const metadata: Metadata = {
   title: "Konectr - Real adventures with real people, right now",
   description:
     "Stop scrolling. Start living. Connect with people who share your vibe for spontaneous real-world adventures.",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAFAFA" },
+    { media: "(prefers-color-scheme: dark)", color: "#1F1F1F" },
+  ],
 };
 
 export default function RootLayout({
@@ -62,15 +67,10 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        {/* Satoshi font from Fontshare */}
-        <link
-          href="https://api.fontshare.com/v2/css?f[]=satoshi@700,800,900&display=swap"
-          rel="stylesheet"
-        />
         {/* Contentsquare (Hotjar) Analytics */}
         <Script
           src="https://t.contentsquare.net/uxa/10ec7463f1940.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </head>
       <body

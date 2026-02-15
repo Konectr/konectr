@@ -47,8 +47,8 @@ export function TheShift() {
                 alt="Person alone on phone"
                 fill
                 className="object-cover"
-                quality={100}
-                unoptimized
+                quality={85}
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
 
               {/* Overlay text */}
@@ -89,8 +89,8 @@ export function TheShift() {
                 alt="Friends laughing together"
                 fill
                 className="object-cover"
-                quality={100}
-                unoptimized
+                quality={85}
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
 
               {/* Overlay text */}

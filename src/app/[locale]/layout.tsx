@@ -42,11 +42,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: "Konectr",
       locale: locale,
       type: "website",
+      images: [
+        {
+          url: "/og-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Konectr - Real Adventures with Real People",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: "Konectr - Real Adventures with Real People",
       description,
+      images: ["/og-image.jpg"],
+      site: "@konectrapp",
     },
     robots: {
       index: true,
@@ -73,8 +83,38 @@ export default async function LocaleLayout({ children, params }: Props) {
   // Get messages for the locale
   const messages = await getMessages();
 
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Konectr",
+      url: "https://konectr.app",
+      logo: "https://konectr.app/logos/konectr-icon-orange.svg",
+      sameAs: [
+        "https://www.facebook.com/konectrapp",
+        "https://www.instagram.com/konectrapp",
+        "https://twitter.com/konectrapp",
+        "https://www.linkedin.com/company/konectr",
+        "https://www.tiktok.com/@konectrapp",
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Konectr",
+      url: "https://konectr.app",
+    },
+  ];
+
   return (
     <div lang={locale}>
+      {structuredData.map((data, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+        />
+      ))}
       <NextIntlClientProvider messages={messages}>
         <ThemeProvider
           attribute="class"

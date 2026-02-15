@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { FAQContent } from "./FAQContent";
+import { faqCategories } from "./faq-data";
 
 export const metadata: Metadata = {
   title: "FAQ - Konectr",
@@ -13,12 +14,32 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
+function getFaqJsonLd() {
+  const allFaqs = faqCategories.flatMap((cat) => cat.faqs);
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: allFaqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+}
+
 export default async function FAQPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqJsonLd()) }}
+      />
       <PageHeader
         title="Frequently Asked Questions"
         subtitle="Everything you need to know about Konectr"
