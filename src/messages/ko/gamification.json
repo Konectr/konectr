@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "title": "Gamification - Konectr",
+    "description": "Discover how Konectr rewards real-world connections with tiers, badges, streaks, and daily rewards. Level up your social life."
+  },
+  "header": {
+    "badge": "Gamification",
+    "title": "Level Up Your Social Life",
+    "subtitle": "Every real connection earns rewards. Climb tiers, collect badges, and unlock perks."
+  },
+  "tiers": {
+    "title": "Your Journey, Six Tiers",
+    "subtitle": "From your first activity to legendary status — every meetup moves you forward"
+  },
+  "badges": {
+    "title": "Collect Badges",
+    "subtitle": "9 categories of achievements that celebrate how you connect",
+    "rarityLabel": "Badge Rarity"
+  },
+  "streaks": {
+    "title": "Keep the Flame Alive",
+    "subtitle": "Stay active week after week and watch your streak grow",
+    "shieldTitle": "Streak Shield",
+    "shieldDescription": "Life happens. Streak Shields protect your streak if you miss a week — earned through consistent activity."
+  },
+  "dailyRewards": {
+    "title": "Daily Rewards",
+    "subtitle": "Check in daily for 30 days to unlock escalating XP bonuses",
+    "cycleNote": "The cycle resets after Day 30 — start again with boosted base rewards"
+  },
+  "xp": {
+    "title": "Earn XP Everywhere",
+    "subtitle": "Six ways to earn experience points — from creating activities to maintaining streaks",
+    "multiplierTitle": "Streak Multiplier",
+    "multiplierDescription": "Your streak boosts all XP earned. Start at 1.0x and climb to 2.0x at 30+ days. The longer your streak, the faster you level up."
+  },
+  "stats": {
+    "tiers": "6 Tiers",
+    "badges": "45+ Badges",
+    "milestones": "6 Streak Milestones",
+    "rewards": "30-Day Rewards"
+  },
+  "cta": {
+    "title": "Ready to Start Your Journey?",
+    "subtitle": "Join Konectr and turn every real-world connection into progress.",
+    "primaryButton": "Get Early Access",
+    "secondaryButton": "How It Works"
+  }
+}

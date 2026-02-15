@@ -1,6 +1,6 @@
 # CLAUDE.md - Konectr Website
 
-**Last Updated**: 2026-01-06 | **Status**: Production Live | **FAQ**: v1 (46 questions)
+**Last Updated**: 2026-02-14 | **Status**: Production Live | **FAQ**: v1 (46 questions)
 
 ---
 
@@ -38,6 +38,7 @@ konectr-web/
 │   │   │   ├── contact/     # Contact page
 │   │   │   ├── faq/         # FAQ page (46 questions)
 │   │   │   ├── feedback/    # Feedback board
+│   │   │   ├── gamification/ # Gamification showcase
 │   │   │   ├── how-it-works/# How it works
 │   │   │   └── safety/      # Safety page
 │   │   ├── a/[code]/        # Activity share links (no locale)
@@ -368,6 +369,54 @@ Emojis in FAQ content match `konectr_mobile/lib/constants/category_reference.dar
 
 ---
 
+## Gamification Page
+
+**Live URL**: https://konectr.app/gamification
+
+### Purpose
+
+Marketing showcase page for the mobile app's gamification system (tiers, badges, streaks, daily rewards, XP). Drives curiosity and app downloads. Follows SafetyContent pattern — thin server `page.tsx` wrapper + `"use client"` content component with Framer Motion scroll animations.
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/app/[locale]/gamification/page.tsx` | Server wrapper with PageHeader + SEO metadata |
+| `src/app/[locale]/gamification/GamificationContent.tsx` | 7-section content component (~350 lines) |
+| `src/app/[locale]/gamification/gamification-data.ts` | Static data arrays (tiers, badges, streaks, rewards, XP) |
+| `src/messages/en/gamification.json` | English i18n translation file |
+
+### Page Sections (7)
+
+| # | Section | Background | Key Visual |
+|---|---------|-----------|------------|
+| 1 | Tier Progression | default | 6 tier cards with colored left border, emoji, perks |
+| 2 | Badge Collection | `bg-muted/50` | 3x3 category grid + 5-level rarity pills |
+| 3 | Streak System | default | Vertical timeline + flame progression + shield callout |
+| 4 | Daily Rewards | `bg-muted/50` | 6 reward nodes, special days highlighted |
+| 5 | XP System | default | 2x3 source grid + streak multiplier callout |
+| 6 | Summary Stats | dark (`bg-foreground`) | 4 key metrics with emojis |
+| 7 | CTA | `bg-primary` gradient | "Get Early Access" + "How It Works" buttons |
+
+### Navigation
+
+- **Footer only** (Resources column) — not in top nav
+- Link label: "Rewards & Progression" (key: `gamification`)
+- Added to all 8 locale `common.json` files
+
+### Data Source
+
+Static data arrays in `gamification-data.ts` derived from mobile app constants:
+- 6 tiers (Basic -> Legendary)
+- 9 badge categories with example badges
+- 5 badge rarity levels (Common -> Legendary)
+- 6 streak milestones (1 week -> 3 months)
+- 4 flame color phases
+- 6 daily reward highlights from 30-day cycle
+- 6 XP sources with ranges
+
+---
+
 ## Static Images
 
 ### Homepage (`public/images/homepage/`)
@@ -678,6 +727,7 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-14 | Gamification Page | Marketing showcase for mobile gamification system — 7 sections (tiers, badges, streaks, daily rewards, XP, stats, CTA). Footer navigation, all 8 locales, emoji/color/text design |
 | 2026-01-06 | Waitlist Fix | Fixed Tally form race condition - changed data-tally-src to direct src, increased height to 500px |
 | 2026-01-03 | Universal Links v2 | Added `/activity/*`, `/join/*` paths to AASA, updated assetlinks.json placeholder |
 | 2025-12-28 | Favicon v1 | Branded favicon set (6 files), Vercel badge removal script |

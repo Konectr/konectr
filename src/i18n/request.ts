@@ -10,7 +10,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   }
 
   // Load all translation files and merge them
-  const [common, home, about, howItWorks, safety, contact, blog] = await Promise.all([
+  const [common, home, about, howItWorks, safety, contact, blog, gamification] = await Promise.all([
     import(`@/messages/${locale}/common.json`),
     import(`@/messages/${locale}/home.json`),
     import(`@/messages/${locale}/about.json`),
@@ -18,6 +18,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     import(`@/messages/${locale}/safety.json`),
     import(`@/messages/${locale}/contact.json`),
     import(`@/messages/${locale}/blog.json`),
+    import(`@/messages/${locale}/gamification.json`),
   ]);
 
   return {
@@ -30,6 +31,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       safety: safety.default,
       contact: contact.default,
       blog: blog.default,
+      gamification: gamification.default,
     }
   };
 });

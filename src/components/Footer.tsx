@@ -74,6 +74,7 @@ export function Footer() {
                 { key: "safetyFirst", href: "/safety" },
                 { key: "faqs", href: "/faq" },
                 { key: "feedback", href: "/feedback" },
+                { key: "gamification", href: "/gamification" },
               ].map((item) => (
                 <li key={item.key}>
                   <Link
