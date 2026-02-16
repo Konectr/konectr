@@ -4,15 +4,16 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 import Link from "next/link";
-import type { BlogPostFull } from "@/content/blog";
-import { allPosts } from "@/content/blog";
+import type { BlogPostFull } from "@/lib/notion";
+import type { BlogPost } from "@/components/blog/BlogCard";
 import { BlogCard } from "@/components/blog/BlogCard";
 
 interface BlogPostContentProps {
   post: BlogPostFull;
+  allPosts: BlogPost[];
 }
 
-export function BlogPostContent({ post }: BlogPostContentProps) {
+export function BlogPostContent({ post, allPosts }: BlogPostContentProps) {
   // Get related posts (same category, excluding current)
   const relatedPosts = allPosts
     .filter((p) => p.category === post.category && p.slug !== post.slug)
@@ -107,6 +108,15 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
               // Skip empty lines
               if (!trimmed) return <br key={index} />;
 
+              // H1 headers
+              if (trimmed.startsWith("# ") && !trimmed.startsWith("## ")) {
+                return (
+                  <h1 key={index} className="text-3xl md:text-4xl font-bold text-foreground mt-12 mb-6" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+                    {trimmed.replace("# ", "")}
+                  </h1>
+                );
+              }
+
               // H2 headers
               if (trimmed.startsWith("## ")) {
                 return (
@@ -130,6 +140,15 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
                 return <hr key={index} className="my-8 border-border" />;
               }
 
+              // Blockquote
+              if (trimmed.startsWith("> ")) {
+                return (
+                  <blockquote key={index} className="border-l-4 border-primary pl-4 italic text-muted-foreground my-4">
+                    {trimmed.replace("> ", "")}
+                  </blockquote>
+                );
+              }
+
               // List items with bullet
               if (trimmed.startsWith("- ")) {
                 const content = trimmed.replace("- ", "");
@@ -137,6 +156,25 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
                 const parts = content.split(/\*\*(.*?)\*\*/g);
                 return (
                   <li key={index} className="text-muted-foreground ml-6 mb-2">
+                    {parts.map((part, i) =>
+                      i % 2 === 1 ? (
+                        <strong key={i} className="text-foreground">
+                          {part}
+                        </strong>
+                      ) : (
+                        part
+                      )
+                    )}
+                  </li>
+                );
+              }
+
+              // Numbered list items
+              if (/^\d+\.\s/.test(trimmed)) {
+                const content = trimmed.replace(/^\d+\.\s/, "");
+                const parts = content.split(/\*\*(.*?)\*\*/g);
+                return (
+                  <li key={index} className="text-muted-foreground ml-6 mb-2 list-decimal">
                     {parts.map((part, i) =>
                       i % 2 === 1 ? (
                         <strong key={i} className="text-foreground">
