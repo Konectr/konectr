@@ -113,7 +113,7 @@ export function Hero() {
         >
           <Button
             size="lg"
-            className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1"
+            className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
             asChild
           >
             <a href="#waitlist">
@@ -124,7 +124,7 @@ export function Hero() {
           <Button
             size="lg"
             variant="outline"
-            className="rounded-full border-2 border-white/80 text-white hover:bg-white/10 font-semibold text-lg px-8 py-6 bg-transparent"
+            className="rounded-full border-2 border-white/80 text-white hover:text-white hover:border-white/80 hover:bg-white/10 font-semibold text-lg px-8 py-6 bg-transparent"
             asChild
           >
             <a href="#how">

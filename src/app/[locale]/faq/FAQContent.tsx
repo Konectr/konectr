@@ -87,7 +87,7 @@ export function FAQContent() {
               <Button
                 size="lg"
                 variant="outline"
-                className="rounded-full border-white text-white hover:bg-white/10 font-semibold px-8"
+                className="rounded-full border-white text-white hover:text-white hover:border-white hover:bg-white/10 bg-transparent font-semibold px-8"
                 asChild
               >
                 <Link href="mailto:hello@konectr.app">hello@konectr.app</Link>
@@ -128,7 +128,7 @@ export function FAQContent() {
               >
                 <Link
                   href={link.href}
-                  className="block bg-card border border-border/50 rounded-xl p-6 hover:border-primary/30 hover:shadow-lg transition-all group"
+                  className="block bg-card border border-border/50 rounded-xl p-6 hover:border-primary/30 hover:shadow-lg transition-[border-color,box-shadow] group"
                 >
                   <span className="text-3xl block mb-3">{link.icon}</span>
                   <h3 className="font-bold text-foreground group-hover:text-primary transition-colors">

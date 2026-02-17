@@ -99,7 +99,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors relative group"
     >
       {children}
-      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-[width] group-hover:w-full" />
     </Link>
   );
 }

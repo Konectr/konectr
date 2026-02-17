@@ -478,7 +478,7 @@ export function GamificationContent() {
               <Button
                 size="lg"
                 variant="outline"
-                className="rounded-full border-white text-white hover:bg-white/10 font-semibold px-8"
+                className="rounded-full border-white text-white hover:text-white hover:border-white hover:bg-white/10 bg-transparent font-semibold px-8"
                 asChild
               >
                 <Link href="/how-it-works">How It Works</Link>

@@ -225,7 +225,7 @@ export function ContactContent() {
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-xl hover:bg-primary hover:scale-105 transition-all"
+                      className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-xl hover:bg-primary hover:scale-105 transition-[background-color,transform]"
                       title={social.name}
                     >
                       {social.icon}

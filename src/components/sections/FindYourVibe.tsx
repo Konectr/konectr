@@ -70,7 +70,7 @@ export function FindYourVibe() {
               className="group cursor-pointer"
             >
               <div
-                className={`relative rounded-2xl overflow-hidden ring-2 ring-transparent ${vibe.hoverColor} transition-all duration-300 aspect-[4/5]`}
+                className={`relative rounded-2xl overflow-hidden ring-2 ring-transparent ${vibe.hoverColor} transition-[box-shadow] duration-300 aspect-[4/5]`}
               >
                 {/* Background Image */}
                 <Image
@@ -121,7 +121,7 @@ export function FindYourVibe() {
         >
           <a
             href="#download"
-            className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-4 transition-all hover:-translate-y-1 hover:shadow-xl"
+            className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-4 transition-[color,background-color,box-shadow,transform] hover:-translate-y-1 hover:shadow-xl"
           >
             {t("downloadApp")}
           </a>
