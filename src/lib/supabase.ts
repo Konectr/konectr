@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;

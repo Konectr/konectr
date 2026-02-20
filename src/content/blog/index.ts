@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import type { BlogPost } from "@/components/blog/BlogCard";
 
 export interface BlogPostFull extends BlogPost {

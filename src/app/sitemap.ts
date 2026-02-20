@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
 import { getAllSlugs } from "@/content/blog";

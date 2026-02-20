@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Inter } from "next/font/google";

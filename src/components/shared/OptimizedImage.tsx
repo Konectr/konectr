@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 "use client";
 
 import Image, { ImageProps } from "next/image";

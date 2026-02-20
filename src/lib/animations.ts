@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 /**
  * Shared animation utilities for consistent, performant animations across the site.
  * Using these shared variants reduces bundle size and ensures consistency.

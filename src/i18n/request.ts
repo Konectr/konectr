@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import { getRequestConfig } from 'next-intl/server';
 import { locales, type Locale } from './config';
 

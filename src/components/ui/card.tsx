@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

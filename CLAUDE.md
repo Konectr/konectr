@@ -1,6 +1,6 @@
 # CLAUDE.md - Konectr Website
 
-**Last Updated**: 2026-02-14 | **Status**: Production Live | **FAQ**: v1 (46 questions)
+**Last Updated**: 2026-02-20 | **Status**: Production Live | **FAQ**: v1 (46 questions)
 
 ---
 
@@ -42,10 +42,15 @@ konectr-web/
 │   │   │   ├── how-it-works/# How it works
 │   │   │   └── safety/      # Safety page
 │   │   ├── a/[code]/        # Activity share links (no locale)
+│   │   ├── not-found.tsx    # 404 page (Flappy Konectr game)
 │   │   ├── globals.css      # Global styles
 │   │   ├── layout.tsx       # Root layout
 │   │   └── sitemap.ts       # Dynamic sitemap
 │   ├── components/
+│   │   ├── games/           # Interactive game components
+│   │   │   ├── flappy-constants.ts  # Physics, colors, types
+│   │   │   ├── useFlappyGame.ts     # Game engine hook
+│   │   │   └── FlappyKonectr.tsx    # Canvas game component
 │   │   ├── ui/              # shadcn/ui components
 │   │   ├── Navigation.tsx   # Global navigation
 │   │   └── Footer.tsx       # Global footer
@@ -417,6 +422,90 @@ Static data arrays in `gamification-data.ts` derived from mobile app constants:
 
 ---
 
+## 404 Page — Flappy Konectr Mini-Game (2026-02-20)
+
+**Live URL**: https://konectr.app/nonexistent (any invalid route)
+
+### Purpose
+
+Custom 404 page featuring a "Flappy Bird"-style mini-game. Player controls a Konectr stick-figure mascot flying through branded obstacle pillars while collecting activity emoji collectibles. Turns a dead-end into a memorable, on-brand experience.
+
+### Architecture
+
+**Placement**: `src/app/not-found.tsx` (root-level, outside `[locale]` layout)
+
+| Design Decision | Rationale |
+|----------------|-----------|
+| Root-level not-found | Catches ALL 404s (invalid locales, invalid pages, everything) |
+| No Navigation/Footer | Full-screen immersive game canvas |
+| No ThemeProvider | Detects dark mode via `matchMedia` + `MutationObserver` on `<html>` class |
+| No next-intl | English-only text (acceptable for whimsical game page) |
+| Locale-aware "Go Home" | Detects `navigator.language` → maps to supported locale |
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/app/not-found.tsx` | Server component wrapper (metadata + renders FlappyKonectr) |
+| `src/components/games/flappy-constants.ts` | Physics values, colors (light/dark), types, brand config |
+| `src/components/games/useFlappyGame.ts` | Game engine hook: requestAnimationFrame loop, delta-time physics, collision detection, rendering pipeline, state machine |
+| `src/components/games/FlappyKonectr.tsx` | Client component: full-viewport canvas, input handling, idle/playing/gameover overlays |
+
+### Game Mechanics
+
+| Feature | Details |
+|---------|---------|
+| Player | Konectr stick-figure mascot (sunset orange, ring head, K-shaped flying pose) |
+| Controls | Tap / Click / Spacebar / Enter |
+| Gravity | 0.45 px/frame², flap force -7.5, terminal velocity 10 |
+| Obstacles | Top/bottom pillar pairs (Sunset Orange top, Solar Amber bottom) with rounded caps |
+| Scoring | +1 per pillar pair passed, +3 for collecting floating activity emojis |
+| Difficulty | Speed increases + gap narrows over time, caps at score 50 |
+| Collectibles | Activity emojis from category_reference.dart, 40% of pillar pairs |
+| High score | `localStorage` key: `"flappy-konectr-high-score"` |
+
+### Visual Layers (per frame, back to front)
+
+1. Sky gradient (warm peach light / deep navy dark)
+2. Clouds (parallax, 30% scroll speed)
+3. City skyline silhouette (parallax, 60% scroll speed)
+4. Greenery (grass strip, procedural bushes + trees, scrolls with ground)
+5. Pillars with rounded caps
+6. Emoji collectibles (bobbing)
+7. Ground strip with movement dashes
+8. Player (stick figure with velocity-based tilt rotation)
+9. Score (top-center, Satoshi font)
+10. Hit flash
+
+### Game States
+
+| State | Display |
+|-------|---------|
+| Idle | "404 Page Not Found" + bobbing mascot + "Tap to Fly" button + high score + "Go back home" link |
+| Playing | Full-screen canvas game + score overlay |
+| Game Over | Blurred overlay card with score, high score, "New High Score!" indicator, "Play Again" + "Go Home" buttons |
+
+### Technical Details
+
+- **Rendering**: HTML5 Canvas with `requestAnimationFrame`, delta-time normalized for 60Hz/120Hz
+- **Full-viewport**: Dynamic design width computed from canvas aspect ratio (height=700 reference, width stretches)
+- **Responsive**: `ResizeObserver` + `devicePixelRatio` capped at 2x
+- **Dark mode**: `matchMedia` + `MutationObserver` on `<html>` class (no ThemeProvider)
+- **Keyboard**: Window-level `keydown` listener (Safari-compatible, not relying on canvas focus)
+- **Accessibility**: `aria-label` on canvas, `aria-live` score, `prefers-reduced-motion` support
+- **Performance**: Off-screen culling, array filtering, capped DPR, no memory leaks
+
+### Stick-Figure Mascot
+
+The player character is a branded stick figure drawn with canvas paths (no external assets):
+- Ring/donut head (thick sunset orange outline, cream center)
+- Thick rounded strokes (~4px, round lineCap) — marker/brush style
+- Organic curves (`quadraticCurveTo`) for all limbs
+- Joyful flying pose: arms spread upward in V, legs trailing below
+- Matches the Konectr brand mascot style
+
+---
+
 ## Static Images
 
 ### Homepage (`public/images/homepage/`)
@@ -781,6 +870,8 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-20 | 404 Page — Flappy Konectr | Flappy Bird-style mini-game as custom 404 page. HTML5 Canvas, branded stick-figure mascot, pillar obstacles, emoji collectibles, parallax layers, greenery, high score persistence, dark mode, full-viewport responsive, Safari keyboard fix. 4 new files, 0 modified. |
+| 2026-02-17 | Micro Font Bugfix | Replaced `transition-all` with explicit property lists across 9 files to prevent `tw-animate-css` scale properties from being animated during hover/scroll reflow. Added `hover:text-white` overrides on outline buttons over coral backgrounds. Root cause: `transition-all` + `tw-animate-css` custom properties (`--tw-enter-scale`, `--tw-exit-scale`) + Framer Motion nav padding animation. |
 | 2026-02-15 | SEO & Performance | JSON-LD structured data (Organization, WebSite, FAQPage, BlogPosting), OG image for social sharing, robots.txt, sitemap fix (+/faq, /feedback), theme-color meta. Image compression (~18MB savings), self-hosted Satoshi font, AVIF/WebP formats, deferred analytics. FAQ data extracted to shared file. |
 | 2026-02-14 | Gamification Page | Marketing showcase for mobile gamification system — 7 sections (tiers, badges, streaks, daily rewards, XP, stats, CTA). Footer navigation, all 8 locales, emoji/color/text design |
 | 2026-01-06 | Waitlist Fix | Fixed Tally form race condition - changed data-tally-src to direct src, increased height to 500px |
@@ -798,7 +889,7 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 ---
 
-**Last Deployed**: 2026-02-15
+**Last Deployed**: 2026-02-17
 **Deployment Method**: `git push origin main:nextjs-website` (Vercel auto-deploys)
 
 ---

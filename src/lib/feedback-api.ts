@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import { supabase } from './supabase';
 import type { FeedbackTicket, FeedbackTicketDetail, FeedbackAttachment, VoteType } from '@/types/feedback';
 

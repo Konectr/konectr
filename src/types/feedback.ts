@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 /** Feedback category types */
 export type FeedbackCategory = 'feature_request' | 'bug_report' | 'general_feedback';
 

@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import FeedbackTicketDetailContent from "./FeedbackTicketDetailContent";

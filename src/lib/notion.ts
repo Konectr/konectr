@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 import { Client } from "@notionhq/client";
 import type {
   PageObjectResponse,

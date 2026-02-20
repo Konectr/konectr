@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 // FAQ data shared between FAQContent (client) and page.tsx (server JSON-LD)
 
 export type FAQ = {

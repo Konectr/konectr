@@ -1,3 +1,6 @@
+// © Konectr 2026. All rights reserved.
+// Proprietary and confidential.
+
 // Konectr Brand Configuration
 // Reference: Mobile app kinetic_colors.dart
 
