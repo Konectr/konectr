@@ -1,6 +1,6 @@
 # CLAUDE.md - Konectr Website
 
-**Last Updated**: 2026-02-20 | **Status**: Production Live | **FAQ**: v1 (46 questions)
+**Last Updated**: 2026-02-28 | **Status**: Production Live | **FAQ**: v2 (54 questions)
 
 ---
 
@@ -42,6 +42,8 @@ konectr-web/
 │   │   │   ├── how-it-works/# How it works
 │   │   │   └── safety/      # Safety page
 │   │   ├── a/[code]/        # Activity share links (no locale)
+│   │   ├── api/venue-interview/ # Venue interview → Notion API
+│   │   ├── venue-interview/ # Venue discovery interview form
 │   │   ├── not-found.tsx    # 404 page (Flappy Konectr game)
 │   │   ├── globals.css      # Global styles
 │   │   ├── layout.tsx       # Root layout
@@ -233,6 +235,7 @@ vercel certs ls
 
 | Category | Icon | Questions |
 |----------|------|-----------|
+| About Konectr | 📱 | 8 |
 | Getting Started | 🚀 | 6 |
 | How Konectr Works | 💡 | 10 |
 | Safety & Trust | 🛡️ | 7 |
@@ -241,14 +244,15 @@ vercel certs ls
 | Account & Settings | ⚙️ | 5 |
 | Premium & Future Features | ✨ | 3 |
 | Troubleshooting & Support | 🔧 | 4 |
-| **Total** | | **46** |
+| **Total** | | **54** |
 
 ### Key Files
 
 | File | Purpose |
 |------|---------|
 | `src/app/[locale]/faq/page.tsx` | FAQ page component |
-| `src/app/[locale]/faq/FAQContent.tsx` | FAQ content with 46 questions |
+| `src/app/[locale]/faq/FAQContent.tsx` | FAQ content with 54 questions |
+| `src/app/[locale]/faq/faq-data.ts` | FAQ data (shared between client + server JSON-LD) |
 
 ### Emoji Reference (Synced with Mobile)
 
@@ -775,6 +779,75 @@ Web fallback page for activity share links. When users share activities, recipie
 
 ---
 
+## Venue Discovery Interview (2026-02-28)
+
+**Live URL**: https://konectr.app/venue-interview
+**Hidden**: `noindex, nofollow` — not in sitemap or navigation
+**Purpose**: Mobile-optimized form for face-to-face venue partner interviews across KL. Target: 100 venues (~2/week). Submissions save directly to Notion database.
+
+### Architecture
+
+| Component | Details |
+|-----------|---------|
+| **Form** | 6-step wizard, 33 fields, localStorage auto-save |
+| **API** | `POST /api/venue-interview` → Notion `pages.create()` |
+| **Database** | Notion "Venue Discovery Interviews" (`1018decf-0484-4a9f-8a82-717ce756ec8b`) |
+| **Middleware** | Excluded from next-intl locale routing |
+| **Env Vars** | `NOTION_API_KEY`, `NOTION_INTERVIEW_DATABASE_ID` (Vercel production) |
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/app/venue-interview/page.tsx` | Server wrapper with noindex metadata |
+| `src/app/venue-interview/VenueInterviewForm.tsx` | Client component — multi-step form wizard |
+| `src/app/venue-interview/interview-data.ts` | Field definitions, steps, options (33 fields, 6 steps) |
+| `src/app/api/venue-interview/route.ts` | POST handler — maps form → Notion properties |
+
+### Form Flow (6 Steps — designed for 15-min conversations)
+
+| Step | Title | Fields | When | Type |
+|------|-------|--------|------|------|
+| 1 | Before You Walk In | 7 | Pre-research | Prep |
+| 2 | Who You're Meeting | 4 | First minute | Taps |
+| 3 | How's Business? | 6 | 4–5 min | Taps |
+| 4 | Community & Konectr | 5 | 4–5 min (pitch) | Taps |
+| 5 | Wrapping Up | 3 | 1–2 min (close) | Taps |
+| 6 | After You Leave | 8 | Debrief (solo) | 5 taps + 3 text |
+
+### Design Principles
+
+- **During conversation**: All taps (selects/multi-selects) — no typing while talking
+- **After leaving**: Text boxes for qualitative capture (key quote, slow periods, notes)
+- **Labels as conversation guides**: Each label tells the interviewer what to ask
+- **Hints as scripts**: Quoted text the interviewer can say verbatim
+- **Auto-save**: localStorage preserves draft if connection drops mid-interview
+
+### Notion Property Mapping
+
+| Form Type | Notion Type | Fields |
+|-----------|-------------|--------|
+| title | title | Venue Name |
+| select | select | Venue Type, Neighborhood, Role, Google Rating, Years Operating, Daily Foot Traffic, Demographic, Monthly Marketing Spend, Hosted Events Before, Open to Meetups, Dashboard Interest, WiFi + Group Seating, Perk Willingness, Partner Interest, Vibe Check, Partner Tier, Enthusiasm |
+| multi_select | multi_select | Top Challenges, Marketing Channels, Top Value Props |
+| number | number | Seating Capacity, Repeat % (÷100), Ambiance Score |
+| rich_text | rich_text | Person Interviewed, Key Quote, Slow Periods, Notes |
+| phone_number | phone_number | Contact, Follow-Up Phone |
+| email | email | Follow-Up Email |
+| url | url | Instagram |
+| date | date | Interview Date |
+
+### Environment Variables (Vercel)
+
+| Variable | Scope | Notes |
+|----------|-------|-------|
+| `NOTION_API_KEY` | Production + Preview | Internal Notion integration token |
+| `NOTION_INTERVIEW_DATABASE_ID` | Production + Preview | UUID without hyphens |
+
+**Important**: Use `printf` (not `echo`) when piping values to `vercel env add` — `echo` appends `\n` which corrupts HTTP headers and UUID validation.
+
+---
+
 ## SEO
 
 ### Structured Data (JSON-LD)
@@ -783,8 +856,33 @@ Web fallback page for activity share links. When users share activities, recipie
 |--------|----------|---------|
 | Organization | `src/app/[locale]/layout.tsx` | Company info + social links |
 | WebSite | `src/app/[locale]/layout.tsx` | Site name + URL |
-| FAQPage | `src/app/[locale]/faq/page.tsx` | 46 Q&As for Google Rich Results |
-| BlogPosting | `src/app/[locale]/blog/[slug]/page.tsx` | Per-post metadata |
+| SoftwareApplication | `src/app/[locale]/layout.tsx` | App metadata for rich results |
+| FAQPage | `src/app/[locale]/faq/page.tsx` | 54 Q&As for Google Rich Results |
+| BlogPosting | `src/app/[locale]/blog/[slug]/page.tsx` | Per-post metadata (Person author) |
+| BreadcrumbList | All sub-pages (`about`, `how-it-works`, etc.) | Navigation breadcrumb rich results |
+| HowTo | `src/app/[locale]/how-it-works/page.tsx` | 3-step process rich results |
+
+### SEO Utilities
+
+| File | Contents |
+|------|----------|
+| `src/lib/seo.ts` | `generateBreadcrumbSchema()`, `generateHowToSchema()`, `APP_STRUCTURED_DATA` |
+
+### Meta Descriptions
+
+Each page has a unique keyword-targeted meta description (not shared from layout):
+
+| Page | Primary Keywords |
+|------|-----------------|
+| Homepage | meet new people, Kuala Lumpur, real activities |
+| About | social app, real friends in KL, founded by expat |
+| How It Works | make friends in 3 steps, small groups, public venue |
+| Safety | phone-verified, public venues only, 3-strike policy |
+| FAQ | 50+ answers, meeting people, Kuala Lumpur |
+| Blog | making friends as adult, expat guides, friendship recession |
+| Gamification | earn badges, build streaks, 6 tiers |
+| Contact | partnerships, press, Konectr team |
+| Feedback | feature requests, community feedback, transparent |
 
 ### Social Sharing
 
@@ -870,6 +968,8 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-28 | Venue Discovery Interview | Mobile-optimized 6-step form for face-to-face venue interviews. 33 fields (selects during conversation, text boxes in debrief). Submissions → Notion database via API route. localStorage auto-save. Conversational labels with script hints. Hidden from search/navigation. New "Slow Periods" field for scheduling intelligence. 4 new files, 1 modified (middleware). |
+| 2026-02-27 | SEO, AEO & Marketing Optimization | 3 new structured data types (SoftwareApplication, BreadcrumbList, HowTo). 9 keyword-targeted meta descriptions. Blog author → Person (E-E-A-T). 8 new AEO FAQ questions (46→54). SEO utility file (`src/lib/seo.ts`). 6 marketing strategy docs in `Marketing/seo/`. 12 files modified, 1 new, 0 build errors. |
 | 2026-02-20 | 404 Page — Flappy Konectr | Flappy Bird-style mini-game as custom 404 page. HTML5 Canvas, branded stick-figure mascot, pillar obstacles, emoji collectibles, parallax layers, greenery, high score persistence, dark mode, full-viewport responsive, Safari keyboard fix. 4 new files, 0 modified. |
 | 2026-02-17 | Micro Font Bugfix | Replaced `transition-all` with explicit property lists across 9 files to prevent `tw-animate-css` scale properties from being animated during hover/scroll reflow. Added `hover:text-white` overrides on outline buttons over coral backgrounds. Root cause: `transition-all` + `tw-animate-css` custom properties (`--tw-enter-scale`, `--tw-exit-scale`) + Framer Motion nav padding animation. |
 | 2026-02-15 | SEO & Performance | JSON-LD structured data (Organization, WebSite, FAQPage, BlogPosting), OG image for social sharing, robots.txt, sitemap fix (+/faq, /feedback), theme-color meta. Image compression (~18MB savings), self-hosted Satoshi font, AVIF/WebP formats, deferred analytics. FAQ data extracted to shared file. |
@@ -889,7 +989,7 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 ---
 
-**Last Deployed**: 2026-02-17
+**Last Deployed**: 2026-02-28
 **Deployment Method**: `git push origin main:nextjs-website` (Vercel auto-deploys)
 
 ---
@@ -908,4 +1008,4 @@ Full checkpoint documentation available at:
 
 ---
 
-**Last Updated**: 2026-02-09 by Claude Code
+**Last Updated**: 2026-02-27 by Claude Code
