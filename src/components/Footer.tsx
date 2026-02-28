@@ -95,9 +95,9 @@ export function Footer() {
             <h4 className="font-semibold text-secondary mb-4">{tFooter("legal")}</h4>
             <ul className="space-y-3">
               {[
-                { key: "privacyPolicy", href: "#" },
-                { key: "termsOfService", href: "#" },
-                { key: "cookiePolicy", href: "#" },
+                { key: "privacyPolicy", href: "/privacy" },
+                { key: "termsOfService", href: "/terms" },
+                { key: "cookiePolicy", href: "/privacy#cookies" },
               ].map((item) => (
                 <li key={item.key}>
                   <Link

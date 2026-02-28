@@ -5,11 +5,12 @@ import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SafetyContent } from "./SafetyContent";
+import { generateBreadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Safety - Konectr",
   description:
-    "Learn about how Konectr keeps our community safe with verification, vetted venues, and community standards.",
+    "Your safety matters. Phone-verified profiles, public venues only, 3-strike policy. How Konectr protects you when meeting new people in KL.",
 };
 
 type Props = {
@@ -20,8 +21,17 @@ export default async function SafetyPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: `/${locale}` },
+    { name: "Safety", url: `/${locale}/safety` },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <PageHeader
         title="Your Safety Matters"
         subtitle="Building trust so you can focus on connection"

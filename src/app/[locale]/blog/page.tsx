@@ -7,11 +7,12 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { BlogContent } from "./BlogContent";
 import { getAllPosts } from "@/lib/notion";
 import { allPosts as staticPosts } from "@/content/blog";
+import { generateBreadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Blog - Konectr",
   description:
-    "Stories, tips, and insights about building genuine connections in the modern world.",
+    "Tips for making friends as an adult in KL. Konectr blog covers activities, social life, expat guides, and the friendship recession.",
 };
 
 // Revalidate every 60 seconds (ISR)
@@ -31,8 +32,17 @@ export default async function BlogPage({ params }: Props) {
     posts = staticPosts;
   }
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: `/${locale}` },
+    { name: "Blog", url: `/${locale}/blog` },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <PageHeader
         title="Stories & Insights"
         subtitle="Tips, stories, and thoughts on real-world connection"

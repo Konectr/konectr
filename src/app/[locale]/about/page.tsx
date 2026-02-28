@@ -5,11 +5,12 @@ import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { AboutContent } from "./AboutContent";
+import { generateBreadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "About Us - Konectr",
   description:
-    "Learn about Konectr's mission to bring real human connection back to the digital age.",
+    "Konectr is a social app helping adults make real friends in KL through shared activities. Founded by an expat who knows how hard it is.",
 };
 
 type Props = {
@@ -20,8 +21,17 @@ export default async function AboutPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: `/${locale}` },
+    { name: "About", url: `/${locale}/about` },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <PageHeader
         title="About Konectr"
         subtitle="We're on a mission to get people off their phones and into real life."

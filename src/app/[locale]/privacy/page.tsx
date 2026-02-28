@@ -4,26 +4,26 @@
 import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { ContactContent } from "./ContactContent";
+import { PrivacyContent } from "./PrivacyContent";
 import { generateBreadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Contact Us - Konectr",
+  title: "Privacy Policy - Konectr",
   description:
-    "Get in touch with the Konectr team. Questions about the app, partnerships, or press? We'd love to hear from you.",
+    "Konectr Privacy Policy. How we collect, use, and protect your data. PDPA 2010 compliant. Your location, messages, and personal information are always protected.",
 };
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function ContactPage({ params }: Props) {
+export default async function PrivacyPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: `/${locale}` },
-    { name: "Contact", url: `/${locale}/contact` },
+    { name: "Privacy Policy", url: `/${locale}/privacy` },
   ]);
 
   return (
@@ -33,11 +33,12 @@ export default async function ContactPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <PageHeader
-        title="Get in Touch"
-        subtitle="We'd love to hear from you"
-        badge="Contact Us"
+        title="Privacy Policy"
+        subtitle="How we protect your data and respect your privacy"
+        badge="Legal"
+        gradient="dark"
       />
-      <ContactContent />
+      <PrivacyContent />
     </>
   );
 }

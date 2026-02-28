@@ -22,6 +22,44 @@ export type FAQCategory = {
 
 export const faqCategories: FAQCategory[] = [
   {
+    title: "About Konectr",
+    icon: "📱",
+    faqs: [
+      {
+        question: "What is Konectr?",
+        answer: "Konectr is a free social app that helps adults make real friends through shared activities in Kuala Lumpur. Instead of endless swiping, you pick an activity, get matched with 2-5 nearby people who want to do the same thing, and meet at a vetted public venue. It's activity-first, not profile-first."
+      },
+      {
+        question: "How much does Konectr cost?",
+        answer: "Konectr is completely free. Creating activities, matching with others, messaging, and meeting up cost nothing. We may add optional premium features in the future, but the core experience of meeting people will always be free."
+      },
+      {
+        question: "Is Konectr available in my city?",
+        answer: "Konectr is currently available in Kuala Lumpur, Malaysia only. We're starting with one city to build a strong, active community before expanding. Next cities planned: more Malaysian cities, then Southeast Asia. Join the waitlist at konectr.app for expansion updates."
+      },
+      {
+        question: "What's the difference between Konectr and Bumble BFF?",
+        answer: "Bumble BFF is one-on-one friend matching through profile swiping — similar to dating apps. Konectr is activity-first: you choose what you want to do, then meet 2-5 people at a real venue. No swiping, no awkward one-on-one pressure. Groups make it natural."
+      },
+      {
+        question: "How do I meet people in KL if I'm an expat?",
+        answer: "Konectr was built for exactly this. Pick any activity — coffee at a cafe, a fitness class, outdoor hiking — and Konectr matches you with locals and other expats who want to do the same thing. Small groups (2-5) at public venues make it easy and safe to meet new people."
+      },
+      {
+        question: "What kind of activities can I do on Konectr?",
+        answer: "Six categories: Chill (coffee, brunch), Active (fitness, hiking, running), Creative (art, photography, cooking), Social (happy hours, board games), Focus (language exchange, networking), and Adventure (day trips, exploring). You can also create custom activities."
+      },
+      {
+        question: "How many people are in a Konectr group?",
+        answer: "Groups are small by design: 2-8 people, with 3-5 being most common. Hosts set their preferred group size. Small groups mean real conversations, not anonymous crowds. This is the sweet spot for making actual friends."
+      },
+      {
+        question: "Can I use Konectr for dating?",
+        answer: "No. Konectr is for friendship only. Our community guidelines explicitly prohibit using the app for dating or romantic approaches. This is what makes Konectr a safe space — everyone knows the intention is genuine friendship through shared activities."
+      }
+    ]
+  },
+  {
     title: "Getting Started",
     icon: "🚀",
     faqs: [

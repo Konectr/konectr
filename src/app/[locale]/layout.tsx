@@ -9,6 +9,7 @@ import { locales, type Locale } from "@/i18n/config";
 import { notFound } from "next/navigation";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { APP_STRUCTURED_DATA } from "@/lib/seo";
 
 const baseUrl = "https://konectr.app";
 
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 
   const description =
-    "Stop scrolling. Start living. Connect with people who share your interests and meet up for real adventures.";
+    "Meet new people in Kuala Lumpur through real activities. Konectr helps you find friends for coffee, hiking, fitness & more. Join free.";
 
   return {
     title,
@@ -107,6 +108,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       name: "Konectr",
       url: "https://konectr.app",
     },
+    APP_STRUCTURED_DATA,
   ];
 
   return (

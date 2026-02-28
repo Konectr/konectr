@@ -8,6 +8,7 @@ import { getPostBySlug, getAllSlugs, getAllPosts } from "@/lib/notion";
 import { allPosts as staticPosts, getPostBySlug as getStaticPostBySlug } from "@/content/blog";
 import { locales } from "@/i18n/config";
 import { BlogPostContent } from "./BlogPostContent";
+import { generateBreadcrumbSchema } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -75,8 +76,9 @@ export default async function BlogPostPage({ params }: Props) {
     headline: post.title,
     description: post.excerpt,
     author: {
-      "@type": "Organization",
-      name: "Konectr",
+      "@type": "Person",
+      name: "Deepak Porwal",
+      url: "https://konectr.app/en/about",
     },
     publisher: {
       "@type": "Organization",
@@ -91,11 +93,21 @@ export default async function BlogPostPage({ params }: Props) {
     url: `https://konectr.app/${locale}/blog/${slug}`,
   };
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: `/${locale}` },
+    { name: "Blog", url: `/${locale}/blog` },
+    { name: post.title, url: `/${locale}/blog/${slug}` },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <BlogPostContent post={post} allPosts={allPosts} />
     </>

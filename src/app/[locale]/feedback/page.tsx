@@ -4,10 +4,12 @@
 import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import FeedbackBoardContent from "./FeedbackBoardContent";
+import { generateBreadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Feedback Board | Konectr",
-  description: "Vote on feature requests and help shape the future of Konectr. Share your ideas and see what the community wants.",
+  description:
+    "See what Konectr users are requesting. Feature requests, bug reports, and community feedback — all public and transparent.",
 };
 
 type Props = {
@@ -18,5 +20,18 @@ export default async function FeedbackPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return <FeedbackBoardContent />;
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: `/${locale}` },
+    { name: "Feedback", url: `/${locale}/feedback` },
+  ]);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <FeedbackBoardContent />
+    </>
+  );
 }

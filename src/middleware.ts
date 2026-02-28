@@ -18,7 +18,8 @@ export const config = {
     // - /_next (Next.js internals)
     // - /_vercel (Vercel internals)
     // - /a (activity share links - no locale prefix)
+    // - /r (referral links - no locale prefix)
     // - Static files (images, etc.)
-    '/((?!api|_next|_vercel|a/|venue-interview|.*\\..*).*)'
+    '/((?!api|_next|_vercel|a/|r/|venue-interview|.*\\..*).*)'
   ]
 };
