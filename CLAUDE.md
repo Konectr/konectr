@@ -1,6 +1,6 @@
 # CLAUDE.md - Konectr Website
 
-**Last Updated**: 2026-02-28 | **Status**: Production Live | **FAQ**: v2 (54 questions)
+**Last Updated**: 2026-03-01 | **Status**: Production Live | **FAQ**: v3 (58 questions)
 
 ---
 
@@ -36,7 +36,7 @@ konectr-web/
 │   │   │   ├── about/       # About page
 │   │   │   ├── blog/        # Blog pages
 │   │   │   ├── contact/     # Contact page
-│   │   │   ├── faq/         # FAQ page (46 questions)
+│   │   │   ├── faq/         # FAQ page (58 questions)
 │   │   │   ├── feedback/    # Feedback board
 │   │   │   ├── gamification/ # Gamification showcase
 │   │   │   ├── how-it-works/# How it works
@@ -227,7 +227,7 @@ vercel certs ls
 
 ---
 
-## FAQ Page (v2)
+## FAQ Page (v3)
 
 **Live URL**: https://konectr.app/faq
 
@@ -235,23 +235,23 @@ vercel certs ls
 
 | Category | Icon | Questions |
 |----------|------|-----------|
-| About Konectr | 📱 | 8 |
-| Getting Started | 🚀 | 6 |
+| About Konectr | 📱 | 7 |
+| Getting Started | 🚀 | 5 |
 | How Konectr Works | 💡 | 10 |
-| Safety & Trust | 🛡️ | 7 |
-| Activities & Meetups | 🎯 | 8 |
-| Badges & Gamification | 🏆 | 3 |
-| Account & Settings | ⚙️ | 5 |
+| Safety & Trust | 🛡️ | 8 |
+| Activities & Meetups | 🎯 | 9 |
+| Badges & Gamification | 🏆 | 5 |
+| Account & Settings | ⚙️ | 6 |
 | Premium & Future Features | ✨ | 3 |
-| Troubleshooting & Support | 🔧 | 4 |
-| **Total** | | **54** |
+| Troubleshooting & Support | 🔧 | 5 |
+| **Total** | | **58** |
 
 ### Key Files
 
 | File | Purpose |
 |------|---------|
 | `src/app/[locale]/faq/page.tsx` | FAQ page component |
-| `src/app/[locale]/faq/FAQContent.tsx` | FAQ content with 54 questions |
+| `src/app/[locale]/faq/FAQContent.tsx` | FAQ content with 58 questions |
 | `src/app/[locale]/faq/faq-data.ts` | FAQ data (shared between client + server JSON-LD) |
 
 ### Emoji Reference (Synced with Mobile)
@@ -301,7 +301,7 @@ Emojis in FAQ content match `konectr_mobile/lib/constants/category_reference.dar
 ### Key Files
 
 - `src/app/[locale]/page.tsx` - Homepage
-- `src/app/[locale]/faq/FAQContent.tsx` - FAQ page (46 questions, 8 categories)
+- `src/app/[locale]/faq/FAQContent.tsx` - FAQ page (58 questions, 9 categories)
 - `src/app/[locale]/layout.tsx` - Locale layout (includes Navigation + Footer)
 - `src/components/Navigation.tsx` - Global navigation header
 - `src/components/Footer.tsx` - Global footer
@@ -878,7 +878,7 @@ Each page has a unique keyword-targeted meta description (not shared from layout
 | About | social app, real friends in KL, founded by expat |
 | How It Works | make friends in 3 steps, small groups, public venue |
 | Safety | phone-verified, public venues only, 3-strike policy |
-| FAQ | 50+ answers, meeting people, Kuala Lumpur |
+| FAQ | 55+ answers, meeting people, Kuala Lumpur |
 | Blog | making friends as adult, expat guides, friendship recession |
 | Gamification | earn badges, build streaks, 6 tiers |
 | Contact | partnerships, press, Konectr team |
@@ -968,6 +968,7 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-03-01 | FAQ v3 Content Review | Comprehensive content audit: removed 4 duplicates, fixed 6 accuracy issues (E2E encryption claim, photo verification qualifier, strike thresholds, hosting gate, matching flow, Circle description), added 9 new questions (Pulse, referrals, profile completeness, Terms/Privacy, in-progress activities, XP, tiers, sharing referral link, feedback board), rewrote 5 answers. Added Terms of Service + Privacy Policy to helpful resources. 54 → 58 questions. Archived v2 state. 1 new file, 2 modified, 0 build errors. |
 | 2026-02-28 | Venue Discovery Interview | Mobile-optimized 6-step form for face-to-face venue interviews. 33 fields (selects during conversation, text boxes in debrief). Submissions → Notion database via API route. localStorage auto-save. Conversational labels with script hints. Hidden from search/navigation. New "Slow Periods" field for scheduling intelligence. 4 new files, 1 modified (middleware). |
 | 2026-02-27 | SEO, AEO & Marketing Optimization | 3 new structured data types (SoftwareApplication, BreadcrumbList, HowTo). 9 keyword-targeted meta descriptions. Blog author → Person (E-E-A-T). 8 new AEO FAQ questions (46→54). SEO utility file (`src/lib/seo.ts`). 6 marketing strategy docs in `Marketing/seo/`. 12 files modified, 1 new, 0 build errors. |
 | 2026-02-20 | 404 Page — Flappy Konectr | Flappy Bird-style mini-game as custom 404 page. HTML5 Canvas, branded stick-figure mascot, pillar obstacles, emoji collectibles, parallax layers, greenery, high score persistence, dark mode, full-viewport responsive, Safari keyboard fix. 4 new files, 0 modified. |
@@ -1008,4 +1009,4 @@ Full checkpoint documentation available at:
 
 ---
 
-**Last Updated**: 2026-02-27 by Claude Code
+**Last Updated**: 2026-03-01 by Claude Code

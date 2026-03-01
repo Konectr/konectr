@@ -2,7 +2,6 @@
 // Proprietary and confidential.
 
 // FAQ data shared between FAQContent (client) and page.tsx (server JSON-LD)
-// v3 — 58 questions across 9 categories (updated 2026-03-01)
 
 export type FAQ = {
   question: string;
@@ -39,8 +38,8 @@ export const faqCategories: FAQCategory[] = [
         answer: "Konectr is currently available in Kuala Lumpur, Malaysia only. We're starting with one city to build a strong, active community before expanding. Next cities planned: more Malaysian cities, then Southeast Asia. Join the waitlist at konectr.app for expansion updates."
       },
       {
-        question: "How is Konectr different from Meetup or Bumble BFF?",
-        answer: "Meetup hosts large anonymous groups (20-100+) where you can easily get lost. Bumble BFF is one-on-one swiping that often leads to chats that go nowhere. Konectr sits in the sweet spot: small groups (2-8), activity-based matching at vetted venues. More intimate than Meetup, more social than Bumble BFF, and every match leads to a real meetup — not just another chat."
+        question: "What's the difference between Konectr and Bumble BFF?",
+        answer: "Bumble BFF is one-on-one friend matching through profile swiping — similar to dating apps. Konectr is activity-first: you choose what you want to do, then meet 2-5 people at a real venue. No swiping, no awkward one-on-one pressure. Groups make it natural."
       },
       {
         question: "How do I meet people in KL if I'm an expat?",
@@ -49,6 +48,10 @@ export const faqCategories: FAQCategory[] = [
       {
         question: "What kind of activities can I do on Konectr?",
         answer: "Six categories: Chill (coffee, brunch), Active (fitness, hiking, running), Creative (art, photography, cooking), Social (happy hours, board games), Focus (language exchange, networking), and Adventure (day trips, exploring). You can also create custom activities."
+      },
+      {
+        question: "How many people are in a Konectr group?",
+        answer: "Groups are small by design: 2-8 people, with 3-5 being most common. Hosts set their preferred group size. Small groups mean real conversations, not anonymous crowds. This is the sweet spot for making actual friends."
       },
       {
         question: "Can I use Konectr for dating?",
@@ -61,24 +64,28 @@ export const faqCategories: FAQCategory[] = [
     icon: "🚀",
     faqs: [
       {
+        question: "Is Konectr free to use?",
+        answer: "Yes, completely free. Create activities, match with others, and meet up—no cost. We may add optional premium features later, but core functionality stays free forever."
+      },
+      {
         question: "How do I create an account?",
         answer: "Download from the App Store (Android coming Q2 2026), sign up with phone or email, add your interests and a photo. Takes about 2 minutes."
       },
       {
+        question: "What cities is Konectr available in?",
+        answer: "Launching in Kuala Lumpur, Malaysia. We're starting with one city to build a strong community before expanding to more Malaysian cities and Southeast Asia. Join our waitlist for updates."
+      },
+      {
         question: "Do I need to verify my identity?",
-        answer: "Phone verification is required. Optional photo verification (coming soon) will earn you a trust badge, and hosts often prefer verified members for their activities."
+        answer: "Phone verification is required. Optional photo verification earns you a trust badge, and hosts often prefer verified members for their activities."
       },
       {
         question: "What makes Konectr different from other social apps?",
-        answer: "No chat that goes nowhere. On Konectr, every connection leads to a real meetup. You pick an activity, get matched with people planning the same thing, and meet IRL at a vetted venue. No endless swiping, no ghosting — just real people doing real things."
+        answer: "Activity-first, not profile-first. You create an activity, we match you with people planning the same thing, you meet IRL. No endless swiping or chats that go nowhere."
       },
       {
         question: "I'm new in KL. Can Konectr help me make friends?",
         answer: "This is exactly what we built Konectr for. Create an activity you'd enjoy—hiking at outdoor spots, brunch at a restaurant, or coffee at a cafe. Meet people who share your interests."
-      },
-      {
-        question: "How complete does my profile need to be?",
-        answer: "The more complete your profile, the better your matches. To use Pulse (AI matching), you need 100% profile completeness — that means a photo, bio, interests, and availability. Even without Pulse, a complete profile helps hosts and other members decide to join your activities."
       }
     ]
   },
@@ -87,24 +94,24 @@ export const faqCategories: FAQCategory[] = [
     icon: "💡",
     faqs: [
       {
+        question: "How is Konectr different from Meetup or Bumble BFF?",
+        answer: "Meetup = large anonymous groups (20-100+). Bumble BFF = one-on-one swiping that often fizzles. Konectr = small groups (2-8), activity-based matching, vetted venues. More intimate than Meetup, more social than Bumble BFF."
+      },
+      {
         question: "What if I'm shy or introverted?",
         answer: "Small groups (3-6 typical), activity-focused conversation topics, and everyone's there for the same reason. Many of our most active users are introverts who prefer this structured approach over traditional social settings."
       },
       {
         question: "Can I create my own activities (become a host)?",
-        answer: "Yes! Anyone can create activities and become a host. Choose from vetted venues, set your group size, pick a time slot, and publish. Earn special Captain badges as you host more activities."
+        answer: "Yes! After attending a few activities, you can become a Konectr Captain. Create activities, choose from vetted venues, set group size limits, and earn special badges."
       },
       {
         question: "How does the matching work?",
-        answer: "Pick your vibe, time slot, and venue. Konectr finds people planning the same activity, same time, within 50km. You can also use Pulse — our AI matching feature — which automatically finds your best match based on interests, availability, and profile compatibility. Either way, every match leads to a real meetup."
+        answer: "Pick your vibe, time slot, and venue. We find people planning the same activity, same time, within 50km. Browse matches, connect and meet. Simple, intentional matching."
       },
       {
-        question: "What is Pulse and how does AI matching work?",
-        answer: "Pulse is Konectr's AI-powered matching feature. Instead of browsing activities manually, Pulse finds your best match automatically based on your interests, availability, location, and profile. It uses a commit-then-reveal flow: you opt in, Pulse finds a match, and both of you get a celebration reveal with activity details. Requires 100% profile completeness to activate."
-      },
-      {
-        question: "How do referral links work?",
-        answer: "Every Konectr user gets a unique referral link (konectr.app/r/yourcode). Share it with friends — when they sign up through your link, both of you earn XP and progress toward referral badges. Find your link in your profile or share it directly from the app."
+        question: "What types of activities are available?",
+        answer: "Chill — coffee, brunch, book clubs. Active — runs, hikes, fitness. Creative — photography, art, cooking. Social — happy hours, board games, karaoke. Focus — language exchange, networking. Adventure — day trips, exploring."
       },
       {
         question: "What if no one matches my activity?",
@@ -116,11 +123,11 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What's a 'Konectr Circle'?",
-        answer: "Your friend network within the app — people you've connected with. Anyone can add anyone to their Circle (no mutual activity required). Circle perks: permanent 1:1 chat, see when they create activities, broadcast your plans to them."
+        answer: "Your friend network within the app—people you've met and both chose to add. Circle perks: permanent 1:1 chat, see when they create activities, broadcast your plans to them."
       },
       {
         question: "What happens after an activity ends?",
-        answer: "Activity auto-completes 2 hours after end time. You'll earn XP and progress toward badges, rate the experience, leave kudos, and choose who to add to your Circle. Group chat archives become read-only."
+        answer: "Activity auto-completes 2 hours after end time. You'll rate the experience, leave kudos, and choose who to add to your Circle. Group chat archives become read-only."
       },
       {
         question: "Can I host private activities?",
@@ -134,7 +141,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How do I know the people I meet are safe?",
-        answer: "Phone verification required, optional photo verification (coming soon) with trust badges. All meetups at public vetted venues only. Badge system tracks positive participation. Three-strike system for violations: 3 reports = warning, 6 = suspension, 9 = six-month ban. Zero tolerance for harassment with 24-hour report review."
+        answer: "Phone verification required, optional photo verification with trust badges. All meetups at public vetted venues only. Badge system tracks positive participation, 3-strike policy for violations, zero tolerance for harassment with 24-hour report review."
       },
       {
         question: "What are vetted venues?",
@@ -150,7 +157,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Is my data safe?",
-        answer: "All data is encrypted in transit and at rest. We never sell your data. Download or delete your data anytime. PDPA (Malaysia/Singapore) and GDPR compliant."
+        answer: "All data encrypted, end-to-end encryption for messages. We never sell your data. Download or delete your data anytime. PDPA (Malaysia/Singapore) and GDPR compliant."
       },
       {
         question: "What happens if I report someone?",
@@ -159,10 +166,6 @@ export const faqCategories: FAQCategory[] = [
       {
         question: "What are the community guidelines?",
         answer: "Do: Show up when committed, be inclusive, communicate if plans change. Don't: Ghost, harass, share others' contact info, discriminate, use for dating. Violations = warnings, suspension, or bans."
-      },
-      {
-        question: "Where can I read the Terms of Service and Privacy Policy?",
-        answer: "You can read our full Terms of Service at konectr.app/terms and our Privacy Policy at konectr.app/privacy. Both are accessible from the app settings and from the footer of our website. We believe in transparency — no hidden clauses."
       }
     ]
   },
@@ -201,10 +204,6 @@ export const faqCategories: FAQCategory[] = [
       {
         question: "What if the activity is cancelled?",
         answer: "Host cancels: you get notified immediately, no impact on your reliability. Not enough signups: you're notified before the scheduled time. Consider hosting your own version."
-      },
-      {
-        question: "Can I join an activity that's already in progress?",
-        answer: "No — once an activity's time slot has started, it's no longer open for new joiners. This protects the experience for everyone already there. Keep an eye on upcoming activities and join before they start. You can also create your own activity for a time that works for you."
       }
     ]
   },
@@ -223,14 +222,6 @@ export const faqCategories: FAQCategory[] = [
       {
         question: "How do badges help me?",
         answer: "Trust signals for hosts and attendees. Personal milestones to track your journey. Conversation starters. Some hosts set badge requirements for their activities."
-      },
-      {
-        question: "What are XP points and how do I earn them?",
-        answer: "XP (experience points) measure your overall engagement on Konectr. You earn XP by attending activities, hosting, adding people to your Circle, maintaining streaks, completing your profile, and referring friends. XP determines your tier level and unlocks perks as you progress."
-      },
-      {
-        question: "What are the tier levels?",
-        answer: "Konectr has 6 tiers: Basic (starting), Explorer, Connector, Captain, Ambassador, and Legendary. Each tier requires more XP and unlocks new perks like priority matching, exclusive badges, and recognition in the community. Check your progress on your profile page."
       }
     ]
   },
@@ -257,10 +248,6 @@ export const faqCategories: FAQCategory[] = [
       {
         question: "How do I change my notification settings?",
         answer: "Settings, Notifications. Toggle match alerts, activity suggestions, messages, reminders, and Circle updates. Keep match and message notifications on to avoid missing connections."
-      },
-      {
-        question: "How do I share my Konectr profile or referral link?",
-        answer: "Go to your profile and tap the share icon. You can share your unique referral link (konectr.app/r/yourcode) via WhatsApp, Instagram, or any messaging app. When friends sign up through your link, both of you earn XP."
       }
     ]
   },
@@ -300,11 +287,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "I have an idea/feedback for Konectr!",
-        answer: "Visit konectr.app/feedback to see community feature requests and suggestions. You can also email hello@konectr.app with 'Feature Idea' in the subject. Tell us the problem you want solved. We read everything and add good ideas to our roadmap."
-      },
-      {
-        question: "What is the feedback board?",
-        answer: "The feedback board at konectr.app/feedback is where you can see feature requests, bug reports, and suggestions from the Konectr community. It's fully transparent — you can see what others have asked for and how many votes each idea has. Voting is available in the mobile app, and viewing is available on the web."
+        answer: "Email hello@konectr.app with 'Feature Idea' in the subject. Tell us the problem you want solved. We read everything and add good ideas to our roadmap."
       }
     ]
   }
@@ -334,17 +317,5 @@ export const helpfulResources = [
     description: "Tips and stories",
     href: "/blog",
     icon: "📖",
-  },
-  {
-    title: "Terms of Service",
-    description: "Our terms and conditions",
-    href: "/terms",
-    icon: "📜",
-  },
-  {
-    title: "Privacy Policy",
-    description: "How we protect your data",
-    href: "/privacy",
-    icon: "🔒",
   },
 ];

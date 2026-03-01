@@ -11,7 +11,7 @@ import { generateBreadcrumbSchema } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "FAQ - Konectr",
   description:
-    "Got questions about Konectr? 50+ answers about meeting people, safety, activities, badges, and how the app works in Kuala Lumpur.",
+    "Got questions about Konectr? 55+ answers about meeting people, safety, activities, badges, and how the app works in Kuala Lumpur.",
 };
 
 type Props = {
