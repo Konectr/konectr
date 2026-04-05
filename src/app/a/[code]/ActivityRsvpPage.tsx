@@ -249,7 +249,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   const ended = isActivityEnded(activity.end_time);
   const deepLink = `konectr://activity/${shareCode}`;
   const emoji = getCategoryEmoji(activity.category);
-  const isFull = activity.max_participants > 0 && activity.current_participants >= activity.max_participants;
+  // isFull is computed after teaser data loads (see spotsRemaining below)
 
   // =============================================
   // Ended State
@@ -280,6 +280,8 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     ?? storedRsvp?.participantCount ?? activity.current_participants;
   const messageCount = teaserData?.message_count
     ?? storedRsvp?.messageCount ?? 0;
+  const spotsRemaining = teaserData?.spots_remaining
+    ?? (activity.max_participants > 0 ? activity.max_participants - participantCount : -1);
 
   const canSubmit = guestName.trim().length > 0;
 
@@ -326,17 +328,17 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                 <span>{activity.venue_name}</span>
               </div>
             )}
-            {/* Spots indicator */}
+            {/* Spots indicator — uses teaser count (confirmed + web RSVPs) */}
             <div className="flex items-center gap-2.5">
               <span className="text-[#999] w-5 text-center">👥</span>
-              {isFull ? (
+              {spotsRemaining <= 0 && activity.max_participants > 0 ? (
                 <span className="text-[#E53E3E] font-medium">Activity is full</span>
               ) : activity.max_participants > 0 ? (
                 <span>
-                  <strong>{activity.max_participants - activity.current_participants}</strong> of {activity.max_participants} spots left
+                  <strong>{spotsRemaining}</strong> of {activity.max_participants} spots left
                 </span>
               ) : (
-                <span>Open · <strong>{activity.current_participants}</strong> joined</span>
+                <span>Open · <strong>{participantCount}</strong> joined</span>
               )}
             </div>
           </div>
@@ -434,7 +436,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             // Pre-RSVP State — RSVP Form
             // =============================================
             <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
-              {isFull ? (
+              {spotsRemaining <= 0 && activity.max_participants > 0 ? (
                 <div className="text-center">
                   <DownloadButton />
                   <OpenInApp deepLink={deepLink} />
