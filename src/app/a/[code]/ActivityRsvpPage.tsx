@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { SharedActivity } from '@/lib/supabase';
+import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
 
 // Brand assets
 const LOGO_ORANGE = 'https://cdn.prod.website-files.com/6857df346d4e4bd260786fbd/686328457e3945d8a146fbaf_Konectr_Orange_SSVG_2.avif';
@@ -39,20 +40,22 @@ function formatDate(dateString: string): string {
   });
 }
 
-function getTimeOfDay(dateString: string): string {
+function formatTime(dateString: string): string {
   const date = new Date(dateString);
-  const hour = date.getHours();
-  if (hour < 12) return 'Morning';
-  if (hour < 17) return 'Afternoon';
-  return 'Evening';
+  return date.toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: '2-digit', hour12: true,
+  });
 }
 
-function isActivityEnded(startTime: string): boolean {
-  return new Date(startTime) < new Date();
+function isActivityEnded(endTime: string): boolean {
+  return new Date(endTime) < new Date();
 }
 
+// =============================================
 // localStorage helpers
-const STORAGE_KEY = 'konectr_rsvps';
+// =============================================
+const RSVP_STORAGE_KEY = 'konectr_rsvps';
+const USER_PROFILE_KEY = 'konectr_user_profile';
 
 interface StoredRsvp {
   claimToken: string;
@@ -63,10 +66,16 @@ interface StoredRsvp {
   messageCount: number;
 }
 
+interface StoredUserProfile {
+  guestName: string;
+  phoneNumber: string;
+  countryCode: string;
+}
+
 function getStoredRsvp(shareCode: string): StoredRsvp | null {
   if (typeof window === 'undefined') return null;
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(RSVP_STORAGE_KEY);
     if (!stored) return null;
     const rsvps = JSON.parse(stored);
     return rsvps[shareCode] || null;
@@ -77,10 +86,29 @@ function getStoredRsvp(shareCode: string): StoredRsvp | null {
 
 function storeRsvp(shareCode: string, rsvp: StoredRsvp): void {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(RSVP_STORAGE_KEY);
     const rsvps = stored ? JSON.parse(stored) : {};
     rsvps[shareCode] = rsvp;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(rsvps));
+    localStorage.setItem(RSVP_STORAGE_KEY, JSON.stringify(rsvps));
+  } catch {
+    // localStorage unavailable
+  }
+}
+
+function getStoredUserProfile(): StoredUserProfile | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const stored = localStorage.getItem(USER_PROFILE_KEY);
+    if (!stored) return null;
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+}
+
+function storeUserProfile(profile: StoredUserProfile): void {
+  try {
+    localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
   } catch {
     // localStorage unavailable
   }
@@ -100,38 +128,58 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [teaserData, setTeaserData] = useState<RsvpTeaserResponse | null>(null);
 
-  // Check localStorage on mount
+  // Check localStorage on mount + auto-fill + fetch teaser
   useEffect(() => {
     if (!activity) {
       setRsvpState('pre-rsvp');
       return;
     }
+
+    // Auto-fill from stored user profile (repeat RSVPs)
+    const userProfile = getStoredUserProfile();
+    if (userProfile) {
+      setGuestName(userProfile.guestName);
+      setPhoneNumber(userProfile.phoneNumber);
+      setCountryCode(userProfile.countryCode);
+    }
+
+    // Check if already RSVP'd to this activity
     const existing = getStoredRsvp(shareCode);
     if (existing) {
       setStoredRsvp(existing);
       setRsvpState('post-rsvp');
     } else {
       setRsvpState('pre-rsvp');
+      // Fetch fresh teaser data only for pre-RSVP users
+      getActivityRsvpTeaser(activity.id).then((data) => {
+        if (data) setTeaserData(data);
+      });
     }
   }, [activity, shareCode]);
 
   const handleRsvp = useCallback(async () => {
-    if (!guestName.trim() || !phoneNumber.trim() || !activity) return;
+    if (!guestName.trim() || !activity) return;
 
     setIsSubmitting(true);
     setError(null);
 
     try {
+      // Build request body — phone is optional
+      const body: Record<string, string> = {
+        share_code: shareCode,
+        guest_name: guestName.trim(),
+      };
+      if (phoneNumber.trim()) {
+        body.phone_number = phoneNumber.trim();
+        body.country_code = countryCode;
+      }
+
       const res = await fetch('/api/rsvp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          share_code: shareCode,
-          guest_name: guestName.trim(),
-          phone_number: phoneNumber.trim(),
-          country_code: countryCode,
-        }),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
@@ -141,6 +189,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
         return;
       }
 
+      // Store RSVP for this activity
       const rsvpData: StoredRsvp = {
         claimToken: data.claim_token,
         guestName: data.guest_name,
@@ -149,9 +198,16 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
         participantNames: data.participant_names || [],
         messageCount: data.message_count || 0,
       };
-
       storeRsvp(shareCode, rsvpData);
       setStoredRsvp(rsvpData);
+
+      // Save user profile for auto-fill on next RSVP
+      storeUserProfile({
+        guestName: guestName.trim(),
+        phoneNumber: phoneNumber.trim(),
+        countryCode,
+      });
+
       setRsvpState('post-rsvp');
     } catch {
       setError('Network error. Please try again.');
@@ -190,7 +246,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     );
   }
 
-  const ended = isActivityEnded(activity.start_time);
+  const ended = isActivityEnded(activity.end_time);
   const deepLink = `konectr://activity/${shareCode}`;
   const emoji = getCategoryEmoji(activity.category);
   const isFull = activity.max_participants > 0 && activity.current_participants >= activity.max_participants;
@@ -217,7 +273,15 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     );
   }
 
-  const canSubmit = guestName.trim().length > 0 && phoneNumber.trim().length >= 7;
+  // Prefer fresh teaser data; fall back to stored RSVP snapshot
+  const participantNames = teaserData?.participant_names
+    || storedRsvp?.participantNames || [];
+  const participantCount = teaserData?.participant_count
+    ?? storedRsvp?.participantCount ?? activity.current_participants;
+  const messageCount = teaserData?.message_count
+    ?? storedRsvp?.messageCount ?? 0;
+
+  const canSubmit = guestName.trim().length > 0;
 
   // =============================================
   // Active Activity — with RSVP
@@ -254,7 +318,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             </div>
             <div className="flex items-center gap-2.5">
               <span className="text-[#999] w-5 text-center">📅</span>
-              <span>{formatDate(activity.start_time)} · {getTimeOfDay(activity.start_time)}</span>
+              <span>{formatDate(activity.start_time)} · {formatTime(activity.start_time)}</span>
             </div>
             {activity.venue_name && (
               <div className="flex items-center gap-2.5">
@@ -277,16 +341,49 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             </div>
           </div>
 
+          {/* Description */}
+          {activity.description && activity.description !== activity.title && (
+            <div className="mt-3 pt-3 border-t border-[#F0F0F0]">
+              <p className="text-sm text-[#555] leading-relaxed">{activity.description}</p>
+            </div>
+          )}
+
+          {/* Who's Joining + Chatter Teaser (always visible) */}
+          {(participantNames.length > 0 || messageCount > 0) && (
+            <div className="mt-3 pt-3 border-t border-[#F0F0F0]">
+              {participantNames.length > 0 && (
+                <div className="flex items-start gap-2 mb-2">
+                  <span className="text-sm mt-0.5">🙋</span>
+                  <p className="text-sm text-[#555]">
+                    <strong className="text-[#1F1F1F]">{participantNames.join(', ')}</strong>
+                    {participantCount > participantNames.length && (
+                      <span> and {participantCount - participantNames.length} more</span>
+                    )}
+                    <span className="text-[#999]"> joining</span>
+                  </p>
+                </div>
+              )}
+              {messageCount > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">💬</span>
+                  <p className="text-xs text-[#999]">
+                    <strong className="text-[#777]">{messageCount} messages</strong> in Activity Chatter
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* RSVP Section */}
           {rsvpState === 'loading' ? (
-            <div className="mt-5 pt-4 border-t border-[#F0F0F0]">
+            <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
               <div className="h-12 bg-[#F5F5F5] rounded-lg animate-pulse" />
             </div>
           ) : rsvpState === 'post-rsvp' && storedRsvp ? (
             // =============================================
-            // Post-RSVP State — FOMO Teaser
+            // Post-RSVP State
             // =============================================
-            <div className="mt-5 pt-4 border-t border-[#F0F0F0]">
+            <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
               {/* Confirmation */}
               <div className="bg-[#F0FFF4] rounded-xl p-4 mb-4">
                 <div className="flex items-center gap-2 mb-1">
@@ -296,56 +393,22 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                 <p className="text-[#666] text-xs ml-7">Your spot is reserved</p>
               </div>
 
-              {/* FOMO Teaser Section */}
-              <div className="bg-[#F9FAFB] rounded-xl p-4 mb-4">
-                {/* Blurred avatar row + count */}
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex -space-x-2">
-                    {Array.from({ length: Math.min(storedRsvp.participantCount, 5) }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-8 h-8 rounded-full border-2 border-white"
-                        style={{
-                          background: ['#FFB4A2', '#B5D8CC', '#A8D8EA', '#FFD6A5', '#C9B1FF'][i % 5],
-                          filter: 'blur(2px)',
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-[#666]">
-                    <strong className="text-[#1F1F1F]">{storedRsvp.participantCount} people</strong> are joining
-                  </span>
-                </div>
-
-                {/* Chatter teaser */}
-                {storedRsvp.messageCount > 0 && (
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-base">💬</span>
-                    <span className="text-xs text-[#666]">
-                      <strong className="text-[#1F1F1F]">{storedRsvp.messageCount} messages</strong> in Activity Chatter
-                    </span>
-                  </div>
-                )}
-
-                {/* Divider */}
-                <div className="border-t border-[#E8E8E8] pt-3">
-                  <p className="text-xs text-[#555] font-medium text-center">
-                    Sign up to see who&apos;s coming and join the conversation
-                  </p>
-                </div>
+              {/* Download CTA */}
+              <div className="bg-[#F9FAFB] rounded-xl p-4 mb-4 text-center">
+                <p className="text-xs text-[#555] font-medium mb-3">
+                  Download Konectr to join the conversation and get notified
+                </p>
+                <a
+                  href="#"
+                  className="inline-flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-[#E5693F] transition-colors shadow-sm"
+                >
+                  <AppleIcon />
+                  Download Konectr
+                </a>
               </div>
 
-              {/* Download CTA — Primary, prominent */}
-              <a
-                href="#"
-                className="flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3.5 px-4 rounded-xl text-sm font-bold hover:bg-[#E5693F] transition-colors shadow-sm"
-              >
-                <AppleIcon />
-                Download Konectr
-              </a>
-
               {/* Open in App */}
-              <div className="mt-3 text-center">
+              <div className="text-center">
                 <a
                   href={deepLink}
                   className="inline-flex items-center gap-1.5 text-[#FF774D] font-medium text-sm hover:underline"
@@ -368,14 +431,14 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             </div>
           ) : (
             // =============================================
-            // Pre-RSVP State — Name + Phone Form
+            // Pre-RSVP State — RSVP Form
             // =============================================
-            <div className="mt-5 pt-4 border-t border-[#F0F0F0]">
+            <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
               {isFull ? (
-                <>
+                <div className="text-center">
                   <DownloadButton />
                   <OpenInApp deepLink={deepLink} />
-                </>
+                </div>
               ) : (
                 <>
                   {/* RSVP Form */}
@@ -391,11 +454,12 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                       placeholder="Your first name"
                       value={guestName}
                       onChange={(e) => setGuestName(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && canSubmit && !phoneNumber && handleRsvp()}
                       maxLength={50}
                       className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors mb-2"
                     />
 
-                    {/* Phone input with country code */}
+                    {/* Phone input with country code (optional) */}
                     <div className="flex gap-1.5 mb-3">
                       <select
                         value={countryCode}
@@ -412,7 +476,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                       <input
                         id="guest-phone"
                         type="tel"
-                        placeholder="12 345 6789"
+                        placeholder="Phone (optional)"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
@@ -438,11 +502,11 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                     )}
 
                     <p className="text-[10px] text-[#BBB] mt-2 text-center">
-                      Your phone is used to link your RSVP when you sign up. Never shared.
+                      Phone links your RSVP when you sign up. Never shared.
                     </p>
                   </div>
 
-                  {/* Existing Download CTA */}
+                  {/* Download CTA */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex-1 h-px bg-[#F0F0F0]" />
                     <span className="text-xs text-[#CCC]">or</span>

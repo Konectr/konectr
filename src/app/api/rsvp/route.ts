@@ -2,7 +2,7 @@
 // API route: POST /api/rsvp → creates a web RSVP for an activity
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createWebRsvp } from '@/lib/supabase';
+import { createWebRsvp, getActivityByShareCode } from '@/lib/supabase';
 import { createHash } from 'crypto';
 
 // Sanitize name: allow letters (including accented), spaces, hyphens, apostrophes
@@ -66,38 +66,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate phone (required)
-    if (!phone_number || typeof phone_number !== 'string') {
-      return NextResponse.json(
-        { error: 'Phone number is required' },
-        { status: 400 }
-      );
+    // Validate phone (optional — if provided, must be valid)
+    let phoneHash: string | null = null;
+
+    if (phone_number && typeof phone_number === 'string' && phone_number.trim()) {
+      if (!country_code || typeof country_code !== 'string') {
+        return NextResponse.json(
+          { error: 'Country code is required with phone number' },
+          { status: 400 }
+        );
+      }
+
+      // Validate digits using normalizePhone's cleaning logic
+      const e164Phone = normalizePhone(country_code, phone_number);
+      const digitsOnly = e164Phone.replace(/^\+/, '');
+
+      if (!PHONE_DIGITS_REGEX.test(digitsOnly)) {
+        return NextResponse.json(
+          { error: 'Please enter a valid phone number' },
+          { status: 400 }
+        );
+      }
+
+      phoneHash = hashPhone(e164Phone);
     }
 
-    if (!country_code || typeof country_code !== 'string') {
-      return NextResponse.json(
-        { error: 'Country code is required' },
-        { status: 400 }
-      );
-    }
-
-    // Strip non-digit chars from phone for validation
-    const cleanPhone = phone_number.replace(/[\s\-().]/g, '');
-    const phoneDigits = cleanPhone.startsWith('0') ? cleanPhone.slice(1) : cleanPhone;
-
-    if (!PHONE_DIGITS_REGEX.test(phoneDigits)) {
-      return NextResponse.json(
-        { error: 'Please enter a valid phone number' },
-        { status: 400 }
-      );
-    }
-
-    // Normalize to E.164 and hash
-    const e164Phone = normalizePhone(country_code, phone_number);
-    const phoneHash = hashPhone(e164Phone);
-
-    // Get activity ID from share code first
-    const { getActivityByShareCode } = await import('@/lib/supabase');
     const activity = await getActivityByShareCode(share_code);
 
     if (!activity) {
