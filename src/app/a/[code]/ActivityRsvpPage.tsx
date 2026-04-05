@@ -19,6 +19,15 @@ const categoryEmojis: Record<string, string> = {
   focus: '🎯', creative: '🎨', adventure: '⛰️', social: '🎉',
 };
 
+// Country codes (synced with mobile: auth_constants.dart)
+const countryCodes = [
+  { code: '+60', name: 'Malaysia', flag: '🇲🇾' },
+  { code: '+65', name: 'Singapore', flag: '🇸🇬' },
+  { code: '+1', name: 'USA', flag: '🇺🇸' },
+  { code: '+44', name: 'UK', flag: '🇬🇧' },
+  { code: '+86', name: 'China', flag: '🇨🇳' },
+];
+
 function getCategoryEmoji(category: string): string {
   return categoryEmojis[category.toLowerCase()] || '📌';
 }
@@ -51,6 +60,7 @@ interface StoredRsvp {
   rsvpAt: string;
   participantCount: number;
   participantNames: string[];
+  messageCount: number;
 }
 
 function getStoredRsvp(shareCode: string): StoredRsvp | null {
@@ -85,6 +95,8 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   const [rsvpState, setRsvpState] = useState<'loading' | 'pre-rsvp' | 'post-rsvp'>('loading');
   const [storedRsvp, setStoredRsvp] = useState<StoredRsvp | null>(null);
   const [guestName, setGuestName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [countryCode, setCountryCode] = useState('+60');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -105,7 +117,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   }, [activity, shareCode]);
 
   const handleRsvp = useCallback(async () => {
-    if (!guestName.trim() || !activity) return;
+    if (!guestName.trim() || !phoneNumber.trim() || !activity) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -117,6 +129,8 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
         body: JSON.stringify({
           share_code: shareCode,
           guest_name: guestName.trim(),
+          phone_number: phoneNumber.trim(),
+          country_code: countryCode,
         }),
       });
 
@@ -133,6 +147,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
         rsvpAt: new Date().toISOString(),
         participantCount: data.participant_count,
         participantNames: data.participant_names || [],
+        messageCount: data.message_count || 0,
       };
 
       storeRsvp(shareCode, rsvpData);
@@ -143,7 +158,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [guestName, activity, shareCode]);
+  }, [guestName, phoneNumber, countryCode, activity, shareCode]);
 
   const copyClaimCode = useCallback(() => {
     if (!storedRsvp) return;
@@ -201,6 +216,8 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       </div>
     );
   }
+
+  const canSubmit = guestName.trim().length > 0 && phoneNumber.trim().length >= 7;
 
   // =============================================
   // Active Activity — with RSVP
@@ -267,7 +284,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             </div>
           ) : rsvpState === 'post-rsvp' && storedRsvp ? (
             // =============================================
-            // Post-RSVP State
+            // Post-RSVP State — FOMO Teaser
             // =============================================
             <div className="mt-5 pt-4 border-t border-[#F0F0F0]">
               {/* Confirmation */}
@@ -279,54 +296,52 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                 <p className="text-[#666] text-xs ml-7">Your spot is reserved</p>
               </div>
 
-              {/* Teaser Section */}
+              {/* FOMO Teaser Section */}
               <div className="bg-[#F9FAFB] rounded-xl p-4 mb-4">
-                <div className="flex items-center gap-3 mb-2">
-                  {/* Blurred avatar circles */}
+                {/* Blurred avatar row + count */}
+                <div className="flex items-center gap-3 mb-3">
                   <div className="flex -space-x-2">
-                    {[0, 1, 2].map((i) => (
+                    {Array.from({ length: Math.min(storedRsvp.participantCount, 5) }).map((_, i) => (
                       <div
                         key={i}
-                        className="w-8 h-8 rounded-full bg-[#DDD] border-2 border-white"
-                        style={{ filter: 'blur(1px)' }}
+                        className="w-8 h-8 rounded-full border-2 border-white"
+                        style={{
+                          background: ['#FFB4A2', '#B5D8CC', '#A8D8EA', '#FFD6A5', '#C9B1FF'][i % 5],
+                          filter: 'blur(2px)',
+                        }}
                       />
                     ))}
                   </div>
                   <span className="text-sm text-[#666]">
-                    <strong className="text-[#1F1F1F]">{storedRsvp.participantCount} people</strong> joining
+                    <strong className="text-[#1F1F1F]">{storedRsvp.participantCount} people</strong> are joining
                   </span>
                 </div>
-                <p className="text-xs text-[#999]">
-                  Download the app to see who&apos;s coming
-                </p>
-              </div>
 
-              {/* Claim Code */}
-              <div className="bg-[#FFF5F2] rounded-xl p-4 mb-4">
-                <p className="text-xs text-[#666] mb-2">Your claim code</p>
-                <div className="flex items-center gap-2">
-                  <code className="text-lg font-mono font-bold text-[#FF774D] tracking-wider">
-                    {storedRsvp.claimToken}
-                  </code>
-                  <button
-                    onClick={copyClaimCode}
-                    className="text-xs text-[#999] hover:text-[#FF774D] transition-colors px-2 py-1 rounded border border-[#E5E5E5] hover:border-[#FF774D]"
-                  >
-                    {copied ? 'Copied!' : 'Copy'}
-                  </button>
+                {/* Chatter teaser */}
+                {storedRsvp.messageCount > 0 && (
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-base">💬</span>
+                    <span className="text-xs text-[#666]">
+                      <strong className="text-[#1F1F1F]">{storedRsvp.messageCount} messages</strong> in Activity Chatter
+                    </span>
+                  </div>
+                )}
+
+                {/* Divider */}
+                <div className="border-t border-[#E8E8E8] pt-3">
+                  <p className="text-xs text-[#555] font-medium text-center">
+                    Sign up to see who&apos;s coming and join the conversation
+                  </p>
                 </div>
-                <p className="text-xs text-[#999] mt-2">
-                  Enter this code after signing up to claim your spot
-                </p>
               </div>
 
-              {/* Download CTA */}
+              {/* Download CTA — Primary, prominent */}
               <a
                 href="#"
-                className="flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3 px-4 rounded-lg text-sm font-semibold hover:bg-[#E5693F] transition-colors"
+                className="flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3.5 px-4 rounded-xl text-sm font-bold hover:bg-[#E5693F] transition-colors shadow-sm"
               >
                 <AppleIcon />
-                Download Konectr to see who&apos;s coming
+                Download Konectr
               </a>
 
               {/* Open in App */}
@@ -335,14 +350,25 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                   href={deepLink}
                   className="inline-flex items-center gap-1.5 text-[#FF774D] font-medium text-sm hover:underline"
                 >
-                  Open in Konectr
+                  Already have the app? Open in Konectr
                   <ExternalIcon />
                 </a>
+              </div>
+
+              {/* Claim code — de-emphasized fallback */}
+              <div className="mt-4 pt-3 border-t border-[#F0F0F0] text-center">
+                <p className="text-[10px] text-[#BBB] mb-1">Having trouble? Use your claim code</p>
+                <button
+                  onClick={copyClaimCode}
+                  className="text-xs font-mono text-[#999] hover:text-[#FF774D] transition-colors"
+                >
+                  {copied ? 'Copied!' : storedRsvp.claimToken}
+                </button>
               </div>
             </div>
           ) : (
             // =============================================
-            // Pre-RSVP State
+            // Pre-RSVP State — Name + Phone Form
             // =============================================
             <div className="mt-5 pt-4 border-t border-[#F0F0F0]">
               {isFull ? (
@@ -355,34 +381,65 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                   {/* RSVP Form */}
                   <div className="mb-4">
                     <label htmlFor="guest-name" className="block text-xs text-[#999] mb-1.5">
-                      Reserve your spot — no account needed
+                      Reserve your spot
                     </label>
-                    <div className="flex gap-2">
+
+                    {/* Name input */}
+                    <input
+                      id="guest-name"
+                      type="text"
+                      placeholder="Your first name"
+                      value={guestName}
+                      onChange={(e) => setGuestName(e.target.value)}
+                      maxLength={50}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors mb-2"
+                    />
+
+                    {/* Phone input with country code */}
+                    <div className="flex gap-1.5 mb-3">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="w-[88px] shrink-0 px-2 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] bg-white focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors appearance-none"
+                        aria-label="Country code"
+                      >
+                        {countryCodes.map((cc) => (
+                          <option key={cc.code} value={cc.code}>
+                            {cc.flag} {cc.code}
+                          </option>
+                        ))}
+                      </select>
                       <input
-                        id="guest-name"
-                        type="text"
-                        placeholder="Your first name"
-                        value={guestName}
-                        onChange={(e) => setGuestName(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleRsvp()}
-                        maxLength={50}
+                        id="guest-phone"
+                        type="tel"
+                        placeholder="12 345 6789"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
                         className="flex-1 px-3 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors"
                       />
-                      <button
-                        onClick={handleRsvp}
-                        disabled={!guestName.trim() || isSubmitting}
-                        className="px-4 py-2.5 bg-[#FF774D] text-white rounded-lg text-sm font-semibold hover:bg-[#E5693F] disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
-                      >
-                        {isSubmitting ? (
-                          <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          "I'm In!"
-                        )}
-                      </button>
                     </div>
+
+                    {/* Submit button */}
+                    <button
+                      onClick={handleRsvp}
+                      disabled={!canSubmit || isSubmitting}
+                      className="w-full px-4 py-3 bg-[#FF774D] text-white rounded-xl text-sm font-bold hover:bg-[#E5693F] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {isSubmitting ? (
+                        <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        "I'm In!"
+                      )}
+                    </button>
+
                     {error && (
                       <p className="text-xs text-red-500 mt-1.5">{error}</p>
                     )}
+
+                    <p className="text-[10px] text-[#BBB] mt-2 text-center">
+                      Your phone is used to link your RSVP when you sign up. Never shared.
+                    </p>
                   </div>
 
                   {/* Existing Download CTA */}

@@ -55,3 +55,66 @@ export async function getActivityByShareCode(shareCode: string): Promise<SharedA
     return null;
   }
 }
+
+// ============================================================================
+// Web RSVP Types & Helpers
+// ============================================================================
+
+export interface WebRsvpResponse {
+  claim_token: string;
+  guest_name: string;
+  activity_title: string;
+  participant_count: number;
+  participant_names: string[];
+  spots_remaining: number;
+  message_count: number;
+}
+
+export interface RsvpTeaserResponse {
+  participant_count: number;
+  participant_names: string[];
+  creator_name: string;
+  spots_remaining: number;
+  max_participants: number;
+  message_count: number;
+}
+
+export async function createWebRsvp(
+  activityId: string,
+  guestName: string,
+  ipHash: string | null,
+  phoneHash: string | null = null
+): Promise<WebRsvpResponse> {
+  const { data, error } = await supabase.rpc('create_web_rsvp', {
+    p_activity_id: activityId,
+    p_guest_name: guestName,
+    p_ip_hash: ipHash,
+    p_phone_hash: phoneHash,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as WebRsvpResponse;
+}
+
+export async function getActivityRsvpTeaser(
+  activityId: string
+): Promise<RsvpTeaserResponse | null> {
+  try {
+    const { data, error } = await supabase.rpc('get_activity_rsvp_teaser', {
+      p_activity_id: activityId,
+    });
+
+    if (error) {
+      console.error('RSVP teaser error:', error);
+      return null;
+    }
+
+    return data as RsvpTeaserResponse;
+  } catch (err) {
+    console.error('Error fetching RSVP teaser:', err);
+    return null;
+  }
+}
