@@ -151,6 +151,10 @@ const sections = [
         subtitle: "Our Intellectual Property",
         content: "Konectr owns the app, code, design, branding, trademarks, logos, and all proprietary technology including matching algorithms.",
       },
+      {
+        subtitle: "Third-Party Image Credits",
+        content: "Certain images used within the Konectr app and website, including splash screen photographs, are sourced from Unsplash and Unsplash+ under their respective licences. These images are not the property of Konectr and remain the intellectual property of their respective photographers. If you are a photographer and would like your image removed, please contact us at hello@konectr.app and we will remove it promptly.",
+      },
     ],
   },
   {
