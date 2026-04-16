@@ -744,10 +744,29 @@ Web fallback page for activity share links. When users share activities, recipie
 | File | Purpose |
 |------|---------|
 | `src/app/a/[code]/page.tsx` | Activity preview page (server-rendered) |
+| `src/app/r/[code]/page.tsx` | Referral landing page (server-rendered) |
 | `src/lib/supabase.ts` | Supabase client + `getActivityByShareCode()` helper |
+| `src/lib/smartLink.ts` | Smart Download CTA helper (deep-link + store fallback) |
+| `src/components/SmartDownloadLink.tsx` | Client-only `<a>` wrapper for use in server components |
 | `public/logos/konectr-icon-orange.svg` | Orange Konectr icon for header |
 | `public/.well-known/apple-app-site-association` | iOS Universal Links |
 | `public/.well-known/assetlinks.json` | Android App Links |
+
+### Smart Download CTAs (2026-04-16)
+
+Download buttons on `/a/[code]` and `/r/[code]` attempt the Konectr deep link first
+(`konectr://activity/{code}` / `konectr://referral/{code}`), falling back to the
+platform store after 2s if the app isn't installed. Visibility-change listener
+cancels the fallback once the app takes focus.
+
+Env vars (optional — set once app is live on stores):
+
+| Variable | Fallback | Platform |
+|----------|----------|----------|
+| `NEXT_PUBLIC_IOS_STORE_URL` | `https://konectr.app/#waitlist` | iOS |
+| `NEXT_PUBLIC_ANDROID_STORE_URL` | `https://konectr.app/#waitlist` | Android |
+
+Desktop visitors always route to the waitlist page — there's no app to download on desktop.
 
 ### Page States
 
@@ -968,6 +987,7 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-04-16 | Smart Download CTAs (WA Funnel Branch 1) | Fixed 3 dead `href="#"` placeholders on `/a/[code]` and `/r/[code]` Download buttons. New `src/lib/smartLink.ts` helper attempts `konectr://activity\|referral/{code}` deep link first, falls back to platform store after 2s with a visibility-change cancel so users with the app don't get bumped to the store. New `src/components/SmartDownloadLink.tsx` client-only wrapper for use in server components. Env vars `NEXT_PUBLIC_IOS_STORE_URL` / `NEXT_PUBLIC_ANDROID_STORE_URL` configurable (default: waitlist). 2 new + 2 modified + CLAUDE.md, 0 errors. |
 | 2026-03-01 | FAQ v3 Content Review | Comprehensive content audit: removed 4 duplicates, fixed 6 accuracy issues (E2E encryption claim, photo verification qualifier, strike thresholds, hosting gate, matching flow, Circle description), added 9 new questions (Pulse, referrals, profile completeness, Terms/Privacy, in-progress activities, XP, tiers, sharing referral link, feedback board), rewrote 5 answers. Added Terms of Service + Privacy Policy to helpful resources. 54 → 58 questions. Archived v2 state. 1 new file, 2 modified, 0 build errors. |
 | 2026-02-28 | Venue Discovery Interview | Mobile-optimized 6-step form for face-to-face venue interviews. 33 fields (selects during conversation, text boxes in debrief). Submissions → Notion database via API route. localStorage auto-save. Conversational labels with script hints. Hidden from search/navigation. New "Slow Periods" field for scheduling intelligence. 4 new files, 1 modified (middleware). |
 | 2026-02-27 | SEO, AEO & Marketing Optimization | 3 new structured data types (SoftwareApplication, BreadcrumbList, HowTo). 9 keyword-targeted meta descriptions. Blog author → Person (E-E-A-T). 8 new AEO FAQ questions (46→54). SEO utility file (`src/lib/seo.ts`). 6 marketing strategy docs in `Marketing/seo/`. 12 files modified, 1 new, 0 build errors. |

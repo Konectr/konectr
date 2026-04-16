@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
+import { getSmartDownloadProps } from '@/lib/smartLink';
 
 // Brand assets
 const LOGO_ORANGE = 'https://cdn.prod.website-files.com/6857df346d4e4bd260786fbd/686328457e3945d8a146fbaf_Konectr_Orange_SSVG_2.avif';
@@ -239,7 +240,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             <h1 className="text-xl font-bold text-[#1F1F1F] mb-2">Activity not found</h1>
             <p className="text-[#666] text-sm">This link may have expired or the activity was removed.</p>
           </div>
-          <DownloadButton />
+          <DownloadButton shareCode={shareCode} />
         </div>
         <Footer />
       </div>
@@ -266,7 +267,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             <h1 className="text-xl font-bold text-[#1F1F1F] mb-2">This activity has ended</h1>
             <p className="text-[#666] text-sm">Download the app to discover more activities.</p>
           </div>
-          <DownloadButton />
+          <DownloadButton shareCode={shareCode} />
         </div>
         <Footer />
       </div>
@@ -401,7 +402,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                   Download Konectr to join the conversation and get notified
                 </p>
                 <a
-                  href="#"
+                  {...getSmartDownloadProps(shareCode)}
                   className="inline-flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-[#E5693F] transition-colors shadow-sm"
                 >
                   <AppleIcon />
@@ -438,7 +439,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
               {spotsRemaining <= 0 && activity.max_participants > 0 ? (
                 <div className="text-center">
-                  <DownloadButton />
+                  <DownloadButton shareCode={shareCode} />
                   <OpenInApp deepLink={deepLink} />
                 </div>
               ) : (
@@ -516,7 +517,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                   </div>
 
                   <a
-                    href="#"
+                    {...getSmartDownloadProps(shareCode)}
                     className="flex items-center justify-center gap-2 w-full bg-[#1F1F1F] text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-[#333] transition-colors"
                   >
                     <AppleIcon />
@@ -539,10 +540,10 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
 // Shared Sub-Components
 // =============================================
 
-function DownloadButton() {
+function DownloadButton({ shareCode }: { shareCode: string }) {
   return (
     <a
-      href="#"
+      {...getSmartDownloadProps(shareCode)}
       className="inline-flex items-center gap-2 bg-[#1F1F1F] text-white py-2.5 px-5 rounded-lg text-sm font-medium hover:bg-[#333] transition-colors"
     >
       <AppleIcon />
