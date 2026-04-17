@@ -11,6 +11,9 @@ const NAME_REGEX = /^[\p{L}\s'\-]+$/u;
 // Phone digits only (after country code is stripped)
 const PHONE_DIGITS_REGEX = /^\d{7,15}$/;
 
+// Tight RFC-lite email regex (same server-side regex as RPC)
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 function hashIp(ip: string): string {
   return createHash('sha256').update(ip).digest('hex');
 }
@@ -33,7 +36,7 @@ function normalizePhone(countryCode: string, phoneNumber: string): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { share_code, guest_name, phone_number, country_code } = body;
+    const { share_code, guest_name, phone_number, country_code, email } = body;
 
     // Validate required fields
     if (!share_code || typeof share_code !== 'string') {
@@ -91,6 +94,19 @@ export async function POST(request: NextRequest) {
       phoneHash = hashPhone(e164Phone);
     }
 
+    // Validate email (optional — if provided, must be valid RFC-lite)
+    let normalizedEmail: string | null = null;
+    if (email && typeof email === 'string' && email.trim()) {
+      const candidate = email.trim().toLowerCase();
+      if (candidate.length > 254 || !EMAIL_REGEX.test(candidate)) {
+        return NextResponse.json(
+          { error: 'Please enter a valid email' },
+          { status: 400 }
+        );
+      }
+      normalizedEmail = candidate;
+    }
+
     const activity = await getActivityByShareCode(share_code);
 
     if (!activity) {
@@ -105,8 +121,8 @@ export async function POST(request: NextRequest) {
     const ip = forwardedFor?.split(',')[0]?.trim() || 'unknown';
     const ipHash = hashIp(ip);
 
-    // Create RSVP via Supabase RPC (now with phone hash)
-    const result = await createWebRsvp(activity.id, trimmedName, ipHash, phoneHash);
+    // Create RSVP via Supabase RPC (with phone hash + optional email)
+    const result = await createWebRsvp(activity.id, trimmedName, ipHash, phoneHash, normalizedEmail);
 
     return NextResponse.json(result);
   } catch (err: unknown) {

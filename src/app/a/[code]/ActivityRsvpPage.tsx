@@ -10,6 +10,7 @@ import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
 import { getSmartDownloadProps, detectPlatform, type Platform } from '@/lib/smartLink';
 import AndroidWaitlistCTA from './AndroidWaitlistCTA';
+import WebChatPanel from './WebChatPanel';
 
 // Brand assets
 const LOGO_ORANGE = 'https://cdn.prod.website-files.com/6857df346d4e4bd260786fbd/686328457e3945d8a146fbaf_Konectr_Orange_SSVG_2.avif';
@@ -72,6 +73,7 @@ interface StoredUserProfile {
   guestName: string;
   phoneNumber: string;
   countryCode: string;
+  email?: string;
 }
 
 function getStoredRsvp(shareCode: string): StoredRsvp | null {
@@ -127,6 +129,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   const [guestName, setGuestName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+60');
+  const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -151,6 +154,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       setGuestName(userProfile.guestName);
       setPhoneNumber(userProfile.phoneNumber);
       setCountryCode(userProfile.countryCode);
+      if (userProfile.email) setEmail(userProfile.email);
     }
 
     // Check if already RSVP'd to this activity
@@ -160,12 +164,27 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       setRsvpState('post-rsvp');
     } else {
       setRsvpState('pre-rsvp');
-      // Fetch fresh teaser data only for pre-RSVP users
+    }
+
+    // Fetch fresh teaser data for both states so participant names + spot count
+    // reflect reality (B2: first-to-RSVP was stuck on stale snapshot).
+    getActivityRsvpTeaser(activity.id).then((data) => {
+      if (data) setTeaserData(data);
+    });
+  }, [activity, shareCode]);
+
+  // Poll teaser every 5s while on the page so "X, Y joining" + spots stay live
+  // without manual refresh (B4). Stops when tab is hidden to save requests.
+  useEffect(() => {
+    if (!activity) return;
+    const id = setInterval(() => {
+      if (typeof document !== 'undefined' && document.hidden) return;
       getActivityRsvpTeaser(activity.id).then((data) => {
         if (data) setTeaserData(data);
       });
-    }
-  }, [activity, shareCode]);
+    }, 5_000);
+    return () => clearInterval(id);
+  }, [activity]);
 
   const handleRsvp = useCallback(async () => {
     if (!guestName.trim() || !activity) return;
@@ -174,7 +193,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     setError(null);
 
     try {
-      // Build request body — phone is optional
+      // Build request body — phone and email are optional
       const body: Record<string, string> = {
         share_code: shareCode,
         guest_name: guestName.trim(),
@@ -182,6 +201,9 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       if (phoneNumber.trim()) {
         body.phone_number = phoneNumber.trim();
         body.country_code = countryCode;
+      }
+      if (email.trim()) {
+        body.email = email.trim();
       }
 
       const res = await fetch('/api/rsvp', {
@@ -214,6 +236,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
         guestName: guestName.trim(),
         phoneNumber: phoneNumber.trim(),
         countryCode,
+        email: email.trim() || undefined,
       });
 
       setRsvpState('post-rsvp');
@@ -222,7 +245,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [guestName, phoneNumber, countryCode, activity, shareCode]);
+  }, [guestName, phoneNumber, countryCode, email, activity, shareCode]);
 
   const copyClaimCode = useCallback(() => {
     if (!storedRsvp) return;
@@ -332,33 +355,33 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             </h1>
           </div>
 
-          {/* Details */}
-          <div className="space-y-2.5 text-sm text-[#1F1F1F]">
-            <div className="flex items-center gap-2.5">
-              <span className="text-[#999] w-5 text-center">👤</span>
-              <span>Hosted by <strong>{activity.creator_name}</strong></span>
+          {/* Details — 2-col grid for scanability */}
+          <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-sm text-[#1F1F1F]">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-[#999] w-5 text-center shrink-0">👤</span>
+              <span className="truncate">Hosted by <strong>{activity.creator_name}</strong></span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <span className="text-[#999] w-5 text-center">📅</span>
-              <span>{formatDate(activity.start_time)} · {formatTime(activity.start_time)}</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-[#999] w-5 text-center shrink-0">📅</span>
+              <span className="truncate">{formatDate(activity.start_time)} · {formatTime(activity.start_time)}</span>
             </div>
             {activity.venue_name && (
-              <div className="flex items-center gap-2.5">
-                <span className="text-[#FF774D] w-5 text-center">📍</span>
-                <span>{activity.venue_name}</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[#FF774D] w-5 text-center shrink-0">📍</span>
+                <span className="truncate">{activity.venue_name}</span>
               </div>
             )}
             {/* Spots indicator — uses teaser count (confirmed + web RSVPs) */}
-            <div className="flex items-center gap-2.5">
-              <span className="text-[#999] w-5 text-center">👥</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-[#999] w-5 text-center shrink-0">👥</span>
               {spotsRemaining <= 0 && activity.max_participants > 0 ? (
-                <span className="text-[#E53E3E] font-medium">Activity is full</span>
+                <span className="text-[#E53E3E] font-medium truncate">Activity is full</span>
               ) : activity.max_participants > 0 ? (
-                <span>
+                <span className="truncate">
                   <strong>{spotsRemaining}</strong> of {activity.max_participants} spots left
                 </span>
               ) : (
-                <span>Open · <strong>{participantCount}</strong> joined</span>
+                <span className="truncate">Open · <strong>{participantCount}</strong> joined</span>
               )}
             </div>
           </div>
@@ -413,6 +436,14 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                   <span className="font-bold text-[#1F1F1F]">You&apos;re in, {storedRsvp.guestName}!</span>
                 </div>
                 <p className="text-[#666] text-xs ml-7">Your spot is reserved</p>
+              </div>
+
+              {/* Activity Chatter — web chat panel (beta; gated server-side by feature flag) */}
+              <div className="mb-4">
+                <WebChatPanel
+                  claimToken={storedRsvp.claimToken}
+                  guestName={storedRsvp.guestName}
+                />
               </div>
 
               {/* Download / Android Waitlist CTA */}
@@ -519,6 +550,20 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                         className="flex-1 px-3 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors"
                       />
                     </div>
+
+                    {/* Email (optional) — for confirmation + reminders */}
+                    <input
+                      id="guest-email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      placeholder="Email (optional) — get a reminder"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
+                      maxLength={254}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors mb-3"
+                    />
 
                     {/* Submit button */}
                     <button
