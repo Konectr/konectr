@@ -8,7 +8,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
-import { getSmartDownloadProps } from '@/lib/smartLink';
+import { getSmartDownloadProps, detectPlatform, type Platform } from '@/lib/smartLink';
+import AndroidWaitlistCTA from './AndroidWaitlistCTA';
 
 // Brand assets
 const LOGO_ORANGE = 'https://cdn.prod.website-files.com/6857df346d4e4bd260786fbd/686328457e3945d8a146fbaf_Konectr_Orange_SSVG_2.avif';
@@ -130,6 +131,12 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [teaserData, setTeaserData] = useState<RsvpTeaserResponse | null>(null);
+  const [platform, setPlatform] = useState<Platform | null>(null);
+
+  // Detect platform on mount (SSR-safe)
+  useEffect(() => {
+    setPlatform(detectPlatform());
+  }, []);
 
   // Check localStorage on mount + auto-fill + fetch teaser
   useEffect(() => {
@@ -240,7 +247,11 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             <h1 className="text-xl font-bold text-[#1F1F1F] mb-2">Activity not found</h1>
             <p className="text-[#666] text-sm">This link may have expired or the activity was removed.</p>
           </div>
-          <DownloadButton shareCode={shareCode} />
+          {platform === 'android' ? (
+            <AndroidWaitlistCTA shareCode={shareCode} />
+          ) : (
+            <DownloadButton shareCode={shareCode} />
+          )}
         </div>
         <Footer />
       </div>
@@ -265,9 +276,17 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
           <div className="mb-6">
             <div className="text-5xl mb-3">⏰</div>
             <h1 className="text-xl font-bold text-[#1F1F1F] mb-2">This activity has ended</h1>
-            <p className="text-[#666] text-sm">Download the app to discover more activities.</p>
+            <p className="text-[#666] text-sm">
+              {platform === 'android'
+                ? 'Konectr is iOS-only for now — get notified when Android launches.'
+                : 'Download the app to discover more activities.'}
+            </p>
           </div>
-          <DownloadButton shareCode={shareCode} />
+          {platform === 'android' ? (
+            <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+          ) : (
+            <DownloadButton shareCode={shareCode} />
+          )}
         </div>
         <Footer />
       </div>
@@ -396,30 +415,38 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                 <p className="text-[#666] text-xs ml-7">Your spot is reserved</p>
               </div>
 
-              {/* Download CTA */}
-              <div className="bg-[#F9FAFB] rounded-xl p-4 mb-4 text-center">
-                <p className="text-xs text-[#555] font-medium mb-3">
-                  Download Konectr to join the conversation and get notified
-                </p>
-                <a
-                  {...getSmartDownloadProps(shareCode)}
-                  className="inline-flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-[#E5693F] transition-colors shadow-sm"
-                >
-                  <AppleIcon />
-                  Download Konectr
-                </a>
-              </div>
+              {/* Download / Android Waitlist CTA */}
+              {platform === 'android' ? (
+                <div className="mb-4">
+                  <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+                </div>
+              ) : (
+                <div className="bg-[#F9FAFB] rounded-xl p-4 mb-4 text-center">
+                  <p className="text-xs text-[#555] font-medium mb-3">
+                    Download Konectr to join the conversation and get notified
+                  </p>
+                  <a
+                    {...getSmartDownloadProps(shareCode)}
+                    className="inline-flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-[#E5693F] transition-colors shadow-sm"
+                  >
+                    <AppleIcon />
+                    Download Konectr
+                  </a>
+                </div>
+              )}
 
-              {/* Open in App */}
-              <div className="text-center">
-                <a
-                  href={deepLink}
-                  className="inline-flex items-center gap-1.5 text-[#FF774D] font-medium text-sm hover:underline"
-                >
-                  Already have the app? Open in Konectr
-                  <ExternalIcon />
-                </a>
-              </div>
+              {/* Open in App — only for iOS/desktop (Android has no app to open) */}
+              {platform !== 'android' && (
+                <div className="text-center">
+                  <a
+                    href={deepLink}
+                    className="inline-flex items-center gap-1.5 text-[#FF774D] font-medium text-sm hover:underline"
+                  >
+                    Already have the app? Open in Konectr
+                    <ExternalIcon />
+                  </a>
+                </div>
+              )}
 
               {/* Claim code — de-emphasized fallback */}
               <div className="mt-4 pt-3 border-t border-[#F0F0F0] text-center">
@@ -439,8 +466,14 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
             <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
               {spotsRemaining <= 0 && activity.max_participants > 0 ? (
                 <div className="text-center">
-                  <DownloadButton shareCode={shareCode} />
-                  <OpenInApp deepLink={deepLink} />
+                  {platform === 'android' ? (
+                    <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+                  ) : (
+                    <>
+                      <DownloadButton shareCode={shareCode} />
+                      <OpenInApp deepLink={deepLink} />
+                    </>
+                  )}
                 </div>
               ) : (
                 <>
@@ -509,22 +542,28 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                     </p>
                   </div>
 
-                  {/* Download CTA */}
+                  {/* Download / Android Waitlist CTA */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex-1 h-px bg-[#F0F0F0]" />
                     <span className="text-xs text-[#CCC]">or</span>
                     <div className="flex-1 h-px bg-[#F0F0F0]" />
                   </div>
 
-                  <a
-                    {...getSmartDownloadProps(shareCode)}
-                    className="flex items-center justify-center gap-2 w-full bg-[#1F1F1F] text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-[#333] transition-colors"
-                  >
-                    <AppleIcon />
-                    Download on App Store
-                  </a>
+                  {platform === 'android' ? (
+                    <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+                  ) : (
+                    <>
+                      <a
+                        {...getSmartDownloadProps(shareCode)}
+                        className="flex items-center justify-center gap-2 w-full bg-[#1F1F1F] text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-[#333] transition-colors"
+                      >
+                        <AppleIcon />
+                        Download on App Store
+                      </a>
 
-                  <OpenInApp deepLink={deepLink} />
+                      <OpenInApp deepLink={deepLink} />
+                    </>
+                  )}
                 </>
               )}
             </div>

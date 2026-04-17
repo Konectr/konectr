@@ -3,12 +3,17 @@
 
 import type { MouseEvent } from 'react';
 
-type Platform = 'ios' | 'android' | 'desktop';
+export type Platform = 'ios' | 'android' | 'desktop';
 
 const WAITLIST_FALLBACK = 'https://konectr.app/#waitlist';
 const DEEP_LINK_FALLBACK_MS = 2000;
 
-function detectPlatform(): Platform {
+/**
+ * Detect the user's platform from the User-Agent.
+ * SSR-safe: returns 'desktop' when navigator is unavailable.
+ * Components should call this inside a useEffect to avoid hydration mismatch.
+ */
+export function detectPlatform(): Platform {
   if (typeof navigator === 'undefined') return 'desktop';
   const ua = navigator.userAgent || '';
   if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
