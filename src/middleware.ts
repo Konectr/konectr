@@ -19,7 +19,9 @@ export const config = {
     // - /_vercel (Vercel internals)
     // - /a (activity share links - no locale prefix)
     // - /r (referral links - no locale prefix)
+    // - /venue-interview (hidden form - no locale prefix)
+    // - /unsubscribe (email unsub handler - no locale prefix)
     // - Static files (images, etc.)
-    '/((?!api|_next|_vercel|a/|r/|venue-interview|.*\\..*).*)'
+    '/((?!api|_next|_vercel|a/|r/|venue-interview|unsubscribe|.*\\..*).*)'
   ]
 };

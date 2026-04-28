@@ -43,6 +43,8 @@ konectr-web/
 │   │   │   └── safety/      # Safety page
 │   │   ├── a/[code]/        # Activity share links (no locale)
 │   │   ├── api/venue-interview/ # Venue interview → Notion API
+│   │   ├── api/calendar/[code]/ # .ics generator for activity (no locale)
+│   │   ├── unsubscribe/     # Token-based one-click email unsub (no locale)
 │   │   ├── venue-interview/ # Venue discovery interview form
 │   │   ├── not-found.tsx    # 404 page (Flappy Konectr game)
 │   │   ├── globals.css      # Global styles
@@ -208,12 +210,20 @@ npm run lint
 
 ## Deployment Commands
 
+> ⚠️ **Git auto-deploy is BROKEN as of 2026-04-27.** Pushing to `nextjs-website` no longer triggers a Vercel production build (latest auto-deploy was 9 days stale on Apr 26). Until the Vercel ↔ GitHub integration is fixed, **always deploy manually** via `vercel --prod`. Verify with `curl -sL https://konectr.app/en/ | grep "Launching"` before assuming the change is live.
+
 ```bash
-# Deploy to production
-vercel --prod
+# Deploy to production (use this — git auto-deploy is broken)
+cd /Users/devsmac/Konectr/Development/konectr-web && vercel --prod --yes
 
 # Deploy preview (generates unique URL)
 vercel
+
+# Verify production is up to date
+curl -sL https://konectr.app/en/ | grep "Launching"
+
+# List recent production deploys (check freshness)
+vercel ls --prod
 
 # List all domains
 vercel domains ls
@@ -987,7 +997,9 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 | Date | Version | Changes |
 |------|---------|---------|
-| 2026-04-26 | Launch date update | `src/config/brand.ts` — `launchDate` "February 2026" → "April 2026" to match locked Public Beta date (Apr 28, 2026). Single-line text change, awaiting deploy. |
+| 2026-04-29 | Email infra: /unsubscribe + /api/calendar/[code] + /images/email/ | New `src/app/unsubscribe/page.tsx` — token-based one-click unsubscribe (uses `unsubscribe_by_token` Supabase RPC, flips `profiles.email_notifications_enabled` to FALSE on token match). New `src/app/api/calendar/[code]/route.ts` — fetches activity via `get_activity_by_share_code` and returns RFC 5545 `.ics` file (Content-Type: text/calendar). Both routes excluded from `next-intl` locale routing in `src/middleware.ts`. New `public/images/email/` directory with 5 assets: `logo.png` (500×500 Konectr "K" mark from Design folder), `cafe-friends.jpg` (cafe-chill, ~256KB), `asian-friends-park.jpg` (KL friends, ~340KB), `friends-group.jpg` (celebration, ~160KB), `fitness-class.jpg` (workouts, ~270KB). Powers the marketing-grade email templates in `Development/supabase/functions/send-email/index.ts` v10. All photos compressed via `sips -Z 1200 -s formatOptions 75`. |
+| 2026-04-27 | Launch date deployed + auto-deploy issue flagged | Manual `vercel --prod` to push `launchDate: "April 2026"` live. Discovered git auto-deploy from `nextjs-website` had been silently broken for ~9 days — push from Apr 26 never triggered a build. CLAUDE.md updated with warning + manual deploy as default. Verified konectr.app now shows "Launching April 2026". |
+| 2026-04-26 | Launch date source change | `src/config/brand.ts` — `launchDate` "February 2026" → "April 2026" to match locked Public Beta date (Apr 28, 2026). Pushed via git (deploy did not auto-trigger — see 04-27 entry). |
 | 2026-04-17 | Web RSVP Bridge — Phase 3 (Web Chat Write + Digest) | `ActivityRsvpPage` post-RSVP state now renders a new `WebChatPanel` (polling every 15s) that lets any web RSVP guest (iOS, Android, desktop) post into the Activity Chatter group chat — 5-message cap per RSVP enforced server-side. New API routes `/api/chat/send` + `/api/chat/history` wrap `post_web_chat_message` / `get_web_chat_messages` RPCs. Panel shows "X left" counter, orange self-bubbles, "via web" badge on other guests' messages. After 5 messages, input disables with "coming soon" CTA. Protected by `feature_flags.web_chat_write_enabled` kill switch (server-side). 2 new API routes + 1 new component + `ActivityRsvpPage.tsx` wiring. |
 | 2026-04-17 | Web RSVP Bridge — Phase 2 (Email Lifecycle) | Optional email field added to RSVP form. `/api/rsvp` accepts email, passes to new 5-param `create_web_rsvp` RPC overload. Universal Brevo email sequence: confirmation immediate, 24h reminder if >25h out, day-of 3h before start, change/cancellation when host edits activity. `src/lib/supabase.ts:createWebRsvp` signature extended with `email` param. Applies to ALL platforms (iOS, Android, desktop) — removes "dark after confirmation" problem. 3 modified files, 0 breaking changes for non-email callers. |
 | 2026-04-17 | Android Web RSVP Bridge — Phase 1 | Android users on `/a/[code]` share links now see "Coming soon to Android — get notified" CTA with email capture instead of a broken App Store button. 5 CTA render sites branch on platform (post-RSVP, pre-RSVP, Not Found, Ended, Activity Full). New `AndroidWaitlistCTA.tsx` component (email input + success state + localStorage persistence). New `/api/android-waitlist` POST route → `register_android_waitlist` RPC (SECURITY DEFINER, idempotent on email, writes to `waitlist_users` with `referral_source='android_rsvp_bridge'`, `utm_campaign=share_code` for viral attribution). `smartLink.ts` now exports `detectPlatform` + `Platform` type for component use. SSR renders iOS fallback (hydration-safe); client-side `useEffect` swaps to Android CTA on mount. iOS flow unchanged, no regression. Phases 2 (Brevo email sequence for all web RSVPs) + 3 (web chat write into Activity Chatter with 5-msg cap + digest) deferred to follow-up sprints. 1 new migration, 2 new + 2 modified files, 0 new TS errors. |
@@ -1014,8 +1026,8 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 ---
 
-**Last Deployed**: 2026-02-28
-**Deployment Method**: `git push origin main:nextjs-website` (Vercel auto-deploys)
+**Last Deployed**: 2026-04-27 (manual via `vercel --prod`)
+**Deployment Method**: ⚠️ Manual only — `vercel --prod --yes` (git auto-deploy is currently broken, see Deployment Commands section)
 
 ---
 
