@@ -3,14 +3,37 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
+import { detectPlatform, type Platform } from "@/lib/smartLink";
+
+// TestFlight Public Link — set via Vercel env when the beta link is generated
+// in App Store Connect. Falls back to #waitlist if not configured.
+const TESTFLIGHT_URL = process.env.NEXT_PUBLIC_TESTFLIGHT_URL || "#waitlist";
+const HAS_TESTFLIGHT = TESTFLIGHT_URL !== "#waitlist";
+
+type PosthogLike = { capture: (event: string, props?: Record<string, unknown>) => void };
+function trackTestFlightClick(platform: Platform | null) {
+  if (typeof window === "undefined") return;
+  const ph = (window as unknown as { posthog?: PosthogLike }).posthog;
+  ph?.capture("clicked_testflight_cta", { platform: platform ?? "unknown", source: "home_hero" });
+}
 
 export function Hero() {
   const t = useTranslations("home.hero");
+  const [platform, setPlatform] = useState<Platform | null>(null);
+
+  useEffect(() => {
+    setPlatform(detectPlatform());
+  }, []);
+
+  // iOS visitors get the TestFlight CTA once the env var is wired.
+  // Everyone else (Android, desktop, and iOS before the link exists) routes to waitlist.
+  const showTestFlightCta = HAS_TESTFLIGHT && platform === "ios";
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -73,17 +96,28 @@ export function Hero() {
           />
         </motion.div>
 
-        {/* Badge */}
+        {/* Badge — switches to TestFlight signal when the public link is wired */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
           className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-5 py-2.5 rounded-full mb-8"
         >
-          <span className="text-lg">✨</span>
-          <span className="text-white font-semibold text-sm">
-            {t("launching", { date: brand.launchDate })}
-          </span>
+          {HAS_TESTFLIGHT ? (
+            <>
+              <span className="text-lg">🧪</span>
+              <span className="text-white font-semibold text-sm">
+                TestFlight beta is live · iPhone only for now
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="text-lg">✨</span>
+              <span className="text-white font-semibold text-sm">
+                {t("launching", { date: brand.launchDate })}
+              </span>
+            </>
+          )}
         </motion.div>
 
         {/* Headline */}
@@ -114,16 +148,33 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Button
-            size="lg"
-            className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
-            asChild
-          >
-            <a href="#waitlist">
-              {t("joinWaitlist")}
-              <span className="ml-2">→</span>
-            </a>
-          </Button>
+          {showTestFlightCta ? (
+            <Button
+              size="lg"
+              className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
+              asChild
+            >
+              <a
+                id="cta-testflight"
+                href={TESTFLIGHT_URL}
+                onClick={() => trackTestFlightClick(platform)}
+              >
+                Open the beta on iPhone
+                <span className="ml-2">→</span>
+              </a>
+            </Button>
+          ) : (
+            <Button
+              size="lg"
+              className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
+              asChild
+            >
+              <a href="#waitlist">
+                {t("joinWaitlist")}
+                <span className="ml-2">→</span>
+              </a>
+            </Button>
+          )}
           <Button
             size="lg"
             variant="outline"
@@ -135,6 +186,18 @@ export function Hero() {
             </a>
           </Button>
         </motion.div>
+
+        {/* TestFlight context line — only when link is live and visitor is on iPhone */}
+        {showTestFlightCta && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="text-white/80 text-xs mt-4"
+          >
+            Installs via Apple TestFlight · ~30 seconds · Android coming next
+          </motion.p>
+        )}
 
         {/* Venue showcase - Activity pills */}
         <motion.div

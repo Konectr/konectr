@@ -13,7 +13,6 @@ import AndroidWaitlistCTA from './AndroidWaitlistCTA';
 import WebChatPanel from './WebChatPanel';
 
 // Brand assets
-const LOGO_ORANGE = 'https://cdn.prod.website-files.com/6857df346d4e4bd260786fbd/686328457e3945d8a146fbaf_Konectr_Orange_SSVG_2.avif';
 const LOGO_ICON_ORANGE = '/logos/konectr-icon-orange.svg';
 
 // Category emoji mapping (synced with mobile app)
@@ -22,6 +21,24 @@ const categoryEmojis: Record<string, string> = {
   outdoors: '⛰️', entertainment: '🎭', chill: '☕', active: '💪',
   focus: '🎯', creative: '🎨', adventure: '⛰️', social: '🎉',
 };
+
+// Hero photo by category — re-uses the same compressed assets the email
+// templates render so the cross-channel brand feel stays consistent.
+const HERO_PHOTOS: Record<string, string> = {
+  cafe: '/images/email/cafe-friends.jpg',
+  chill: '/images/email/cafe-friends.jpg',
+  restaurant: '/images/email/friends-group.jpg',
+  bar: '/images/email/friends-group.jpg',
+  social: '/images/email/friends-group.jpg',
+  entertainment: '/images/email/friends-group.jpg',
+  creative: '/images/email/friends-group.jpg',
+  focus: '/images/email/cafe-friends.jpg',
+  fitness: '/images/email/fitness-class.jpg',
+  active: '/images/email/fitness-class.jpg',
+  outdoors: '/images/email/asian-friends-park.jpg',
+  adventure: '/images/email/asian-friends-park.jpg',
+};
+const DEFAULT_HERO = '/images/email/asian-friends-park.jpg';
 
 // Country codes (synced with mobile: auth_constants.dart)
 const countryCodes = [
@@ -36,6 +53,10 @@ function getCategoryEmoji(category: string): string {
   return categoryEmojis[category.toLowerCase()] || '📌';
 }
 
+function getHeroPhoto(category: string): string {
+  return HERO_PHOTOS[category.toLowerCase()] || DEFAULT_HERO;
+}
+
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
@@ -48,6 +69,43 @@ function formatTime(dateString: string): string {
   return date.toLocaleTimeString('en-US', {
     hour: 'numeric', minute: '2-digit', hour12: true,
   });
+}
+
+// Friendly day label for the hero overlay — "Tonight", "Tomorrow", "Friday".
+function getDayLabel(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfTomorrow = new Date(startOfToday); startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+  const startOfDayAfter = new Date(startOfToday); startOfDayAfter.setDate(startOfDayAfter.getDate() + 2);
+
+  if (date >= startOfToday && date < startOfTomorrow) {
+    return date.getHours() >= 17 ? 'TONIGHT' : 'TODAY';
+  }
+  if (date >= startOfTomorrow && date < startOfDayAfter) return 'TOMORROW';
+  return date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+}
+
+// Natural-language relative day for the datetime card — "Tonight", "Tomorrow",
+// "This Friday", "Next Wednesday", or the bare weekday for activities ≥2 weeks out.
+function getRelativeDayPhrase(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.round((target.getTime() - startOfToday.getTime()) / 86_400_000);
+
+  if (diffDays <= 0) return date.getHours() >= 17 ? 'Tonight' : 'Today';
+  if (diffDays === 1) return 'Tomorrow';
+  const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+  if (diffDays <= 6) return `This ${weekday}`;
+  if (diffDays <= 13) return `Next ${weekday}`;
+  return weekday;
+}
+
+function formatShortDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function isActivityEnded(endTime: string): boolean {
@@ -130,6 +188,8 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+60');
   const [email, setEmail] = useState('');
+  const [showOptional, setShowOptional] = useState(false);
+  const [showAllParticipants, setShowAllParticipants] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -148,16 +208,16 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       return;
     }
 
-    // Auto-fill from stored user profile (repeat RSVPs)
     const userProfile = getStoredUserProfile();
     if (userProfile) {
       setGuestName(userProfile.guestName);
       setPhoneNumber(userProfile.phoneNumber);
       setCountryCode(userProfile.countryCode);
       if (userProfile.email) setEmail(userProfile.email);
+      // If we already have any optional data, surface the disclosure expanded
+      if (userProfile.phoneNumber || userProfile.email) setShowOptional(true);
     }
 
-    // Check if already RSVP'd to this activity
     const existing = getStoredRsvp(shareCode);
     if (existing) {
       setStoredRsvp(existing);
@@ -166,15 +226,14 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       setRsvpState('pre-rsvp');
     }
 
-    // Fetch fresh teaser data for both states so participant names + spot count
-    // reflect reality (B2: first-to-RSVP was stuck on stale snapshot).
+    // Fresh teaser data for both states so participant names + spot count
+    // reflect reality (B2 fix: stale snapshot after first-to-RSVP).
     getActivityRsvpTeaser(activity.id).then((data) => {
       if (data) setTeaserData(data);
     });
   }, [activity, shareCode]);
 
-  // Poll teaser every 5s while on the page so "X, Y joining" + spots stay live
-  // without manual refresh (B4). Stops when tab is hidden to save requests.
+  // Poll teaser every 5s while visible (B4 fix: live "X, Y joining" + spots).
   useEffect(() => {
     if (!activity) return;
     const id = setInterval(() => {
@@ -193,7 +252,6 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     setError(null);
 
     try {
-      // Build request body — phone and email are optional
       const body: Record<string, string> = {
         share_code: shareCode,
         guest_name: guestName.trim(),
@@ -219,7 +277,6 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
         return;
       }
 
-      // Store RSVP for this activity
       const rsvpData: StoredRsvp = {
         claimToken: data.claim_token,
         guestName: data.guest_name,
@@ -231,7 +288,6 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       storeRsvp(shareCode, rsvpData);
       setStoredRsvp(rsvpData);
 
-      // Save user profile for auto-fill on next RSVP
       storeUserProfile({
         guestName: guestName.trim(),
         phoneNumber: phoneNumber.trim(),
@@ -260,59 +316,38 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   // =============================================
   if (!activity) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-6">
-        <div className="max-w-sm w-full bg-white rounded-2xl shadow-lg p-6 text-center">
-          <Link href="/">
-            <Image src={LOGO_ORANGE} alt="Konectr" width={120} height={32} className="mx-auto mb-6" unoptimized />
-          </Link>
-          <div className="mb-6">
-            <div className="text-5xl mb-3">🔍</div>
-            <h1 className="text-xl font-bold text-[#1F1F1F] mb-2">Activity not found</h1>
-            <p className="text-[#666] text-sm">This link may have expired or the activity was removed.</p>
-          </div>
-          {platform === 'android' ? (
-            <AndroidWaitlistCTA shareCode={shareCode} />
-          ) : (
-            <DownloadButton shareCode={shareCode} />
-          )}
-        </div>
-        <Footer />
-      </div>
+      <SimpleStateLayout
+        emoji="🔍"
+        title="Activity not found"
+        subtitle="This link may have expired or the activity was removed."
+        platform={platform}
+        shareCode={shareCode}
+      />
     );
   }
 
   const ended = isActivityEnded(activity.end_time);
   const deepLink = `konectr://activity/${shareCode}`;
   const emoji = getCategoryEmoji(activity.category);
-  // isFull is computed after teaser data loads (see spotsRemaining below)
+  const heroPhoto = getHeroPhoto(activity.category);
 
   // =============================================
   // Ended State
   // =============================================
   if (ended) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-6">
-        <div className="max-w-sm w-full bg-white rounded-2xl shadow-lg p-6 text-center">
-          <Link href="/">
-            <Image src={LOGO_ORANGE} alt="Konectr" width={120} height={32} className="mx-auto mb-6" unoptimized />
-          </Link>
-          <div className="mb-6">
-            <div className="text-5xl mb-3">⏰</div>
-            <h1 className="text-xl font-bold text-[#1F1F1F] mb-2">This activity has ended</h1>
-            <p className="text-[#666] text-sm">
-              {platform === 'android'
-                ? 'Konectr is iOS-only for now — get notified when Android launches.'
-                : 'Download the app to discover more activities.'}
-            </p>
-          </div>
-          {platform === 'android' ? (
-            <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-          ) : (
-            <DownloadButton shareCode={shareCode} />
-          )}
-        </div>
-        <Footer />
-      </div>
+      <SimpleStateLayout
+        emoji="⏰"
+        title="This activity has ended"
+        subtitle={
+          platform === 'android'
+            ? 'Konectr is iOS-only for now — get notified when Android launches.'
+            : 'Real plans, real people. Download Konectr to see what’s next.'
+        }
+        platform={platform}
+        shareCode={shareCode}
+        activityId={activity.id}
+      />
     );
   }
 
@@ -325,297 +360,371 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     ?? storedRsvp?.messageCount ?? 0;
   const spotsRemaining = teaserData?.spots_remaining
     ?? (activity.max_participants > 0 ? activity.max_participants - participantCount : -1);
+  const isFull = spotsRemaining <= 0 && activity.max_participants > 0;
 
   const canSubmit = guestName.trim().length > 0;
+  const dayLabel = getDayLabel(activity.start_time);
 
   // =============================================
   // Active Activity — with RSVP
   // =============================================
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-6">
-      <div className="max-w-sm w-full bg-white rounded-2xl shadow-lg overflow-hidden">
-        {/* Logo Header */}
-        <div className="bg-[#FF774D] py-6 px-4">
-          <Link href="/">
-            <div className="w-14 h-14 mx-auto bg-white rounded-2xl flex items-center justify-center shadow-sm">
-              <Image src={LOGO_ICON_ORANGE} alt="Konectr" width={36} height={36} unoptimized />
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
+      {/* ============ HERO ============ */}
+      <div className="relative w-full h-[260px] sm:h-[300px] overflow-hidden">
+        <Image
+          src={heroPhoto}
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 640px) 100vw, 480px"
+          className="object-cover"
+        />
+        {/* Layered scrim — darker at bottom to let title sit cleanly */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/35 to-black/75" />
+
+        {/* Top row: logo pill + tagline */}
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-4 z-10">
+          <Link href="/" aria-label="Konectr home">
+            <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur rounded-full pl-1.5 pr-2.5 py-1 shadow-sm">
+              <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center">
+                <Image src={LOGO_ICON_ORANGE} alt="Konectr" width={16} height={16} unoptimized />
+              </div>
+              <span className="text-[11px] font-bold text-[#1F1F1F] tracking-tight">Konectr</span>
             </div>
           </Link>
+          <span className="text-[11px] text-white/95 font-medium tracking-wide italic">
+            Let&apos;s make it real
+          </span>
         </div>
 
-        {/* Activity Card */}
-        <div className="p-5">
-          {/* Activity Name with Emoji */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-[#FFF5F2] rounded-xl flex items-center justify-center text-2xl shrink-0">
+        {/* Bottom: emoji chip + day label + title */}
+        <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 z-10">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 backdrop-blur-sm text-xl ring-1 ring-white/25">
               {emoji}
-            </div>
-            <h1 className="text-lg font-bold text-[#1F1F1F] leading-tight">
-              {activity.title}
-            </h1>
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-white/90 bg-[#FF774D] px-2 py-0.5 rounded">
+              {dayLabel}
+            </span>
           </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-white leading-tight font-[family-name:var(--font-heading)] line-clamp-2 drop-shadow-sm">
+            {activity.title}
+          </h1>
+        </div>
+      </div>
 
-          {/* Details — 2-col grid for scanability */}
-          <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-sm text-[#1F1F1F]">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-[#999] w-5 text-center shrink-0">👤</span>
-              <span className="truncate">Hosted by <strong>{activity.creator_name}</strong></span>
+      {/* ============ BODY ============ */}
+      <div className="flex-1 px-4 -mt-4 pb-8 relative z-10">
+        <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl shadow-black/[0.06] overflow-hidden">
+          <div className="p-5">
+            {/* Activity meta — datetime card on right, other details on left */}
+            <div className="flex items-stretch gap-3">
+              <div className="flex-1 min-w-0 space-y-2.5 text-sm text-[#1F1F1F]">
+                {activity.venue_name && (
+                  <MetaRow icon="📍" iconColor="#FF774D">
+                    {activity.venue_name}
+                  </MetaRow>
+                )}
+                <MetaRow icon="👤">
+                  Hosted by <strong className="font-semibold">{activity.creator_name}</strong>
+                </MetaRow>
+                <MetaRow icon="👥">
+                  {isFull ? (
+                    <span className="text-[#E53E3E] font-semibold">Activity is full</span>
+                  ) : activity.max_participants > 0 ? (
+                    <span><strong className="font-semibold">{spotsRemaining}</strong> of {activity.max_participants} spots left</span>
+                  ) : (
+                    <span>Open · <strong className="font-semibold">{participantCount}</strong> joined</span>
+                  )}
+                </MetaRow>
+              </div>
+
+              {/* Datetime card — bigger, visible, hard to miss */}
+              <div className="shrink-0 flex flex-col items-center justify-center bg-white border-2 border-[#F0F0F0] rounded-2xl px-4 py-3 min-w-[112px] text-center">
+                <span className="text-[12px] font-semibold text-[#555] leading-tight">
+                  {getRelativeDayPhrase(activity.start_time)}
+                </span>
+                <span className="text-[11px] text-[#999] mt-0.5 leading-tight">
+                  {formatShortDate(activity.start_time)}
+                </span>
+                <span className="text-[16px] font-bold text-[#FF774D] mt-1.5 leading-none tabular-nums">
+                  {formatTime(activity.start_time)}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-[#999] w-5 text-center shrink-0">📅</span>
-              <span className="truncate">{formatDate(activity.start_time)} · {formatTime(activity.start_time)}</span>
-            </div>
-            {activity.venue_name && (
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-[#FF774D] w-5 text-center shrink-0">📍</span>
-                <span className="truncate">{activity.venue_name}</span>
+
+            {/* Description */}
+            {activity.description && activity.description !== activity.title && (
+              <p className="mt-4 pt-4 border-t border-[#F0F0F0] text-sm text-[#555] leading-relaxed">
+                {activity.description}
+              </p>
+            )}
+
+            {/* Social proof — preview shows latest 2 signups; tap to expand full list */}
+            {(participantNames.length > 0 || messageCount > 0) && (
+              <div className="mt-4 pt-4 border-t border-[#F0F0F0] space-y-2">
+                {participantNames.length > 0 && (() => {
+                  const previewNames = participantNames.slice(0, 2);
+                  const extraCount = participantCount - previewNames.length;
+                  const verb = participantCount === 1 ? 'is in' : 'are in';
+                  // Only show the chevron if there's more than the preview reveals
+                  const expandable = participantNames.length > previewNames.length || extraCount > 0;
+                  return (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => expandable && setShowAllParticipants((v) => !v)}
+                        disabled={!expandable}
+                        aria-expanded={expandable ? showAllParticipants : undefined}
+                        className={`flex items-start gap-2.5 w-full text-left ${expandable ? 'cursor-pointer' : 'cursor-default'}`}
+                      >
+                        <span className="text-base shrink-0 leading-none mt-0.5">🙋</span>
+                        <p className="flex-1 text-sm text-[#555] leading-relaxed">
+                          <strong className="text-[#1F1F1F] font-semibold">{previewNames.join(', ')}</strong>
+                          {extraCount > 0 && (
+                            <span> and {extraCount} more</span>
+                          )}
+                          {' '}<span className="text-[#999]">{verb}</span>
+                        </p>
+                        {expandable && (
+                          <ChevronDownIcon className={`shrink-0 mt-0.5 text-[#999] transition-transform duration-200 ${showAllParticipants ? 'rotate-180' : ''}`} />
+                        )}
+                      </button>
+                      {showAllParticipants && (
+                        <ul className="mt-3 ml-7 space-y-1.5">
+                          {participantNames.map((name, i) => (
+                            <li key={`${name}-${i}`} className="flex items-center gap-2 text-sm text-[#1F1F1F]">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#FF774D] shrink-0" />
+                              {name}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  );
+                })()}
+                {messageCount > 0 && (
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-base shrink-0">💬</span>
+                    <p className="text-xs text-[#777]">
+                      <strong className="text-[#555] font-semibold">{messageCount}</strong> {messageCount === 1 ? 'message' : 'messages'} in chat
+                    </p>
+                  </div>
+                )}
               </div>
             )}
-            {/* Spots indicator — uses teaser count (confirmed + web RSVPs) */}
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-[#999] w-5 text-center shrink-0">👥</span>
-              {spotsRemaining <= 0 && activity.max_participants > 0 ? (
-                <span className="text-[#E53E3E] font-medium truncate">Activity is full</span>
-              ) : activity.max_participants > 0 ? (
-                <span className="truncate">
-                  <strong>{spotsRemaining}</strong> of {activity.max_participants} spots left
-                </span>
-              ) : (
-                <span className="truncate">Open · <strong>{participantCount}</strong> joined</span>
-              )}
-            </div>
-          </div>
 
-          {/* Description */}
-          {activity.description && activity.description !== activity.title && (
-            <div className="mt-3 pt-3 border-t border-[#F0F0F0]">
-              <p className="text-sm text-[#555] leading-relaxed">{activity.description}</p>
-            </div>
-          )}
-
-          {/* Who's Joining + Chatter Teaser (always visible) */}
-          {(participantNames.length > 0 || messageCount > 0) && (
-            <div className="mt-3 pt-3 border-t border-[#F0F0F0]">
-              {participantNames.length > 0 && (
-                <div className="flex items-start gap-2 mb-2">
-                  <span className="text-sm mt-0.5">🙋</span>
-                  <p className="text-sm text-[#555]">
-                    <strong className="text-[#1F1F1F]">{participantNames.join(', ')}</strong>
-                    {participantCount > participantNames.length && (
-                      <span> and {participantCount - participantNames.length} more</span>
-                    )}
-                    <span className="text-[#999]"> joining</span>
-                  </p>
-                </div>
-              )}
-              {messageCount > 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">💬</span>
-                  <p className="text-xs text-[#999]">
-                    <strong className="text-[#777]">{messageCount} messages</strong> in Activity Chatter
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* RSVP Section */}
-          {rsvpState === 'loading' ? (
-            <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
-              <div className="h-12 bg-[#F5F5F5] rounded-lg animate-pulse" />
-            </div>
-          ) : rsvpState === 'post-rsvp' && storedRsvp ? (
-            // =============================================
-            // Post-RSVP State
-            // =============================================
-            <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
-              {/* Confirmation */}
-              <div className="bg-[#F0FFF4] rounded-xl p-4 mb-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-green-500 text-lg">✓</span>
-                  <span className="font-bold text-[#1F1F1F]">You&apos;re in, {storedRsvp.guestName}!</span>
-                </div>
-                <p className="text-[#666] text-xs ml-7">Your spot is reserved</p>
+            {/* ============ RSVP ============ */}
+            {rsvpState === 'loading' ? (
+              <div className="mt-5 pt-5 border-t border-[#F0F0F0]">
+                <div className="h-12 bg-[#F5F5F5] rounded-xl animate-pulse" />
               </div>
+            ) : rsvpState === 'post-rsvp' && storedRsvp ? (
+              // ============ POST-RSVP ============
+              <div className="mt-5 pt-5 border-t border-[#F0F0F0]">
+                {/* Confirmation */}
+                <div className="bg-gradient-to-br from-[#F0FFF4] to-[#E6F9EC] border border-[#C6F0D5] rounded-xl p-4 mb-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-[#22A05B] flex items-center justify-center shrink-0">
+                      <CheckIcon />
+                    </div>
+                    <div>
+                      <p className="font-bold text-[#1F1F1F] leading-tight">You&apos;re in, {storedRsvp.guestName}</p>
+                      <p className="text-xs text-[#557A66] mt-0.5">Your spot is reserved</p>
+                    </div>
+                  </div>
+                </div>
 
-              {/* Activity Chatter — web chat panel (beta; gated server-side by feature flag) */}
-              <div className="mb-4">
-                <WebChatPanel
-                  claimToken={storedRsvp.claimToken}
-                  guestName={storedRsvp.guestName}
-                />
-              </div>
-
-              {/* Download / Android Waitlist CTA */}
-              {platform === 'android' ? (
+                {/* Activity Chatter — web chat panel */}
                 <div className="mb-4">
-                  <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-                </div>
-              ) : (
-                <div className="bg-[#F9FAFB] rounded-xl p-4 mb-4 text-center">
-                  <p className="text-xs text-[#555] font-medium mb-3">
-                    Download Konectr to join the conversation and get notified
+                  <p className="text-[11px] uppercase tracking-wider font-semibold text-[#999] mb-2 px-1">
+                    Activity Chatter
                   </p>
-                  <a
-                    {...getSmartDownloadProps(shareCode)}
-                    className="inline-flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-[#E5693F] transition-colors shadow-sm"
-                  >
-                    <AppleIcon />
-                    Download Konectr
-                  </a>
+                  <WebChatPanel
+                    claimToken={storedRsvp.claimToken}
+                    guestName={storedRsvp.guestName}
+                  />
                 </div>
-              )}
 
-              {/* Open in App — only for iOS/desktop (Android has no app to open) */}
-              {platform !== 'android' && (
-                <div className="text-center">
-                  <a
-                    href={deepLink}
-                    className="inline-flex items-center gap-1.5 text-[#FF774D] font-medium text-sm hover:underline"
+                {/* Download / Android Waitlist CTA */}
+                {platform === 'android' ? (
+                  <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+                ) : (
+                  <div className="bg-gradient-to-br from-[#FFF8F5] to-[#FFEFE6] border border-[#FFD9C7] rounded-xl p-4 text-center">
+                    <p className="text-xs text-[#5A4438] font-medium mb-3 leading-relaxed">
+                      Get reminded, see who&apos;s coming, and join the chat
+                    </p>
+                    <a
+                      {...getSmartDownloadProps(shareCode)}
+                      className="inline-flex items-center justify-center gap-2 w-full bg-[#1F1F1F] text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-black transition-colors shadow-sm"
+                    >
+                      <AppleIcon />
+                      Download Konectr
+                    </a>
+                  </div>
+                )}
+
+                {/* Open in app (iOS/desktop) */}
+                {platform !== 'android' && (
+                  <div className="text-center mt-3">
+                    <a
+                      href={deepLink}
+                      className="inline-flex items-center gap-1.5 text-[#FF774D] font-semibold text-xs hover:underline"
+                    >
+                      Already have the app? Open in Konectr
+                      <ExternalIcon />
+                    </a>
+                  </div>
+                )}
+
+                {/* Claim code — quiet fallback */}
+                <div className="mt-4 pt-3 border-t border-[#F0F0F0] text-center">
+                  <p className="text-[10px] text-[#BBB] mb-1">Having trouble? Use your claim code</p>
+                  <button
+                    onClick={copyClaimCode}
+                    className="text-xs font-mono text-[#999] hover:text-[#FF774D] transition-colors"
                   >
-                    Already have the app? Open in Konectr
-                    <ExternalIcon />
-                  </a>
+                    {copied ? 'Copied!' : storedRsvp.claimToken}
+                  </button>
                 </div>
-              )}
-
-              {/* Claim code — de-emphasized fallback */}
-              <div className="mt-4 pt-3 border-t border-[#F0F0F0] text-center">
-                <p className="text-[10px] text-[#BBB] mb-1">Having trouble? Use your claim code</p>
-                <button
-                  onClick={copyClaimCode}
-                  className="text-xs font-mono text-[#999] hover:text-[#FF774D] transition-colors"
-                >
-                  {copied ? 'Copied!' : storedRsvp.claimToken}
-                </button>
               </div>
-            </div>
-          ) : (
-            // =============================================
-            // Pre-RSVP State — RSVP Form
-            // =============================================
-            <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
-              {spotsRemaining <= 0 && activity.max_participants > 0 ? (
-                <div className="text-center">
-                  {platform === 'android' ? (
-                    <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-                  ) : (
-                    <>
-                      <DownloadButton shareCode={shareCode} />
-                      <OpenInApp deepLink={deepLink} />
-                    </>
-                  )}
-                </div>
-              ) : (
-                <>
-                  {/* RSVP Form */}
-                  <div className="mb-4">
-                    <label htmlFor="guest-name" className="block text-xs text-[#999] mb-1.5">
+            ) : (
+              // ============ PRE-RSVP ============
+              <div className="mt-5 pt-5 border-t border-[#F0F0F0]">
+                {isFull ? (
+                  <div className="text-center">
+                    {platform === 'android' ? (
+                      <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+                    ) : (
+                      <>
+                        <p className="text-sm text-[#555] mb-3">
+                          This one&apos;s full — find another that fits.
+                        </p>
+                        <DownloadButton shareCode={shareCode} />
+                        <OpenInApp deepLink={deepLink} />
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    {/* Name input — focal */}
+                    <label htmlFor="guest-name" className="block text-[11px] uppercase tracking-wider font-semibold text-[#999] mb-2">
                       Reserve your spot
                     </label>
-
-                    {/* Name input */}
                     <input
                       id="guest-name"
                       type="text"
                       placeholder="Your first name"
                       value={guestName}
                       onChange={(e) => setGuestName(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && canSubmit && !phoneNumber && handleRsvp()}
+                      onKeyDown={(e) => e.key === 'Enter' && canSubmit && !showOptional && handleRsvp()}
                       maxLength={50}
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors mb-2"
+                      autoComplete="given-name"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] text-[15px] text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-4 focus:ring-[#FF774D]/10 transition-all mb-3"
                     />
 
-                    {/* Phone input with country code (optional) */}
-                    <div className="flex gap-1.5 mb-3">
-                      <select
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
-                        className="w-[88px] shrink-0 px-2 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] bg-white focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors appearance-none"
-                        aria-label="Country code"
+                    {/* Optional disclosure — collapses 3 fields into 1 click */}
+                    {!showOptional ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowOptional(true)}
+                        className="w-full text-left text-xs text-[#777] hover:text-[#FF774D] transition-colors mb-3 inline-flex items-center gap-1.5 py-1"
                       >
-                        {countryCodes.map((cc) => (
-                          <option key={cc.code} value={cc.code}>
-                            {cc.flag} {cc.code}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        id="guest-phone"
-                        type="tel"
-                        placeholder="Phone (optional)"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
-                        className="flex-1 px-3 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors"
-                      />
-                    </div>
+                        <span className="text-[#BBB]">+</span>
+                        Add phone or email <span className="text-[#BBB]">(auto-matches your RSVP when you sign up)</span>
+                      </button>
+                    ) : (
+                      <div className="space-y-2 mb-3 p-3 bg-[#FAFAFA] rounded-xl">
+                        <div className="flex gap-1.5">
+                          <select
+                            value={countryCode}
+                            onChange={(e) => setCountryCode(e.target.value)}
+                            className="w-[88px] shrink-0 px-2 py-2.5 rounded-lg border border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all appearance-none"
+                            aria-label="Country code"
+                          >
+                            {countryCodes.map((cc) => (
+                              <option key={cc.code} value={cc.code}>
+                                {cc.flag} {cc.code}
+                              </option>
+                            ))}
+                          </select>
+                          <input
+                            id="guest-phone"
+                            type="tel"
+                            placeholder="Phone (optional)"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
+                            autoComplete="tel-national"
+                            className="flex-1 px-3 py-2.5 rounded-lg border border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all"
+                          />
+                        </div>
+                        <input
+                          id="guest-email"
+                          type="email"
+                          inputMode="email"
+                          autoComplete="email"
+                          placeholder="Email — get a reminder"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
+                          maxLength={254}
+                          className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all"
+                        />
+                        <p className="text-[10px] text-[#999] px-0.5">
+                          Never shared. Used only to link your RSVP when you sign up.
+                        </p>
+                      </div>
+                    )}
 
-                    {/* Email (optional) — for confirmation + reminders */}
-                    <input
-                      id="guest-email"
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      placeholder="Email (optional) — get a reminder"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
-                      maxLength={254}
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-1 focus:ring-[#FF774D] transition-colors mb-3"
-                    />
-
-                    {/* Submit button */}
+                    {/* Submit */}
                     <button
                       onClick={handleRsvp}
                       disabled={!canSubmit || isSubmitting}
-                      className="w-full px-4 py-3 bg-[#FF774D] text-white rounded-xl text-sm font-bold hover:bg-[#E5693F] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="w-full px-4 py-3.5 bg-[#FF774D] text-white rounded-xl text-[15px] font-bold hover:bg-[#E5693F] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 transition-all shadow-sm shadow-[#FF774D]/30"
                     >
                       {isSubmitting ? (
-                        <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin align-middle" />
                       ) : (
-                        "I'm In!"
+                        "I'm In"
                       )}
                     </button>
 
                     {error && (
-                      <p className="text-xs text-red-500 mt-1.5">{error}</p>
+                      <p className="text-xs text-red-500 mt-2 text-center">{error}</p>
                     )}
 
-                    <p className="text-[10px] text-[#BBB] mt-2 text-center">
-                      Phone links your RSVP when you sign up. Never shared.
-                    </p>
-                  </div>
+                    {/* Or download */}
+                    <div className="flex items-center gap-2 mt-5 mb-3">
+                      <div className="flex-1 h-px bg-[#F0F0F0]" />
+                      <span className="text-[10px] uppercase tracking-wider text-[#BBB]">or</span>
+                      <div className="flex-1 h-px bg-[#F0F0F0]" />
+                    </div>
 
-                  {/* Download / Android Waitlist CTA */}
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="flex-1 h-px bg-[#F0F0F0]" />
-                    <span className="text-xs text-[#CCC]">or</span>
-                    <div className="flex-1 h-px bg-[#F0F0F0]" />
-                  </div>
-
-                  {platform === 'android' ? (
-                    <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-                  ) : (
-                    <>
-                      <a
-                        {...getSmartDownloadProps(shareCode)}
-                        className="flex items-center justify-center gap-2 w-full bg-[#1F1F1F] text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-[#333] transition-colors"
-                      >
-                        <AppleIcon />
-                        Download on App Store
-                      </a>
-
-                      <OpenInApp deepLink={deepLink} />
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          )}
+                    {platform === 'android' ? (
+                      <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+                    ) : (
+                      <>
+                        <a
+                          {...getSmartDownloadProps(shareCode)}
+                          className="flex items-center justify-center gap-2 w-full bg-[#1F1F1F] text-white py-3 px-4 rounded-xl text-sm font-semibold hover:bg-black transition-colors"
+                        >
+                          <AppleIcon />
+                          Download Konectr
+                        </a>
+                        <OpenInApp deepLink={deepLink} />
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
+
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }
@@ -624,11 +733,65 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
 // Shared Sub-Components
 // =============================================
 
+function MetaRow({ icon, iconColor, children }: { icon: string; iconColor?: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2.5 min-w-0">
+      <span
+        className="w-5 text-center text-sm shrink-0"
+        style={iconColor ? { color: iconColor } : { color: '#999' }}
+      >
+        {icon}
+      </span>
+      <span className="truncate text-[#1F1F1F]">{children}</span>
+    </div>
+  );
+}
+
+function SimpleStateLayout({
+  emoji,
+  title,
+  subtitle,
+  platform,
+  shareCode,
+  activityId,
+}: {
+  emoji: string;
+  title: string;
+  subtitle: string;
+  platform: Platform | null;
+  shareCode: string;
+  activityId?: string;
+}) {
+  return (
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-6">
+      <div className="max-w-sm w-full bg-white rounded-2xl shadow-lg p-6 text-center">
+        <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <div className="w-8 h-8 rounded-lg bg-[#FFF5F2] flex items-center justify-center">
+            <Image src={LOGO_ICON_ORANGE} alt="Konectr" width={20} height={20} unoptimized />
+          </div>
+          <span className="text-base font-bold text-[#1F1F1F]">Konectr</span>
+        </Link>
+        <div className="mb-6">
+          <div className="text-5xl mb-3">{emoji}</div>
+          <h1 className="text-xl font-bold text-[#1F1F1F] mb-2">{title}</h1>
+          <p className="text-[#666] text-sm leading-relaxed">{subtitle}</p>
+        </div>
+        {platform === 'android' ? (
+          <AndroidWaitlistCTA shareCode={shareCode} activityId={activityId} />
+        ) : (
+          <DownloadButton shareCode={shareCode} />
+        )}
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
 function DownloadButton({ shareCode }: { shareCode: string }) {
   return (
     <a
       {...getSmartDownloadProps(shareCode)}
-      className="inline-flex items-center gap-2 bg-[#1F1F1F] text-white py-2.5 px-5 rounded-lg text-sm font-medium hover:bg-[#333] transition-colors"
+      className="inline-flex items-center gap-2 bg-[#1F1F1F] text-white py-2.5 px-5 rounded-xl text-sm font-semibold hover:bg-black transition-colors"
     >
       <AppleIcon />
       Download Konectr
@@ -638,13 +801,12 @@ function DownloadButton({ shareCode }: { shareCode: string }) {
 
 function OpenInApp({ deepLink }: { deepLink: string }) {
   return (
-    <div className="mt-4 text-center">
-      <p className="text-[#999] text-xs mb-1">Already have the app?</p>
+    <div className="mt-3 text-center">
       <a
         href={deepLink}
-        className="inline-flex items-center gap-1.5 text-[#FF774D] font-medium text-sm hover:underline"
+        className="inline-flex items-center gap-1.5 text-[#FF774D] font-semibold text-xs hover:underline"
       >
-        Open in Konectr
+        Already have the app? Open in Konectr
         <ExternalIcon />
       </a>
     </div>
@@ -653,24 +815,40 @@ function OpenInApp({ deepLink }: { deepLink: string }) {
 
 function AppleIcon() {
   return (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <polyline points="20 6 9 17 4 12" />
     </svg>
   );
 }
 
 function ExternalIcon() {
   return (
-    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+    </svg>
+  );
+}
+
+function ChevronDownIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
     </svg>
   );
 }
 
 function Footer() {
   return (
-    <p className="mt-6 text-[#999] text-xs">
-      <Link href="/" className="hover:text-[#FF774D]">konectr.app</Link> · The Offline First App
+    <p className="mt-6 text-center text-[#999] text-xs">
+      <Link href="/" className="hover:text-[#FF774D]">konectr.app</Link> · Let&apos;s make it real
     </p>
   );
 }

@@ -8,4 +8,11 @@
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
 | #6784 | 11:54 AM | ⚖️ | Selected and Designed "Flappy Konectr" Game for 404 Page | ~700 |
+
+### Apr 28, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #8923 | 5:52 PM | 🔵 | Business-Side Launch Essentials: Social Media Unscheduled, Trust & Safety Not User-Facing, Press Strategy Missing | ~882 |
+| #8921 | 5:51 PM | 🔵 | Technical Infrastructure & Marketing Operations: Pre-Launch Readiness April 28, 2026 | ~2446 |
 </claude-mem-context>
