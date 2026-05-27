@@ -41,8 +41,6 @@ export function ContactContent() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send to an API
-    console.log("Form submitted:", formState);
     setSubmitted(true);
   };
 

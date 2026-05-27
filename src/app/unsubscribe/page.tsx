@@ -42,39 +42,39 @@ export default async function UnsubscribePage({
   }
 
   return (
-    <main style={{ maxWidth: 480, margin: '80px auto', padding: '0 24px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', color: '#1F1F1F', textAlign: 'center' }}>
-      <div style={{ background: 'white', borderRadius: 16, padding: 40, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+    <main className="min-h-screen bg-background flex items-start justify-center px-6 pt-20 pb-10">
+      <div className="w-full max-w-[480px] bg-card rounded-2xl p-10 text-center shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-border/50">
         {result.success ? (
           <>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
-            <h1 style={{ color: '#FF774D', fontSize: 24, margin: '0 0 12px' }}>You&apos;re unsubscribed</h1>
-            <p style={{ fontSize: 16, lineHeight: 1.6, color: '#444' }}>
+            <div className="text-5xl mb-4">✓</div>
+            <h1 className="text-2xl font-bold text-primary mb-3">You&apos;re unsubscribed</h1>
+            <p className="text-base leading-relaxed text-foreground/80">
               {result.email
                 ? <>We won&apos;t send marketing emails to <strong>{result.email}</strong> anymore.</>
                 : <>We won&apos;t send you marketing emails anymore.</>}
             </p>
-            <p style={{ fontSize: 14, color: '#888', marginTop: 24 }}>
+            <p className="text-sm text-muted-foreground mt-6">
               You&apos;ll still get critical account emails (security, account changes).
             </p>
-            <p style={{ fontSize: 14, marginTop: 24 }}>
+            <p className="text-sm text-foreground/80 mt-6">
               Changed your mind? Re-enable email in the Konectr app under <strong>Profile → Notification Settings</strong>.
             </p>
           </>
         ) : (
           <>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>ⓘ</div>
-            <h1 style={{ color: '#FF774D', fontSize: 24, margin: '0 0 12px' }}>Link expired or invalid</h1>
-            <p style={{ fontSize: 16, lineHeight: 1.6, color: '#444' }}>
+            <div className="text-5xl mb-4">ⓘ</div>
+            <h1 className="text-2xl font-bold text-primary mb-3">Link expired or invalid</h1>
+            <p className="text-base leading-relaxed text-foreground/80">
               This unsubscribe link isn&apos;t valid. It may have been used already or copied incorrectly.
             </p>
-            <p style={{ fontSize: 14, marginTop: 24 }}>
+            <p className="text-sm text-foreground/80 mt-6">
               You can manage email preferences in the Konectr app under <strong>Profile → Notification Settings</strong>, or email{' '}
-              <a href="mailto:hello@konectr.app" style={{ color: '#FF774D' }}>hello@konectr.app</a> for help.
+              <a href="mailto:hello@konectr.app" className="text-primary hover:underline">hello@konectr.app</a> for help.
             </p>
           </>
         )}
-        <div style={{ marginTop: 32 }}>
-          <Link href="/" style={{ color: '#888', fontSize: 14, textDecoration: 'underline' }}>
+        <div className="mt-8">
+          <Link href="/" className="text-sm text-muted-foreground underline hover:text-foreground transition-colors">
             Back to konectr.app
           </Link>
         </div>

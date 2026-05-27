@@ -7,30 +7,31 @@
   "features": {
     "title": "How We Keep You Safe",
     "subtitle": "Multiple layers of protection so you can focus on making real connections",
+    "comingSoonLabel": "Coming Soon",
     "items": {
-      "identityVerification": {
-        "title": "Identity Verification",
-        "description": "All users verify their identity before joining. We confirm you're a real person."
+      "phoneVerified": {
+        "title": "Phone Verified",
+        "description": "Every member verifies their phone number before joining. Real people only."
       },
-      "photoVerification": {
-        "title": "Photo Verification",
-        "description": "Profile photos are verified to ensure they're actually you, not someone else."
-      },
-      "vettedVenues": {
-        "title": "Vetted Venues",
-        "description": "All meetups happen at safe, public venues that we've personally vetted."
+      "publicVenuesOnly": {
+        "title": "Public Venues Only",
+        "description": "All meetups happen at cafés, gyms, and public spaces—never private locations."
       },
       "quickReporting": {
         "title": "Quick Reporting",
-        "description": "Report concerning behavior instantly. Our team reviews reports within hours."
+        "description": "Flag concerning behavior in two taps. Reports trigger automatic review."
       },
-      "safetyTeam": {
-        "title": "24/7 Safety Team",
-        "description": "Dedicated safety team available around the clock to address concerns."
+      "threeStrikeSystem": {
+        "title": "Three-Strike System",
+        "description": "3 reports = warning. 6 = suspension. 9 = six-month ban. No exceptions."
       },
-      "zeroTolerance": {
-        "title": "Zero Tolerance",
-        "description": "Immediate action against harassment, discrimination, or unsafe behavior."
+      "privateMessaging": {
+        "title": "Private Messaging",
+        "description": "Chat in-app only. Your phone number is never shared."
+      },
+      "photoVerification": {
+        "title": "Photo Verification",
+        "description": "AI-powered selfie matching to prevent catfishing."
       }
     }
   },

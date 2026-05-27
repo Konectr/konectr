@@ -4,107 +4,25 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const safetyFeatures = [
-  {
-    icon: "✅",
-    title: "Phone Verified",
-    description:
-      "Every member verifies their phone number before joining. Real people only.",
-  },
-  {
-    icon: "📍",
-    title: "Public Venues Only",
-    description:
-      "All meetups happen at cafés, gyms, and public spaces—never private locations.",
-  },
-  {
-    icon: "🚨",
-    title: "Quick Reporting",
-    description:
-      "Flag concerning behavior in two taps. Reports trigger automatic review.",
-  },
-  {
-    icon: "⚖️",
-    title: "Three-Strike System",
-    description:
-      "3 reports = warning. 6 = suspension. 9 = six-month ban. No exceptions.",
-  },
-  {
-    icon: "🔒",
-    title: "Private Messaging",
-    description:
-      "Chat in-app only. Your phone number is never shared.",
-  },
-  {
-    icon: "📸",
-    title: "Photo Verification",
-    description:
-      "AI-powered selfie matching to prevent catfishing.",
-    comingSoon: true,
-  },
-];
+const safetyFeaturesMeta = [
+  { key: "phoneVerified", icon: "✅" },
+  { key: "publicVenuesOnly", icon: "📍" },
+  { key: "quickReporting", icon: "🚨" },
+  { key: "threeStrikeSystem", icon: "⚖️" },
+  { key: "privateMessaging", icon: "🔒" },
+  { key: "photoVerification", icon: "📸", comingSoon: true },
+] as const;
 
-const guidelines = [
-  {
-    title: "Be Respectful",
-    points: [
-      "Treat everyone with kindness and respect",
-      "No harassment, bullying, or hate speech",
-      "Respect boundaries and consent",
-    ],
-  },
-  {
-    title: "Be Honest",
-    points: [
-      "Use accurate photos and information",
-      "Be upfront about your intentions",
-      "Don't mislead others about who you are",
-    ],
-  },
-  {
-    title: "Be Safe",
-    points: [
-      "Meet only at public venues",
-      "Trust your instincts",
-      "Report anything that feels wrong",
-    ],
-  },
-];
-
-const tips = [
-  {
-    title: "Before Meeting",
-    items: [
-      "Review the profiles of people you'll meet",
-      "Choose meetups at familiar venues",
-      "Tell a friend your plans",
-      "Have your own transportation",
-    ],
-  },
-  {
-    title: "During the Meetup",
-    items: [
-      "Meet at the venue, not before",
-      "Stay in public areas",
-      "Keep your belongings with you",
-      "Trust your instincts – leave if uncomfortable",
-    ],
-  },
-  {
-    title: "After the Meetup",
-    items: [
-      "Share feedback to help the community",
-      "Report any concerning behavior",
-      "Block users you don't want to see again",
-      "Celebrate the good connections!",
-    ],
-  },
-];
+const guidelinesMeta = ["beRespectful", "beHonest", "beSafe"] as const;
+const tipsMeta = ["beforeMeeting", "duringMeetup", "afterMeetup"] as const;
 
 export function SafetyContent() {
+  const t = useTranslations("safety");
+
   return (
     <main className="bg-background">
       {/* Safety Features */}
@@ -120,18 +38,17 @@ export function SafetyContent() {
               className="text-3xl md:text-4xl font-black text-foreground mb-4"
               style={{ fontFamily: "'Satoshi', sans-serif" }}
             >
-              How We Keep You Safe
+              {t("features.title")}
             </h2>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-              Multiple layers of protection so you can focus on making real
-              connections
+              {t("features.subtitle")}
             </p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {safetyFeatures.map((feature, index) => (
+            {safetyFeaturesMeta.map((feature, index) => (
               <motion.div
-                key={feature.title}
+                key={feature.key}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -143,15 +60,15 @@ export function SafetyContent() {
                   className="text-lg font-bold text-foreground mb-2"
                   style={{ fontFamily: "'Satoshi', sans-serif" }}
                 >
-                  {feature.title}
-                  {feature.comingSoon && (
-                    <span className="ml-2 inline-block bg-[#FFC845] text-[#1F1F1F] text-[10px] font-semibold px-2 py-0.5 rounded uppercase">
-                      Coming Soon
+                  {t(`features.items.${feature.key}.title`)}
+                  {"comingSoon" in feature && feature.comingSoon && (
+                    <span className="ml-2 inline-block bg-secondary text-foreground text-[10px] font-semibold px-2 py-0.5 rounded uppercase">
+                      {t("features.comingSoonLabel")}
                     </span>
                   )}
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  {feature.description}
+                  {t(`features.items.${feature.key}.description`)}
                 </p>
               </motion.div>
             ))}
@@ -172,41 +89,44 @@ export function SafetyContent() {
               className="text-3xl md:text-4xl font-black text-foreground mb-4"
               style={{ fontFamily: "'Satoshi', sans-serif" }}
             >
-              Community Guidelines
+              {t("guidelines.title")}
             </h2>
             <p className="text-muted-foreground text-lg">
-              The standards that keep our community great
+              {t("guidelines.subtitle")}
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {guidelines.map((guideline, index) => (
-              <motion.div
-                key={guideline.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card rounded-2xl p-8 border border-border/50"
-              >
-                <h3
-                  className="text-xl font-bold text-foreground mb-4"
-                  style={{ fontFamily: "'Satoshi', sans-serif" }}
+            {guidelinesMeta.map((key, index) => {
+              const points = t.raw(`guidelines.${key}.points`) as string[];
+              return (
+                <motion.div
+                  key={key}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-card rounded-2xl p-8 border border-border/50"
                 >
-                  {guideline.title}
-                </h3>
-                <ul className="space-y-3">
-                  {guideline.points.map((point, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span className="text-primary mt-0.5">•</span>
-                      <span className="text-muted-foreground text-sm">
-                        {point}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
+                  <h3
+                    className="text-xl font-bold text-foreground mb-4"
+                    style={{ fontFamily: "'Satoshi', sans-serif" }}
+                  >
+                    {t(`guidelines.${key}.title`)}
+                  </h3>
+                  <ul className="space-y-3">
+                    {points.map((point, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span className="text-muted-foreground text-sm">
+                          {point}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -224,49 +144,52 @@ export function SafetyContent() {
               className="text-3xl md:text-4xl font-black text-foreground mb-4"
               style={{ fontFamily: "'Satoshi', sans-serif" }}
             >
-              Safety Tips
+              {t("tips.title")}
             </h2>
             <p className="text-muted-foreground text-lg">
-              Best practices for safe and enjoyable meetups
+              {t("tips.subtitle")}
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {tips.map((section, index) => (
-              <motion.div
-                key={section.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div
-                  className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 font-bold text-white ${
-                    index === 0
-                      ? "bg-primary"
-                      : index === 1
-                      ? "bg-secondary text-foreground"
-                      : "bg-green-500"
-                  }`}
+            {tipsMeta.map((key, index) => {
+              const items = t.raw(`tips.${key}.items`) as string[];
+              return (
+                <motion.div
+                  key={key}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
                 >
-                  {index + 1}
-                </div>
-                <h3
-                  className="text-xl font-bold text-foreground mb-4"
-                  style={{ fontFamily: "'Satoshi', sans-serif" }}
-                >
-                  {section.title}
-                </h3>
-                <ul className="space-y-3">
-                  {section.items.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span className="text-primary">✓</span>
-                      <span className="text-muted-foreground">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
+                  <div
+                    className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 font-bold text-white ${
+                      index === 0
+                        ? "bg-primary"
+                        : index === 1
+                        ? "bg-secondary text-foreground"
+                        : "bg-green-500"
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                  <h3
+                    className="text-xl font-bold text-foreground mb-4"
+                    style={{ fontFamily: "'Satoshi', sans-serif" }}
+                  >
+                    {t(`tips.${key}.title`)}
+                  </h3>
+                  <ul className="space-y-3">
+                    {items.map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="text-primary">✓</span>
+                        <span className="text-muted-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -283,11 +206,10 @@ export function SafetyContent() {
               className="text-3xl md:text-4xl font-black mb-4"
               style={{ fontFamily: "'Satoshi', sans-serif" }}
             >
-              Need Help?
+              {t("support.title")}
             </h2>
             <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-              If you ever feel unsafe or need to report something, we&apos;re here
-              for you.
+              {t("support.subtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -295,7 +217,7 @@ export function SafetyContent() {
                 className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8"
                 asChild
               >
-                <Link href="/contact">Contact Support</Link>
+                <Link href="/contact">{t("support.contactSupport")}</Link>
               </Button>
               <Button
                 size="lg"
@@ -309,7 +231,7 @@ export function SafetyContent() {
               </Button>
             </div>
             <p className="text-white/60 text-sm mt-8">
-              In case of emergency, always contact local authorities first.
+              {t("support.emergencyNote")}
             </p>
           </motion.div>
         </div>

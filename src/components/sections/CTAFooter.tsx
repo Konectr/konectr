@@ -44,7 +44,6 @@ export function CTAFooter() {
                 <iframe
                   src="https://tally.so/embed/mY1xRq?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
                   width="100%"
-                  height="500"
                   frameBorder="0"
                   title="Konectr Waitlist"
                   className="bg-white rounded-2xl"
