@@ -45,6 +45,12 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Build must not fail merely because runtime secrets are absent.
-          # Real values live in Vercel; CI only proves the bundle compiles.
           NEXT_TELEMETRY_DISABLED: "1"
+          # `next build` collects page data for API routes (e.g. /api/android-waitlist)
+          # which instantiate the Supabase client at module load — createClient throws
+          # "supabaseUrl is required" if the URL is absent. Placeholder values let the
+          # bundle compile; real values live in Vercel. (Notion routes catch their own
+          # fetch errors, so they don't need placeholders.) Verified by building locally
+          # with .env removed and only these set.
+          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
