@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Non-app code: archived reference snippets + one-off migration scripts.
+    // Not part of the shipped Next app, so not held to its lint rules.
+    "_reference/**",
+    "scripts/**",
   ]),
 ]);
 

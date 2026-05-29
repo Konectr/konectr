@@ -172,7 +172,9 @@ describe('POST /api/rsvp', () => {
       expect(mockCreateWebRsvp).toHaveBeenCalledWith(
         MOCK_ACTIVITY.id,
         'Jordan',
-        expect.any(String)
+        expect.any(String),
+        null, // phoneHash (no phone in request)
+        null // normalizedEmail (no email in request)
       );
     });
 
@@ -282,7 +284,9 @@ describe('POST /api/rsvp', () => {
       expect(mockCreateWebRsvp).toHaveBeenCalledWith(
         MOCK_ACTIVITY.id,
         'Jordan',
-        expect.stringMatching(/^[a-f0-9]{64}$/) // SHA-256 hex
+        expect.stringMatching(/^[a-f0-9]{64}$/), // SHA-256 hex
+        null,
+        null
       );
     });
 
@@ -297,7 +301,9 @@ describe('POST /api/rsvp', () => {
       expect(mockCreateWebRsvp).toHaveBeenCalledWith(
         MOCK_ACTIVITY.id,
         'Jordan',
-        expect.stringMatching(/^[a-f0-9]{64}$/)
+        expect.stringMatching(/^[a-f0-9]{64}$/),
+        null,
+        null
       );
     });
 

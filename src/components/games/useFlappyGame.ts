@@ -1,6 +1,12 @@
 // © Konectr 2026. All rights reserved.
 // Proprietary and confidential.
 
+/* eslint-disable react-hooks/immutability --
+   This is a hand-driven requestAnimationFrame canvas game. Per-frame physics
+   mutate game state in place (player, pillars) and the RAF callback re-schedules
+   itself by name — both are intentional and performance-critical. React Compiler
+   immutability rules do not model this manual game loop. */
+
 "use client";
 
 import { useRef, useCallback, useEffect } from "react";

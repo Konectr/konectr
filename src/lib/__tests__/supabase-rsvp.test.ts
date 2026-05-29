@@ -31,6 +31,7 @@ describe('createWebRsvp', () => {
       participant_count: 3,
       participant_names: ['Sam', 'Jordan'],
       spots_remaining: 2,
+      message_count: 0,
     };
     mockRpc.mockResolvedValue({ data: mockData, error: null });
 
@@ -64,6 +65,8 @@ describe('createWebRsvp', () => {
       p_activity_id: 'my-activity-id',
       p_guest_name: 'Jordan',
       p_ip_hash: 'my-ip-hash',
+      p_phone_hash: null,
+      p_email: null,
     });
   });
 
@@ -79,6 +82,8 @@ describe('createWebRsvp', () => {
       p_activity_id: 'my-activity-id',
       p_guest_name: 'Jordan',
       p_ip_hash: null,
+      p_phone_hash: null,
+      p_email: null,
     });
   });
 
@@ -117,6 +122,7 @@ describe('getActivityRsvpTeaser', () => {
       creator_name: 'Alex',
       spots_remaining: 1,
       max_participants: 5,
+      message_count: 0,
     };
     mockRpc.mockResolvedValue({ data: mockData, error: null });
 
