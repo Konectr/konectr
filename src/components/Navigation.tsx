@@ -37,6 +37,8 @@ export function Navigation() {
   );
 
   useEffect(() => {
+    // Mount gate to avoid SSR/client hydration mismatch on the scroll-driven nav.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -85,9 +87,9 @@ export function Navigation() {
             className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold hidden sm:inline-flex"
             asChild
           >
-            <a href="/#waitlist">
+            <Link href="/#waitlist">
               {t("joinWaitlist")}
-            </a>
+            </Link>
           </Button>
         </div>
       </div>

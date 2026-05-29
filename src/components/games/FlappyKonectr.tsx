@@ -1,6 +1,10 @@
 // © Konectr 2026. All rights reserved.
 // Proprietary and confidential.
 
+/* eslint-disable react-hooks/immutability --
+   Canvas game component: assigns to mutable refs (e.g. onStateChange.current) as the
+   bridge between the imperative RAF loop in useFlappyGame and React state. Intentional. */
+
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";

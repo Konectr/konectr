@@ -28,6 +28,10 @@ export function Hero() {
   const [platform, setPlatform] = useState<Platform | null>(null);
 
   useEffect(() => {
+    // Platform must be detected after hydration (it reads navigator). Doing it in a
+    // lazy initial state would diverge from the SSR-rendered (null) markup and cause
+    // a hydration mismatch, so the post-mount effect is intentional here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPlatform(detectPlatform());
   }, []);
 
