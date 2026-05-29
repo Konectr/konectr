@@ -1,0 +1,50 @@
+name: web-ci
+
+# Gate-only CI for the Konectr marketing site (Konectr/konectr).
+# Deploy is handled by Vercel's git integration (Production Branch = main),
+# so there is intentionally NO deploy step here — adding one would race Vercel.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Cancel superseded runs on the same ref to save minutes.
+concurrency:
+  group: web-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Matches the local `npm run lint` (bare eslint, flat eslint-config-next).
+      # If this ever no-ops, fix the lint script in package.json — keep CI == local.
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Build must not fail merely because runtime secrets are absent.
+          # Real values live in Vercel; CI only proves the bundle compiles.
+          NEXT_TELEMETRY_DISABLED: "1"
