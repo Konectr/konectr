@@ -80,8 +80,20 @@ konectr-web/
 |--------|---------|----------|
 | **konectr.app** | Primary website | Vercel |
 | **www.konectr.app** | WWW variant | Vercel (redirects to apex) |
-| **konectrapp.com** | Legacy/alternate | Vercel (301 → konectr.app) |
-| **www.konectrapp.com** | Legacy WWW | Vercel (301 → konectr.app) |
+| **konectrapp.com** | Legacy/alternate | Vercel **domain redirect** (308 → konectr.app) |
+| **www.konectrapp.com** | Legacy WWW | Vercel **domain redirect** (308 → konectr.app) |
+| **konectr.my** | Owned alt (MY ccTLD) | Vercel **domain redirect** (308 → konectr.app) |
+| **www.konectr.my** | Owned alt WWW | Vercel **domain redirect** (308 → konectr.app) |
+| **konectrcircle.com** | Owned alt | Vercel **domain redirect** (308 → konectr.app) |
+| **www.konectrcircle.com** | Owned alt WWW | Vercel **domain redirect** (308 → konectr.app) |
+
+> ⚠️ **Redirects are configured at the Vercel domain level, NOT in `vercel.json`.**
+> This is a **Next.js** project, so Vercel **ignores `redirects`/`headers`/`rewrites` in
+> `vercel.json`** (and the next-intl middleware 307s `/` → `/en` before any such rule could
+> run). The `vercel.json` `redirects` block below is **dead config** — left only as historical
+> reference; do not rely on it. The live redirects are set per-domain via the Vercel API/dashboard
+> (`PATCH /v9/projects/{id}/domains/{domain}` → `{"redirect":"konectr.app","redirectStatusCode":308}`).
+> Verified 2026-06-06: all 6 alt hostnames return `308 → https://konectr.app/`.
 
 ### Vercel Configuration
 
@@ -93,33 +105,30 @@ konectr-web/
 
 ### DNS Records (Namecheap)
 
-Both domains use identical DNS configuration:
+All alt/redirect domains use identical DNS pointing at Vercel:
 
 ```
 A     @     76.76.21.21
 CNAME www   cname.vercel-dns.com
 ```
 
-### Domain Redirects (vercel.json)
+All 6 alt hostnames (konectrapp.com, konectr.my, konectrcircle.com + their www variants)
+are attached to the `konectr-web` Vercel project and `verified: true` as of 2026-06-06.
 
-```json
-{
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [{"type": "host", "value": "konectrapp.com"}],
-      "destination": "https://konectr.app/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [{"type": "host", "value": "www.konectrapp.com"}],
-      "destination": "https://konectr.app/:path*",
-      "permanent": true
-    }
-  ]
-}
+### Domain Redirects (Vercel domain-level, NOT vercel.json)
+
+Set per-domain via the Vercel API (or dashboard → Settings → Domains → Edit → "Redirect to Another Domain"):
+
+```bash
+# Token from CLI auth; TEAM=team_NGteFxpD625ykJhngEJOZciV  PROJ=prj_JmAtBAphd9uHVnxHX7dHtFt62w40
+curl -X PATCH "https://api.vercel.com/v9/projects/$PROJ/domains/$DOMAIN?teamId=$TEAM" \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"redirect":"konectr.app","redirectStatusCode":308}'
 ```
+
+> The `vercel.json` `redirects` block (konectrapp.com / www.konectrapp.com) is **dead config on
+> Next.js** — it does not fire. Kept only as historical reference. Do not add new redirects there;
+> use the domain-level redirect above.
 
 ---
 
