@@ -43,7 +43,7 @@ function formatTime(iso: string): string {
 
 export default function WebChatPanel({ claimToken, guestName }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [messagesRemaining, setMessagesRemaining] = useState<number>(5);
+  const [messagesRemaining, setMessagesRemaining] = useState<number>(10);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -194,7 +194,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
       <div className="border-t border-[#F0F0F0] p-2">
         {capReached ? (
           <div className="text-center py-2">
-            <p className="text-xs text-[#666] mb-1">You&apos;ve used all 5 messages</p>
+            <p className="text-xs text-[#666] mb-1">You&apos;ve used all 10 messages</p>
             <p className="text-[10px] text-[#999]">
               Get unlimited chat in the Konectr Android app (coming soon)
             </p>
