@@ -69,30 +69,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate phone (optional — if provided, must be valid)
-    let phoneHash: string | null = null;
-
-    if (phone_number && typeof phone_number === 'string' && phone_number.trim()) {
-      if (!country_code || typeof country_code !== 'string') {
-        return NextResponse.json(
-          { error: 'Country code is required with phone number' },
-          { status: 400 }
-        );
-      }
-
-      // Validate digits using normalizePhone's cleaning logic
-      const e164Phone = normalizePhone(country_code, phone_number);
-      const digitsOnly = e164Phone.replace(/^\+/, '');
-
-      if (!PHONE_DIGITS_REGEX.test(digitsOnly)) {
-        return NextResponse.json(
-          { error: 'Please enter a valid phone number' },
-          { status: 400 }
-        );
-      }
-
-      phoneHash = hashPhone(e164Phone);
+    // Validate phone (required)
+    if (!phone_number || typeof phone_number !== 'string' || !phone_number.trim()) {
+      return NextResponse.json(
+        { error: 'Phone number is required' },
+        { status: 400 }
+      );
     }
+    if (!country_code || typeof country_code !== 'string') {
+      return NextResponse.json(
+        { error: 'Country code is required with phone number' },
+        { status: 400 }
+      );
+    }
+
+    // Validate digits using normalizePhone's cleaning logic
+    const e164Phone = normalizePhone(country_code, phone_number);
+    const digitsOnly = e164Phone.replace(/^\+/, '');
+
+    if (!PHONE_DIGITS_REGEX.test(digitsOnly)) {
+      return NextResponse.json(
+        { error: 'Please enter a valid phone number' },
+        { status: 400 }
+      );
+    }
+
+    const phoneHash: string = hashPhone(e164Phone);
 
     // Validate email (optional — if provided, must be valid RFC-lite)
     let normalizedEmail: string | null = null;

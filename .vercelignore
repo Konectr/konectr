@@ -1,0 +1,13 @@
+# Stray non-source directories that accidentally accumulated at the repo root
+# (malformed fetch artifacts + duplicated CLAUDE.md trees). They are NOT part of
+# the Next.js app — real source lives in src/, public/, scripts/ — and must never
+# be uploaded to a Vercel deployment. Safe to delete from disk; ignored here so a
+# `vercel --prod` deploy stays clean regardless. See docs/seo/ deploy notes.
+/Development
+/Marketing
+/assets
+/https:
+/konectr-mvp
+/konectr_mobile
+/lib
+/konectr-web

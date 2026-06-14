@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: msg }, { status: 500 });
     }
 
-    return NextResponse.json(data ?? { messages: [], messages_sent: 0, messages_remaining: 5 });
+    return NextResponse.json(data ?? { messages: [], messages_sent: 0, messages_remaining: 10 });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Internal error';
     console.error('chat/history error:', message);

@@ -8,8 +8,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
-import { getSmartDownloadProps, detectPlatform, type Platform } from '@/lib/smartLink';
+import { detectPlatform, type Platform } from '@/lib/smartLink';
 import AndroidWaitlistCTA from './AndroidWaitlistCTA';
+import TestFlightRequestCTA from './TestFlightRequestCTA';
 import WebChatPanel from './WebChatPanel';
 
 // Brand assets
@@ -214,8 +215,8 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       setPhoneNumber(userProfile.phoneNumber);
       setCountryCode(userProfile.countryCode);
       if (userProfile.email) setEmail(userProfile.email);
-      // If we already have any optional data, surface the disclosure expanded
-      if (userProfile.phoneNumber || userProfile.email) setShowOptional(true);
+      // Email is the only optional field behind the disclosure now — expand if present
+      if (userProfile.email) setShowOptional(true);
     }
 
     const existing = getStoredRsvp(shareCode);
@@ -246,7 +247,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   }, [activity]);
 
   const handleRsvp = useCallback(async () => {
-    if (!guestName.trim() || !activity) return;
+    if (!guestName.trim() || !phoneNumber.trim() || !activity) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -255,11 +256,9 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
       const body: Record<string, string> = {
         share_code: shareCode,
         guest_name: guestName.trim(),
+        phone_number: phoneNumber.trim(),
+        country_code: countryCode,
       };
-      if (phoneNumber.trim()) {
-        body.phone_number = phoneNumber.trim();
-        body.country_code = countryCode;
-      }
       if (email.trim()) {
         body.email = email.trim();
       }
@@ -342,7 +341,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
         subtitle={
           platform === 'android'
             ? 'Konectr is iOS-only for now — get notified when Android launches.'
-            : 'Real plans, real people. Download Konectr to see what’s next.'
+            : 'Real plans, real people. Join the Konectr beta to see what’s next.'
         }
         platform={platform}
         shareCode={shareCode}
@@ -362,7 +361,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     ?? (activity.max_participants > 0 ? activity.max_participants - participantCount : -1);
   const isFull = spotsRemaining <= 0 && activity.max_participants > 0;
 
-  const canSubmit = guestName.trim().length > 0;
+  const canSubmit = guestName.trim().length > 0 && phoneNumber.trim().length >= 7;
   const dayLabel = getDayLabel(activity.start_time);
 
   // =============================================
@@ -555,13 +554,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                     <p className="text-xs text-[#5A4438] font-medium mb-3 leading-relaxed">
                       Get reminded, see who&apos;s coming, and join the chat
                     </p>
-                    <a
-                      {...getSmartDownloadProps(shareCode)}
-                      className="inline-flex items-center justify-center gap-2 w-full bg-[#1F1F1F] text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-black transition-colors shadow-sm"
-                    >
-                      <AppleIcon />
-                      Download Konectr
-                    </a>
+                    <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant="full" />
                   </div>
                 )}
 
@@ -601,7 +594,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                         <p className="text-sm text-[#555] mb-3">
                           This one&apos;s full — find another that fits.
                         </p>
-                        <DownloadButton shareCode={shareCode} />
+                        <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant="compact" />
                         <OpenInApp deepLink={deepLink} />
                       </>
                     )}
@@ -618,13 +611,44 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                       placeholder="Your first name"
                       value={guestName}
                       onChange={(e) => setGuestName(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && canSubmit && !showOptional && handleRsvp()}
+                      onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
                       maxLength={50}
                       autoComplete="given-name"
                       className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] text-[15px] text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-4 focus:ring-[#FF774D]/10 transition-all mb-3"
                     />
 
-                    {/* Optional disclosure — collapses 3 fields into 1 click */}
+                    {/* Phone — required (links your RSVP + chat) */}
+                    <div className="flex gap-1.5 mb-1.5">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="w-[88px] shrink-0 px-2 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all appearance-none"
+                        aria-label="Country code"
+                      >
+                        {countryCodes.map((cc) => (
+                          <option key={cc.code} value={cc.code}>
+                            {cc.flag} {cc.code}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        id="guest-phone"
+                        type="tel"
+                        placeholder="Phone number"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
+                        autoComplete="tel-national"
+                        required
+                        aria-required="true"
+                        className="flex-1 px-4 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white text-[15px] text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-4 focus:ring-[#FF774D]/10 transition-all"
+                      />
+                    </div>
+                    <p className="text-[10px] text-[#999] px-0.5 mb-3">
+                      Never shared publicly. Used to link your RSVP and chat.
+                    </p>
+
+                    {/* Optional email disclosure — 1 click */}
                     {!showOptional ? (
                       <button
                         type="button"
@@ -632,34 +656,10 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                         className="w-full text-left text-xs text-[#777] hover:text-[#FF774D] transition-colors mb-3 inline-flex items-center gap-1.5 py-1"
                       >
                         <span className="text-[#BBB]">+</span>
-                        Add phone or email <span className="text-[#BBB]">(auto-matches your RSVP when you sign up)</span>
+                        Add email <span className="text-[#BBB]">(get a reminder before it starts)</span>
                       </button>
                     ) : (
-                      <div className="space-y-2 mb-3 p-3 bg-[#FAFAFA] rounded-xl">
-                        <div className="flex gap-1.5">
-                          <select
-                            value={countryCode}
-                            onChange={(e) => setCountryCode(e.target.value)}
-                            className="w-[88px] shrink-0 px-2 py-2.5 rounded-lg border border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all appearance-none"
-                            aria-label="Country code"
-                          >
-                            {countryCodes.map((cc) => (
-                              <option key={cc.code} value={cc.code}>
-                                {cc.flag} {cc.code}
-                              </option>
-                            ))}
-                          </select>
-                          <input
-                            id="guest-phone"
-                            type="tel"
-                            placeholder="Phone (optional)"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
-                            autoComplete="tel-national"
-                            className="flex-1 px-3 py-2.5 rounded-lg border border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all"
-                          />
-                        </div>
+                      <div className="mb-3 p-3 bg-[#FAFAFA] rounded-xl">
                         <input
                           id="guest-email"
                           type="email"
@@ -672,8 +672,8 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                           maxLength={254}
                           className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all"
                         />
-                        <p className="text-[10px] text-[#999] px-0.5">
-                          Never shared. Used only to link your RSVP when you sign up.
+                        <p className="text-[10px] text-[#999] px-0.5 mt-1.5">
+                          Optional. Never shared — only to send your reminder.
                         </p>
                       </div>
                     )}
@@ -706,13 +706,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
                       <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
                     ) : (
                       <>
-                        <a
-                          {...getSmartDownloadProps(shareCode)}
-                          className="flex items-center justify-center gap-2 w-full bg-[#1F1F1F] text-white py-3 px-4 rounded-xl text-sm font-semibold hover:bg-black transition-colors"
-                        >
-                          <AppleIcon />
-                          Download Konectr
-                        </a>
+                        <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant="full" />
                         <OpenInApp deepLink={deepLink} />
                       </>
                     )}
@@ -779,23 +773,11 @@ function SimpleStateLayout({
         {platform === 'android' ? (
           <AndroidWaitlistCTA shareCode={shareCode} activityId={activityId} />
         ) : (
-          <DownloadButton shareCode={shareCode} />
+          <TestFlightRequestCTA shareCode={shareCode} activityId={activityId} variant="compact" />
         )}
       </div>
       <Footer />
     </div>
-  );
-}
-
-function DownloadButton({ shareCode }: { shareCode: string }) {
-  return (
-    <a
-      {...getSmartDownloadProps(shareCode)}
-      className="inline-flex items-center gap-2 bg-[#1F1F1F] text-white py-2.5 px-5 rounded-xl text-sm font-semibold hover:bg-black transition-colors"
-    >
-      <AppleIcon />
-      Download Konectr
-    </a>
   );
 }
 
@@ -810,14 +792,6 @@ function OpenInApp({ deepLink }: { deepLink: string }) {
         <ExternalIcon />
       </a>
     </div>
-  );
-}
-
-function AppleIcon() {
-  return (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-    </svg>
   );
 }
 
