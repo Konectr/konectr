@@ -455,7 +455,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
 
             {/* Description */}
             {activity.description && activity.description !== activity.title && (
-              <p className="mt-4 pt-4 border-t border-[#F0F0F0] text-sm text-[#555] leading-relaxed">
+              <p className="mt-4 pt-4 border-t border-[#F0F0F0] text-sm text-[#555] leading-relaxed whitespace-pre-line">
                 {activity.description}
               </p>
             )}
