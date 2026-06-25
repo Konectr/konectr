@@ -118,7 +118,7 @@ export function Hero() {
             <>
               <span className="text-lg">✨</span>
               <span className="text-white font-semibold text-sm">
-                {t("launching", { date: brand.launchDate })}
+                {t("launching")}
               </span>
             </>
           )}
