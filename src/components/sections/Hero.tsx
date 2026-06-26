@@ -114,7 +114,7 @@ export function Hero() {
             <>
               <span className="text-lg">🧪</span>
               <span className="text-white font-semibold text-sm">
-                TestFlight beta is live · iPhone only for now
+                TestFlight beta is live
               </span>
             </>
           ) : (
@@ -193,18 +193,6 @@ export function Hero() {
             </a>
           </Button>
         </motion.div>
-
-        {/* TestFlight context line — only when link is live and visitor is on iPhone */}
-        {showTestFlightCta && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="text-white/80 text-xs mt-4"
-          >
-            Installs via Apple TestFlight · ~30 seconds · Android coming next
-          </motion.p>
-        )}
 
         {/* Venue showcase - Activity pills */}
         <motion.div
