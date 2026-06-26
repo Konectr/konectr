@@ -35,9 +35,12 @@ export function Hero() {
     setPlatform(detectPlatform());
   }, []);
 
-  // iOS visitors get the TestFlight CTA once the env var is wired.
-  // Everyone else (Android, desktop, and iOS before the link exists) routes to waitlist.
-  const showTestFlightCta = HAS_TESTFLIGHT && platform === "ios";
+  // iOS + desktop visitors get the TestFlight CTA once the env var is wired
+  // (desktop users can scan/AirDrop the link to their iPhone). Android routes to
+  // the waitlist since they can't install an iOS beta. null (pre-hydration)
+  // defaults to waitlist too, keeping SSR markup stable / flash-free on Android.
+  const showTestFlightCta =
+    HAS_TESTFLIGHT && (platform === "ios" || platform === "desktop");
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
