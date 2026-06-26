@@ -17,9 +17,18 @@ const sections = [
   },
   {
     id: "company",
+    // INTERIM (2026-06-25, pending legal counsel review): operating party named
+    // ahead of beta; final entity + governing law confirmed at incorporation.
+    // Mirrors Privacy Policy §2. See docs/COMPLIANCE_POSTURE.md.
     title: "2. Company Information",
+    content: [
+      "Konectr is currently operated by Deepak Porwal (founder) from Kuala Lumpur, Malaysia, pending incorporation. Upon completion of incorporation, the incorporated entity will become the service provider under these Terms and this section will be updated.",
+    ],
     details: [
-      { label: "Service Provider", value: "Konectr" },
+      {
+        label: "Service Provider",
+        value: "Deepak Porwal — founder, Konectr (incorporation in progress)",
+      },
       {
         label: "Registered Address",
         value:
@@ -213,6 +222,7 @@ const sections = [
     title: "11. Dispute Resolution",
     content: [
       "These Terms are governed by the laws of Malaysia. Any disputes shall be resolved exclusively in the courts of Kuala Lumpur.",
+      "Interim note: governing law and jurisdiction are provisional and will be updated upon Konectr's incorporation (see Section 2). The Malaysian Personal Data Protection Act 2010 continues to apply to users located in Malaysia regardless of the entity's jurisdiction.",
       "Before taking legal action, you agree to contact legal@konectr.app and allow 30 days for resolution. If informal resolution fails, either party may propose binding arbitration under the rules of the Asian International Arbitration Centre (AIAC).",
     ],
   },
