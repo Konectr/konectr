@@ -36,9 +36,12 @@ export function Hero() {
     setPlatform(detectPlatform());
   }, []);
 
-  // iOS visitors get the TestFlight CTA once the env var is wired.
-  // Everyone else (Android, desktop, and iOS before the link exists) routes to waitlist.
-  const showTestFlightCta = HAS_TESTFLIGHT && platform === "ios";
+  // iOS + desktop visitors get the TestFlight CTA once the env var is wired
+  // (desktop users can scan/AirDrop the link to their iPhone). Android routes to
+  // the waitlist since they can't install an iOS beta. null (pre-hydration)
+  // defaults to waitlist too, keeping SSR markup stable / flash-free on Android.
+  const showTestFlightCta =
+    HAS_TESTFLIGHT && (platform === "ios" || platform === "desktop");
 
   // Primary CTA differs only by destination/label/tracking between the TestFlight
   // and waitlist variants — collapse to one button so the styling stays in sync.
@@ -128,14 +131,14 @@ export function Hero() {
             <>
               <span className="text-lg">🧪</span>
               <span className="text-white font-semibold text-sm">
-                TestFlight beta is live · iPhone only for now
+                TestFlight beta is live
               </span>
             </>
           ) : (
             <>
               <span className="text-lg">✨</span>
               <span className="text-white font-semibold text-sm">
-                {t("launching")}
+                {t("launching", { date: brand.launchDate })}
               </span>
             </>
           )}
@@ -189,18 +192,6 @@ export function Hero() {
             </a>
           </Button>
         </motion.div>
-
-        {/* TestFlight context line — only when link is live and visitor is on iPhone */}
-        {showTestFlightCta && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="text-white/80 text-xs mt-4"
-          >
-            Installs via Apple TestFlight · ~30 seconds · Android coming next
-          </motion.p>
-        )}
 
         {/* Venue showcase - Activity pills */}
         <motion.div

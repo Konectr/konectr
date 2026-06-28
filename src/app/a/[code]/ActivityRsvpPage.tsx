@@ -58,55 +58,66 @@ function getHeroPhoto(category: string): string {
   return HERO_PHOTOS[category.toLowerCase()] || DEFAULT_HERO;
 }
 
+// Konectr is Malaysia-only: every activity time is displayed in Asia/Kuala_Lumpur
+// (fixed GMT+8, no DST), regardless of the viewer's device TZ or the render server
+// (Vercel = UTC). Stored start_time/end_time are true UTC — we always format them in MYT.
+const MYT_TZ = 'Asia/Kuala_Lumpur';
+const MYT_OFFSET_MS = 8 * 60 * 60 * 1000;
+
+// Returns a Date whose getUTC* fields read the Asia/KL wall-clock of `instant`, so
+// day-boundary / hour arithmetic below can use getUTC* deterministically (no DST in MY).
+function asMyt(instant: Date): Date {
+  return new Date(instant.getTime() + MYT_OFFSET_MS);
+}
+
 function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    weekday: 'short', month: 'short', day: 'numeric',
+  return new Date(dateString).toLocaleDateString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric', timeZone: MYT_TZ,
   });
 }
 
 function formatTime(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleTimeString('en-US', {
-    hour: 'numeric', minute: '2-digit', hour12: true,
+  return new Date(dateString).toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: '2-digit', hour12: true, timeZone: MYT_TZ,
   });
 }
 
-// Friendly day label for the hero overlay — "Tonight", "Tomorrow", "Friday".
+// Friendly day label for the hero overlay — "Tonight", "Tomorrow", "Friday" (all MYT).
 function getDayLabel(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const startOfTomorrow = new Date(startOfToday); startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
-  const startOfDayAfter = new Date(startOfToday); startOfDayAfter.setDate(startOfDayAfter.getDate() + 2);
+  const d = asMyt(new Date(dateString));
+  const now = asMyt(new Date());
+  const startOfToday = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const target = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  const diffDays = Math.round((target - startOfToday) / 86_400_000);
 
-  if (date >= startOfToday && date < startOfTomorrow) {
-    return date.getHours() >= 17 ? 'TONIGHT' : 'TODAY';
-  }
-  if (date >= startOfTomorrow && date < startOfDayAfter) return 'TOMORROW';
-  return date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+  if (diffDays === 0) return d.getUTCHours() >= 17 ? 'TONIGHT' : 'TODAY';
+  if (diffDays === 1) return 'TOMORROW';
+  return new Date(dateString)
+    .toLocaleDateString('en-US', { weekday: 'long', timeZone: MYT_TZ })
+    .toUpperCase();
 }
 
 // Natural-language relative day for the datetime card — "Tonight", "Tomorrow",
-// "This Friday", "Next Wednesday", or the bare weekday for activities ≥2 weeks out.
+// "This Friday", "Next Wednesday", or the bare weekday for activities ≥2 weeks out (all MYT).
 function getRelativeDayPhrase(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const diffDays = Math.round((target.getTime() - startOfToday.getTime()) / 86_400_000);
+  const d = asMyt(new Date(dateString));
+  const now = asMyt(new Date());
+  const startOfToday = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const target = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  const diffDays = Math.round((target - startOfToday) / 86_400_000);
 
-  if (diffDays <= 0) return date.getHours() >= 17 ? 'Tonight' : 'Today';
+  if (diffDays <= 0) return d.getUTCHours() >= 17 ? 'Tonight' : 'Today';
   if (diffDays === 1) return 'Tomorrow';
-  const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+  const weekday = new Date(dateString).toLocaleDateString('en-US', { weekday: 'long', timeZone: MYT_TZ });
   if (diffDays <= 6) return `This ${weekday}`;
   if (diffDays <= 13) return `Next ${weekday}`;
   return weekday;
 }
 
 function formatShortDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return new Date(dateString).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', timeZone: MYT_TZ,
+  });
 }
 
 function isActivityEnded(endTime: string): boolean {
@@ -455,7 +466,7 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
 
             {/* Description */}
             {activity.description && activity.description !== activity.title && (
-              <p className="mt-4 pt-4 border-t border-[#F0F0F0] text-sm text-[#555] leading-relaxed whitespace-pre-line">
+              <p className="mt-4 pt-4 border-t border-[#F0F0F0] text-sm text-[#555] leading-relaxed">
                 {activity.description}
               </p>
             )}
