@@ -57,6 +57,10 @@ const MOCK_RSVP_RESPONSE = {
   spots_remaining: 2,
 };
 
+// Phone is required by the route (2026-06-14). Spread into any payload that
+// should pass validation and reach activity lookup / the RPC.
+const VALID_PHONE = { country_code: '+60', phone_number: '123456789' };
+
 describe('POST /api/rsvp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -118,7 +122,7 @@ describe('POST /api/rsvp', () => {
     it('accepts valid Unicode names (accented, CJK, Arabic)', async () => {
       // Test with accented characters
       const req1 = makeRequest(
-        { share_code: 'ABC123', guest_name: 'José María' },
+        { share_code: 'ABC123', guest_name: 'José María', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res1 = await POST(req1);
@@ -126,7 +130,7 @@ describe('POST /api/rsvp', () => {
 
       // Test with CJK characters
       const req2 = makeRequest(
-        { share_code: 'ABC123', guest_name: '田中太郎' },
+        { share_code: 'ABC123', guest_name: '田中太郎', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res2 = await POST(req2);
@@ -134,7 +138,7 @@ describe('POST /api/rsvp', () => {
 
       // Test with Arabic characters
       const req3 = makeRequest(
-        { share_code: 'ABC123', guest_name: 'أحمد' },
+        { share_code: 'ABC123', guest_name: 'أحمد', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res3 = await POST(req3);
@@ -151,7 +155,7 @@ describe('POST /api/rsvp', () => {
       mockGetActivityByShareCode.mockResolvedValue(null);
 
       const req = makeRequest(
-        { share_code: 'INVALID', guest_name: 'Jordan' },
+        { share_code: 'INVALID', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res = await POST(req);
@@ -163,7 +167,7 @@ describe('POST /api/rsvp', () => {
 
     it('returns 200 when share_code finds valid activity', async () => {
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res = await POST(req);
@@ -173,7 +177,7 @@ describe('POST /api/rsvp', () => {
         MOCK_ACTIVITY.id,
         'Jordan',
         expect.any(String),
-        null, // phoneHash (no phone in request)
+        expect.stringMatching(/^[a-f0-9]{64}$/), // phoneHash (phone now required)
         null // normalizedEmail (no email in request)
       );
     });
@@ -182,7 +186,7 @@ describe('POST /api/rsvp', () => {
       mockCreateWebRsvp.mockRejectedValue(new Error('Connection refused'));
 
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res = await POST(req);
@@ -200,7 +204,7 @@ describe('POST /api/rsvp', () => {
   describe('RPC integration', () => {
     it('returns 200 with claim_token on successful RSVP', async () => {
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res = await POST(req);
@@ -216,7 +220,7 @@ describe('POST /api/rsvp', () => {
       mockCreateWebRsvp.mockRejectedValue(new Error('Activity is full'));
 
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res = await POST(req);
@@ -230,7 +234,7 @@ describe('POST /api/rsvp', () => {
       mockCreateWebRsvp.mockRejectedValue(new Error('Activity has ended'));
 
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res = await POST(req);
@@ -244,7 +248,7 @@ describe('POST /api/rsvp', () => {
       mockCreateWebRsvp.mockRejectedValue(new Error('Too many RSVPs'));
 
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res = await POST(req);
@@ -258,7 +262,7 @@ describe('POST /api/rsvp', () => {
       mockCreateWebRsvp.mockRejectedValue(new Error('Activity is not active'));
 
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '1.2.3.4' }
       );
       const res = await POST(req);
@@ -276,7 +280,7 @@ describe('POST /api/rsvp', () => {
   describe('IP hashing', () => {
     it('hashes x-forwarded-for header and passes to RPC', async () => {
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '203.0.113.42' }
       );
       await POST(req);
@@ -284,15 +288,15 @@ describe('POST /api/rsvp', () => {
       expect(mockCreateWebRsvp).toHaveBeenCalledWith(
         MOCK_ACTIVITY.id,
         'Jordan',
-        expect.stringMatching(/^[a-f0-9]{64}$/), // SHA-256 hex
-        null,
+        expect.stringMatching(/^[a-f0-9]{64}$/), // SHA-256 hex (IP)
+        expect.stringMatching(/^[a-f0-9]{64}$/), // phoneHash
         null
       );
     });
 
     it('uses "unknown" hash when x-forwarded-for is missing', async () => {
       const req = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' }
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE }
         // No x-forwarded-for header
       );
       await POST(req);
@@ -301,15 +305,15 @@ describe('POST /api/rsvp', () => {
       expect(mockCreateWebRsvp).toHaveBeenCalledWith(
         MOCK_ACTIVITY.id,
         'Jordan',
-        expect.stringMatching(/^[a-f0-9]{64}$/),
-        null,
+        expect.stringMatching(/^[a-f0-9]{64}$/), // SHA-256 hex (IP)
+        expect.stringMatching(/^[a-f0-9]{64}$/), // phoneHash
         null
       );
     });
 
     it('uses first IP when x-forwarded-for contains multiple IPs', async () => {
       const req1 = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '203.0.113.42, 10.0.0.1, 172.16.0.1' }
       );
       await POST(req1);
@@ -321,7 +325,7 @@ describe('POST /api/rsvp', () => {
 
       // Same first IP should produce same hash
       const req2 = makeRequest(
-        { share_code: 'ABC123', guest_name: 'Jordan' },
+        { share_code: 'ABC123', guest_name: 'Jordan', ...VALID_PHONE },
         { 'x-forwarded-for': '203.0.113.42' }
       );
       await POST(req2);
