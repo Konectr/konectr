@@ -6,7 +6,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { fadeInUp, viewportOnce, defaultTransition } from "@/lib/animations";
+import { fadeInUp, viewportOnce } from "@/lib/animations";
 import { Heading } from "@/components/shared";
 
 // Community member photos
@@ -65,7 +65,7 @@ export function JoinMovement() {
           viewport={viewportOnce}
           variants={fadeInUp}
           custom={0.2}
-          className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12"
+          className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
         >
           {/* Quote icon */}
           <span className="text-5xl text-primary/80 block mb-6">&ldquo;</span>

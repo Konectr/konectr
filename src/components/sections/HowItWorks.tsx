@@ -89,8 +89,7 @@ export function HowItWorks() {
 
                   {/* Content */}
                   <h3
-                    className="text-xl font-bold text-foreground mb-2"
-                    style={{ fontFamily: "'Satoshi', sans-serif" }}
+                    className="font-heading text-xl font-bold text-foreground mb-2"
                   >
                     {t(`steps.${step.key}.title`)}
                   </h3>

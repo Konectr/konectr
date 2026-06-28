@@ -5,6 +5,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { SectionHeader } from "@/components/shared";
@@ -133,9 +134,9 @@ export function TheShift() {
             <motion.span
               animate={{ x: [0, 10, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="text-primary text-2xl"
+              className="text-primary"
             >
-              →
+              <ArrowRight className="size-6" aria-hidden />
             </motion.span>
             <span className="text-lg font-semibold text-foreground">{t("toThis")}</span>
           </div>
