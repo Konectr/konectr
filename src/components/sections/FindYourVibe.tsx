@@ -100,8 +100,7 @@ export function FindYourVibe() {
                   </motion.span>
 
                   <h3
-                    className="text-xl font-bold text-white mb-1"
-                    style={{ fontFamily: "'Satoshi', sans-serif" }}
+                    className="font-heading text-xl font-bold text-white mb-1"
                   >
                     {t(`vibes.${vibe.key}.name`)}
                   </h3>
@@ -124,7 +123,7 @@ export function FindYourVibe() {
         >
           <a
             href="#download"
-            className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-4 transition-[color,background-color,box-shadow,transform] hover:-translate-y-1 hover:shadow-xl"
+            className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-4 transition-[color,background-color,box-shadow,transform] hover:-translate-y-1 shadow-[var(--shadow-brand)] hover:shadow-[var(--shadow-brand-lg)] active:scale-[0.98]"
           >
             {t("downloadApp")}
           </a>

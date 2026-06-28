@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,7 @@ export function Hero() {
     HAS_TESTFLIGHT && (platform === "ios" || platform === "desktop");
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -133,7 +134,6 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
           className="font-heading text-4xl sm:text-5xl md:text-7xl font-black text-white leading-tight mb-6 whitespace-pre-line"
-          style={{ fontFamily: "'Satoshi', sans-serif" }}
         >
           {t("headline")}
         </motion.h1>
@@ -167,7 +167,7 @@ export function Hero() {
                 onClick={() => trackTestFlightClick(platform)}
               >
                 Open the beta on iPhone
-                <span className="ml-2">→</span>
+                <ArrowRight className="ml-2 size-5" aria-hidden />
               </a>
             </Button>
           ) : (
@@ -178,7 +178,7 @@ export function Hero() {
             >
               <a href="#waitlist">
                 {t("joinWaitlist")}
-                <span className="ml-2">→</span>
+                <ArrowRight className="ml-2 size-5" aria-hidden />
               </a>
             </Button>
           )}

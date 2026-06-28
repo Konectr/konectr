@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 import { Link, usePathname } from "@/i18n/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -17,16 +18,21 @@ export function Navigation() {
   const t = useTranslations("navigation");
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
   const { scrollY } = useScroll();
 
   // Check if on homepage (pathname is "/" after locale is stripped by next-intl)
   const isHomepage = pathname === "/";
 
+  // Theme-aware nav surface: white in light mode, graphite (matches --card oklch(0.18 0 0))
+  // in dark mode. Hardcoding white turned the floating pill bright white on scroll in dark mode.
+  const navRgb = resolvedTheme === "dark" ? "24, 24, 24" : "255, 255, 255";
+
   // Transform values based on scroll
   const backgroundColor = useTransform(
     scrollY,
     [0, 100],
-    ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.95)"]
+    [`rgba(${navRgb}, 0)`, `rgba(${navRgb}, 0.95)`]
   );
   const backdropBlur = useTransform(scrollY, [0, 100], ["blur(0px)", "blur(20px)"]);
   const padding = useTransform(scrollY, [0, 100], ["16px 32px", "12px 24px"]);

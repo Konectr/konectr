@@ -71,6 +71,11 @@
   --graphite-grey: #1F1F1F;
   --cloud-white: #FAFAFA;
 
+  /* Brand-tinted elevation — depth that reads as Konectr orange, not a generic gray glow.
+     Use on primary/CTA surfaces; keep neutral shadows for purely structural elevation. */
+  --shadow-brand: 0 18px 40px -12px oklch(0.72 0.18 35 / 0.35);
+  --shadow-brand-lg: 0 24px 60px -12px oklch(0.72 0.18 35 / 0.45);
+
   /* Semantic Colors */
   --background: oklch(0.98 0 0); /* Cloud White */
   --foreground: oklch(0.2 0 0); /* Graphite Grey */
