@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -39,8 +40,24 @@ export function Hero() {
   // Everyone else (Android, desktop, and iOS before the link exists) routes to waitlist.
   const showTestFlightCta = HAS_TESTFLIGHT && platform === "ios";
 
+  // Primary CTA differs only by destination/label/tracking between the TestFlight
+  // and waitlist variants — collapse to one button so the styling stays in sync.
+  const primaryCta = showTestFlightCta
+    ? {
+        href: TESTFLIGHT_URL,
+        label: "Open the beta on iPhone",
+        id: "cta-testflight" as string | undefined,
+        onClick: () => trackTestFlightClick(platform),
+      }
+    : {
+        href: "#waitlist",
+        label: t("joinWaitlist"),
+        id: undefined as string | undefined,
+        onClick: undefined as (() => void) | undefined,
+      };
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -130,7 +147,6 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
           className="font-heading text-4xl sm:text-5xl md:text-7xl font-black text-white leading-tight mb-6 whitespace-pre-line"
-          style={{ fontFamily: "'Satoshi', sans-serif" }}
         >
           {t("headline")}
         </motion.h1>
@@ -152,33 +168,16 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          {showTestFlightCta ? (
-            <Button
-              size="lg"
-              className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
-              asChild
-            >
-              <a
-                id="cta-testflight"
-                href={TESTFLIGHT_URL}
-                onClick={() => trackTestFlightClick(platform)}
-              >
-                Open the beta on iPhone
-                <span className="ml-2">→</span>
-              </a>
-            </Button>
-          ) : (
-            <Button
-              size="lg"
-              className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
-              asChild
-            >
-              <a href="#waitlist">
-                {t("joinWaitlist")}
-                <span className="ml-2">→</span>
-              </a>
-            </Button>
-          )}
+          <Button
+            size="lg"
+            className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
+            asChild
+          >
+            <a id={primaryCta.id} href={primaryCta.href} onClick={primaryCta.onClick}>
+              {primaryCta.label}
+              <ArrowRight className="ml-2 size-5" aria-hidden />
+            </a>
+          </Button>
           <Button
             size="lg"
             variant="outline"

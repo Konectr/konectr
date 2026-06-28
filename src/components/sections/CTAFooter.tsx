@@ -19,7 +19,7 @@ export function CTAFooter() {
             whileInView="visible"
             viewport={viewportOnce}
             variants={fadeInUp}
-            className="relative bg-gradient-to-br from-primary via-primary to-primary/90 rounded-3xl p-10 md:p-16 text-center overflow-hidden"
+            className="relative bg-gradient-to-br from-primary via-primary to-primary/90 rounded-3xl p-10 md:p-16 text-center overflow-hidden shadow-[var(--shadow-brand-lg)]"
           >
             {/* Background animation */}
             <motion.div
@@ -27,7 +27,7 @@ export function CTAFooter() {
               animate={{ rotate: 360 }}
               transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
             >
-              <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-radial from-white/10 to-transparent" />
+              <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-[radial-gradient(circle,rgba(255,255,255,0.1),transparent_70%)]" />
             </motion.div>
 
             {/* Content */}
