@@ -94,8 +94,7 @@ export function SectionHeader({
         </span>
       )}
       <h2
-        className="text-3xl md:text-5xl font-black text-foreground mb-4"
-        style={{ fontFamily: "'Satoshi', sans-serif" }}
+        className="font-heading text-3xl md:text-5xl font-black tracking-tight text-foreground mb-4"
       >
         {title}
       </h2>

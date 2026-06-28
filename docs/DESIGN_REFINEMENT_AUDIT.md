@@ -1,8 +1,9 @@
 # Konectr Web — Design Refinement Audit
 
-> **Progress:** Batch A (P0 bug fixes) + Batch B (materiality/tactility) **SHIPPED 2026-06-28**
-> on branch `claude/web-visual-polish` — browser-verified, tsc + eslint clean, 0 console errors.
-> See "Recommended Rollout" below for the per-batch status. Batch C is next.
+> **Progress:** Batches A + B + C **SHIPPED 2026-06-28** on branch `claude/web-visual-polish`
+> — browser-verified (Playwright, light/dark/scroll), tsc + eslint clean, 0 console errors.
+> Homepage refinement backlog is now essentially complete. Remaining work = inner pages
+> (see "Not Yet Audited"). See "Recommended Rollout" below for per-batch detail.
 
 > **Mode:** Refinement, not redesign. Dials recalibrated for an existing brand:
 > `DESIGN_VARIANCE 3` · `MOTION_INTENSITY 6` · `VISUAL_DENSITY 4`.
@@ -126,10 +127,11 @@ G1 (dvh), G2 (font token, all 3 sections), G7 (dark-mode nav), CTAFooter P0 (rad
 G3 (tinted-shadow tokens `--shadow-brand` / `--shadow-brand-lg`), G4 (button `transform` in transition + global `active:scale-[0.98]`), G5 (`→` glyphs → `lucide` `ArrowRight`). Browser-verified: orange-tinted shadow renders on FindYourVibe CTA + CTAFooter card; 0 legacy arrow glyphs remain.
 - **Judgment calls:** Hero CTA shadow left **neutral** (white button on orange hero — an orange shadow would vanish; the brand shadow only went on orange CTAs over light backgrounds). CTAFooter orange card had **no** shadow before — it now lifts off the background. HowItWorks step cards kept **neutral** (structural elevation).
 
-**Batch C — consistency + refinement (~30 min) — ⬜ NEXT:**
-FindYourVibe raw-`<a>` → `Button`, Hero dual-button dedupe, G6 (nav SSR), JoinMovement glass refraction, G8 (display tracking).
+**Batch C — consistency + refinement — ✅ SHIPPED 2026-06-28:**
+FindYourVibe raw-`<a>` → `Button`; Hero dual-button dedupe (one computed `primaryCta`, −~20 lines); G6 (nav now renders in SSR markup, `suppressHydrationWarning`, no mount gate — verified present in server HTML + 0 hydration errors); JoinMovement glass refraction (inner `inset 0 1px 0` highlight); G8 (`tracking-tight` on display headings).
+- **Bonus:** C8/G8 lives in the shared `Heading` + `SectionHeader`, which were the **last two** places carrying the inline-Satoshi pattern — so this also **completed G2 site-wide** (token + restored fallback chain on every page that uses them, not just the homepage). Removed a pre-existing dead `defaultTransition` import in JoinMovement.
 
-**Then:** review the homepage live, lock taste, and only after that extend the same pass to inner pages.
+**Then:** review the homepage live, lock taste, and only after that extend the same pass to inner pages (the "Not Yet Audited" list).
 
 ---
 

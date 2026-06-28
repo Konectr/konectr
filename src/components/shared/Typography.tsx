@@ -7,9 +7,6 @@ import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
 
-// Satoshi font style (used consistently across headings)
-const satoshiStyle = { fontFamily: "'Satoshi', sans-serif" };
-
 interface HeadingProps extends HTMLMotionProps<"h1"> {
   level?: 1 | 2 | 3 | 4;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
@@ -53,13 +50,12 @@ export function Heading({
     <Component
       className={cn(
         headingSizes[size],
-        "font-black leading-tight",
+        "font-heading font-black leading-tight tracking-tight",
         gradient
           ? "bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent"
           : "text-foreground",
         className
       )}
-      style={satoshiStyle}
       {...animationProps}
       {...props}
     >

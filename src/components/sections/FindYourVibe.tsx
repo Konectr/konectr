@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { staggerContainer, scaleIn, viewportOnce } from "@/lib/animations";
 import { SectionHeader } from "@/components/shared";
+import { Button } from "@/components/ui/button";
 
 // Activity category emojis - synced with mobile app (Dec 2025)
 const vibesMeta = [
@@ -121,12 +122,13 @@ export function FindYourVibe() {
           transition={{ delay: 0.5 }}
           className="text-center mt-12"
         >
-          <a
-            href="#download"
-            className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg px-8 py-4 transition-[color,background-color,box-shadow,transform] hover:-translate-y-1 shadow-[var(--shadow-brand)] hover:shadow-[var(--shadow-brand-lg)] active:scale-[0.98]"
+          <Button
+            asChild
+            size="lg"
+            className="rounded-full text-lg font-bold px-8 py-4 h-auto shadow-[var(--shadow-brand)] hover:shadow-[var(--shadow-brand-lg)] hover:-translate-y-1"
           >
-            {t("downloadApp")}
-          </a>
+            <a href="#download">{t("downloadApp")}</a>
+          </Button>
         </motion.div>
       </div>
     </section>
