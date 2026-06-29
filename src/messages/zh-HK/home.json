@@ -1,6 +1,6 @@
 {
   "hero": {
-    "launching": "Launching soon",
+    "launching": "Launching {date}",
     "headline": "Stop scrolling.\nStart living.",
     "subtext": "Real adventures with real people, right now.",
     "joinWaitlist": "加入等候名單",

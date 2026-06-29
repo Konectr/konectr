@@ -5,12 +5,27 @@ import { Metadata } from 'next';
 import { getActivityByShareCode } from '@/lib/supabase';
 import ActivityRsvpPage from './ActivityRsvpPage';
 
+// Konectr is Malaysia-only: activity times are always shown in Asia/Kuala_Lumpur
+// (fixed GMT+8). This metadata renders on the server (Vercel = UTC), so the timeZone
+// must be pinned explicitly or the OG card would show UTC. Stored times are true UTC.
+const MYT_TZ = 'Asia/Kuala_Lumpur';
+
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
+    timeZone: MYT_TZ,
+  });
+}
+
+function formatTime(dateString: string): string {
+  return new Date(dateString).toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: MYT_TZ,
   });
 }
 
@@ -30,10 +45,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const venueName = activity.venue_name || 'TBD';
+  // Spots framing matches the landing page + share message ("X spots left"), not
+  // "joined/cap" — "0/10 spots" read as if the activity were empty/unavailable.
+  const spotsLeft = activity.max_participants - Number(activity.current_participants);
   const spotsText = activity.max_participants > 0
-    ? `${activity.current_participants}/${activity.max_participants} spots`
+    ? `${spotsLeft} ${spotsLeft === 1 ? 'spot' : 'spots'} left`
     : `${activity.current_participants} joined`;
-  const richDescription = `${formatDate(activity.start_time)} at ${venueName} · ${spotsText} · Join ${activity.creator_name} on Konectr`;
+  const richDescription = `${formatDate(activity.start_time)}, ${formatTime(activity.start_time)} at ${venueName} · ${spotsText} · Join ${activity.creator_name} on Konectr`;
 
   return {
     title: `${activity.title} - Join on Konectr`,
