@@ -1,6 +1,7 @@
 {
   "hero": {
-    "launching": "Launching {date}",
+    "launching": "Ra mắt {date}",
+    "betaLive": "Bản beta TestFlight đã ra mắt",
     "headline": "Stop scrolling.\nStart living.",
     "subtext": "Real adventures with real people, right now.",
     "joinWaitlist": "Tham Gia Danh Sách Chờ",

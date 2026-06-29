@@ -1,6 +1,7 @@
 {
   "hero": {
-    "launching": "Launching {date}",
+    "launching": "{date} 推出",
+    "betaLive": "TestFlight 測試版已上線",
     "headline": "Stop scrolling.\nStart living.",
     "subtext": "Real adventures with real people, right now.",
     "joinWaitlist": "加入等候名單",

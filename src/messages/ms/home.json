@@ -1,6 +1,7 @@
 {
   "hero": {
-    "launching": "Launching {date}",
+    "launching": "Dilancarkan {date}",
+    "betaLive": "Beta TestFlight kini tersedia",
     "headline": "Stop scrolling.\nStart living.",
     "subtext": "Real adventures with real people, right now.",
     "joinWaitlist": "Sertai Senarai Tunggu",

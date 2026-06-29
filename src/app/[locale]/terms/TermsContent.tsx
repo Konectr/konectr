@@ -222,7 +222,7 @@ const sections = [
     title: "11. Dispute Resolution",
     content: [
       "These Terms are governed by the laws of Malaysia. Any disputes shall be resolved exclusively in the courts of Kuala Lumpur.",
-      "Interim note: governing law and jurisdiction are provisional and will be updated upon Konectr's incorporation (see Section 2). The Malaysian Personal Data Protection Act 2010 continues to apply to users located in Malaysia regardless of the entity's jurisdiction.",
+      "Interim note: governing law and jurisdiction are provisional and will be updated upon Konectr's incorporation (see Section 2). We will continue to handle Malaysian users' personal data in accordance with the Malaysian Personal Data Protection Act 2010 to the extent it applies to our processing (for example, where we are established in Malaysia or process personal data using equipment in Malaysia).",
       "Before taking legal action, you agree to contact legal@konectr.app and allow 30 days for resolution. If informal resolution fails, either party may propose binding arbitration under the rules of the Asian International Arbitration Centre (AIAC).",
     ],
   },
