@@ -131,7 +131,7 @@ export function Hero() {
             <>
               <span className="text-lg">🧪</span>
               <span className="text-white font-semibold text-sm">
-                TestFlight beta is live
+                {t("betaLive")}
               </span>
             </>
           ) : (

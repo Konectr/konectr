@@ -1,6 +1,7 @@
 {
   "hero": {
-    "launching": "Launching {date}",
+    "launching": "{date}ローンチ",
+    "betaLive": "TestFlightベータ版が公開中",
     "headline": "Stop scrolling.\nStart living.",
     "subtext": "Real adventures with real people, right now.",
     "joinWaitlist": "ウェイトリストに参加",

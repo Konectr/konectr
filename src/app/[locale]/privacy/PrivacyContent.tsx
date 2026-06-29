@@ -278,7 +278,7 @@ const sections = [
     title: "15. Consent & Data Breach Notification (PDPA 2010)",
     content: [
       "By creating a Konectr account and using the Service, you give your explicit consent to the collection, use, and disclosure of your personal data as described in this Policy, including processing by our service providers located outside Malaysia (for example, data hosting in Singapore). Where we rely on your consent, you may withdraw it at any time by contacting privacy@konectr.app or by deleting your account. Withdrawal does not affect processing carried out before withdrawal, or processing we are required by law to perform.",
-      "Data breach notification: if a personal data breach occurs that is likely to cause significant harm, we will notify the Personal Data Protection Commissioner as soon as practicable (and within 72 hours where required) and will inform affected users without undue delay (our target is within 7 days of becoming aware). We maintain an incident-response process to contain, assess, and remediate breaches.",
+      "Data breach notification: if a personal data breach occurs that is likely to cause significant harm, we will notify the Personal Data Protection Commissioner as soon as practicable (and within 72 hours where required) and will inform affected users without unnecessary delay and, in any case, no later than 7 days after we notify the Commissioner. We maintain an incident-response process to contain, assess, and remediate breaches.",
     ],
   },
 ];

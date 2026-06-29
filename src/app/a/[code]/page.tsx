@@ -47,9 +47,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const venueName = activity.venue_name || 'TBD';
   // Spots framing matches the landing page + share message ("X spots left"), not
   // "joined/cap" — "0/10 spots" read as if the activity were empty/unavailable.
-  const spotsLeft = activity.max_participants - Number(activity.current_participants);
+  const spotsLeft = Math.max(0, activity.max_participants - Number(activity.current_participants));
   const spotsText = activity.max_participants > 0
-    ? `${spotsLeft} ${spotsLeft === 1 ? 'spot' : 'spots'} left`
+    ? (spotsLeft === 0 ? 'Full' : `${spotsLeft} ${spotsLeft === 1 ? 'spot' : 'spots'} left`)
     : `${activity.current_participants} joined`;
   const richDescription = `${formatDate(activity.start_time)}, ${formatTime(activity.start_time)} at ${venueName} · ${spotsText} · Join ${activity.creator_name} on Konectr`;
 

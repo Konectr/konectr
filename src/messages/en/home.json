@@ -1,6 +1,7 @@
 {
   "hero": {
     "launching": "Launching {date}",
+    "betaLive": "TestFlight beta is live",
     "headline": "Stop scrolling.\nStart living.",
     "subtext": "Real adventures with real people, right now.",
     "joinWaitlist": "Join Waitlist",
