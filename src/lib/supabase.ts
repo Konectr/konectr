@@ -101,6 +101,34 @@ export async function createWebRsvp(
   return data as WebRsvpResponse;
 }
 
+// Result of cancel_web_rsvp RPC (24h lockout enforced server-side)
+export interface CancelWebRsvpResult {
+  outcome:
+    | 'withdrawn'        // outside 24h — spot freed
+    | 'flagged_locked'   // inside 24h — spot held, host + group notified
+    | 'already_withdrawn'
+    | 'activity_unavailable'
+    | 'not_found'
+    | 'rate_limited';
+  locked?: boolean;
+}
+
+export async function cancelWebRsvp(
+  claimToken: string,
+  ipHash: string | null
+): Promise<CancelWebRsvpResult> {
+  const { data, error } = await supabase.rpc('cancel_web_rsvp', {
+    p_claim_token: claimToken,
+    p_ip_hash: ipHash,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as CancelWebRsvpResult;
+}
+
 export async function getActivityRsvpTeaser(
   activityId: string
 ): Promise<RsvpTeaserResponse | null> {
