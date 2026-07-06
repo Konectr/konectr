@@ -29,6 +29,12 @@ function formatTime(dateString: string): string {
   });
 }
 
+// Within the 24h cancellation lockout? (helper keeps the impure clock read out of
+// the component render body — the cancel_web_rsvp RPC is the authoritative gate.)
+function isWithinCancelLock(startTime: string): boolean {
+  return new Date(startTime).getTime() - new Date().getTime() < 24 * 60 * 60 * 1000;
+}
+
 type Props = {
   params: Promise<{ code: string }>;
 };
@@ -68,5 +74,9 @@ export default async function ActivityPreviewPage({ params }: Props) {
   const { code } = await params;
   const activity = await getActivityByShareCode(code);
 
-  return <ActivityRsvpPage activity={activity} shareCode={code} />;
+  // 24h-lockout prediction for the cancel copy (computed server-side to keep the
+  // client render pure; the cancel_web_rsvp RPC is the authoritative gate).
+  const withinLock = activity ? isWithinCancelLock(activity.start_time) : false;
+
+  return <ActivityRsvpPage activity={activity} shareCode={code} withinLock={withinLock} />;
 }

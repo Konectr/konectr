@@ -12,34 +12,15 @@ import { detectPlatform, type Platform } from '@/lib/smartLink';
 import AndroidWaitlistCTA from './AndroidWaitlistCTA';
 import TestFlightRequestCTA from './TestFlightRequestCTA';
 import WebChatPanel from './WebChatPanel';
+import { resolveVibe } from './redesign/vibes';
+import { activityImage } from './redesign/activity-images';
+import RsvpLayout from './redesign/RsvpLayout';
+import ClaimScreen from './redesign/ClaimScreen';
+import ChattingScreen from './redesign/ChattingScreen';
+import WithdrawSheet from './redesign/WithdrawSheet';
 
 // Brand assets
 const LOGO_ICON_ORANGE = '/logos/konectr-icon-orange.svg';
-
-// Category emoji mapping (synced with mobile app)
-const categoryEmojis: Record<string, string> = {
-  cafe: '☕', restaurant: '🍽️', bar: '🍻', fitness: '💪',
-  outdoors: '⛰️', entertainment: '🎭', chill: '☕', active: '💪',
-  focus: '🎯', creative: '🎨', adventure: '⛰️', social: '🎉',
-};
-
-// Hero photo by category — re-uses the same compressed assets the email
-// templates render so the cross-channel brand feel stays consistent.
-const HERO_PHOTOS: Record<string, string> = {
-  cafe: '/images/email/cafe-friends.jpg',
-  chill: '/images/email/cafe-friends.jpg',
-  restaurant: '/images/email/friends-group.jpg',
-  bar: '/images/email/friends-group.jpg',
-  social: '/images/email/friends-group.jpg',
-  entertainment: '/images/email/friends-group.jpg',
-  creative: '/images/email/friends-group.jpg',
-  focus: '/images/email/cafe-friends.jpg',
-  fitness: '/images/email/fitness-class.jpg',
-  active: '/images/email/fitness-class.jpg',
-  outdoors: '/images/email/asian-friends-park.jpg',
-  adventure: '/images/email/asian-friends-park.jpg',
-};
-const DEFAULT_HERO = '/images/email/asian-friends-park.jpg';
 
 // Country codes (synced with mobile: auth_constants.dart)
 const countryCodes = [
@@ -49,14 +30,6 @@ const countryCodes = [
   { code: '+44', name: 'UK', flag: '🇬🇧' },
   { code: '+86', name: 'China', flag: '🇨🇳' },
 ];
-
-function getCategoryEmoji(category: string): string {
-  return categoryEmojis[category.toLowerCase()] || '📌';
-}
-
-function getHeroPhoto(category: string): string {
-  return HERO_PHOTOS[category.toLowerCase()] || DEFAULT_HERO;
-}
 
 // Konectr is Malaysia-only: every activity time is displayed in Asia/Kuala_Lumpur
 // (fixed GMT+8, no DST), regardless of the viewer's device TZ or the render server
@@ -70,31 +43,10 @@ function asMyt(instant: Date): Date {
   return new Date(instant.getTime() + MYT_OFFSET_MS);
 }
 
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    weekday: 'short', month: 'short', day: 'numeric', timeZone: MYT_TZ,
-  });
-}
-
 function formatTime(dateString: string): string {
   return new Date(dateString).toLocaleTimeString('en-US', {
     hour: 'numeric', minute: '2-digit', hour12: true, timeZone: MYT_TZ,
   });
-}
-
-// Friendly day label for the hero overlay — "Tonight", "Tomorrow", "Friday" (all MYT).
-function getDayLabel(dateString: string): string {
-  const d = asMyt(new Date(dateString));
-  const now = asMyt(new Date());
-  const startOfToday = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  const target = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-  const diffDays = Math.round((target - startOfToday) / 86_400_000);
-
-  if (diffDays === 0) return d.getUTCHours() >= 17 ? 'TONIGHT' : 'TODAY';
-  if (diffDays === 1) return 'TOMORROW';
-  return new Date(dateString)
-    .toLocaleDateString('en-US', { weekday: 'long', timeZone: MYT_TZ })
-    .toUpperCase();
 }
 
 // Natural-language relative day for the datetime card — "Tonight", "Tomorrow",
@@ -169,6 +121,18 @@ function storeRsvp(shareCode: string, rsvp: StoredRsvp): void {
   }
 }
 
+function removeStoredRsvp(shareCode: string): void {
+  try {
+    const stored = localStorage.getItem(RSVP_STORAGE_KEY);
+    if (!stored) return;
+    const rsvps = JSON.parse(stored);
+    delete rsvps[shareCode];
+    localStorage.setItem(RSVP_STORAGE_KEY, JSON.stringify(rsvps));
+  } catch {
+    // localStorage unavailable
+  }
+}
+
 function getStoredUserProfile(): StoredUserProfile | null {
   if (typeof window === 'undefined') return null;
   try {
@@ -191,9 +155,11 @@ function storeUserProfile(profile: StoredUserProfile): void {
 interface Props {
   activity: SharedActivity | null;
   shareCode: string;
+  // Within the 24h lockout? Computed server-side (render-pure); RPC stays authoritative.
+  withinLock?: boolean;
 }
 
-export default function ActivityRsvpPage({ activity, shareCode }: Props) {
+export default function ActivityRsvpPage({ activity, shareCode, withinLock = false }: Props) {
   const [rsvpState, setRsvpState] = useState<'loading' | 'pre-rsvp' | 'post-rsvp'>('loading');
   const [storedRsvp, setStoredRsvp] = useState<StoredRsvp | null>(null);
   const [guestName, setGuestName] = useState('');
@@ -201,12 +167,16 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
   const [countryCode, setCountryCode] = useState('+60');
   const [email, setEmail] = useState('');
   const [showOptional, setShowOptional] = useState(false);
-  const [showAllParticipants, setShowAllParticipants] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [teaserData, setTeaserData] = useState<RsvpTeaserResponse | null>(null);
   const [platform, setPlatform] = useState<Platform | null>(null);
+  // Cancel-my-RSVP flow (24h lockout enforced server-side)
+  const [cancelPhase, setCancelPhase] = useState<
+    'idle' | 'confirming' | 'working' | 'withdrawn' | 'flagged' | 'error'
+  >('idle');
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   // Detect platform on mount (SSR-safe)
   useEffect(() => {
@@ -321,6 +291,34 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     });
   }, [storedRsvp]);
 
+  const handleCancelRsvp = useCallback(async () => {
+    if (!storedRsvp) return;
+    setCancelPhase('working');
+    setCancelError(null);
+    try {
+      const res = await fetch('/api/rsvp/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ claim_token: storedRsvp.claimToken }),
+      });
+      const data = await res.json();
+
+      if (data?.outcome === 'withdrawn' || data?.outcome === 'already_withdrawn') {
+        removeStoredRsvp(shareCode);
+        setCancelPhase('withdrawn');
+        if (activity) getActivityRsvpTeaser(activity.id).then((d) => d && setTeaserData(d));
+      } else if (data?.outcome === 'flagged_locked') {
+        setCancelPhase('flagged');
+      } else {
+        setCancelError((data && data.error) || 'Something went wrong. Please try again.');
+        setCancelPhase('error');
+      }
+    } catch {
+      setCancelError('Network error. Please try again.');
+      setCancelPhase('error');
+    }
+  }, [storedRsvp, shareCode, activity]);
+
   // =============================================
   // Not Found State
   // =============================================
@@ -338,8 +336,6 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
 
   const ended = isActivityEnded(activity.end_time);
   const deepLink = `konectr://activity/${shareCode}`;
-  const emoji = getCategoryEmoji(activity.category);
-  const heroPhoto = getHeroPhoto(activity.category);
 
   // =============================================
   // Ended State
@@ -366,391 +362,195 @@ export default function ActivityRsvpPage({ activity, shareCode }: Props) {
     || storedRsvp?.participantNames || [];
   const participantCount = teaserData?.participant_count
     ?? storedRsvp?.participantCount ?? activity.current_participants;
-  const messageCount = teaserData?.message_count
-    ?? storedRsvp?.messageCount ?? 0;
   const spotsRemaining = teaserData?.spots_remaining
     ?? (activity.max_participants > 0 ? activity.max_participants - participantCount : -1);
   const isFull = spotsRemaining <= 0 && activity.max_participants > 0;
 
   const canSubmit = guestName.trim().length > 0 && phoneNumber.trim().length >= 7;
-  const dayLabel = getDayLabel(activity.start_time);
+
+  // ── Redesign props (Kinetic system). Heading auto = venue name (no host role);
+  // the "Here for…" purpose is the description; hero image keys to the activity. ──
+  const vibe = resolveVibe(activity.category);
+  const posterPhoto = activityImage({
+    vibe: vibe.key,
+    venueName: activity.venue_name,
+    title: activity.title,
+    purpose: activity.description,
+    category: activity.category,
+  });
+  const heading = activity.venue_name || activity.title;
+  const venueShort = activity.venue_name || activity.title;
+  const purpose = activity.description && activity.description !== activity.title ? activity.description : null;
+  const timeLabel = formatTime(activity.start_time);
+  const whenDay = `${getRelativeDayPhrase(activity.start_time)} · ${formatShortDate(activity.start_time)}`;
+  const spotsLeft = isFull || activity.max_participants <= 0 ? 0 : spotsRemaining;
+
+  const handleAddToCalendar = () => {
+    if (typeof window !== 'undefined') window.open(`/api/calendar/${shareCode}`, '_blank');
+  };
+  const handleShare = async () => {
+    if (typeof window === 'undefined') return;
+    const url = window.location.href;
+    if (navigator.share) {
+      try { await navigator.share({ title: heading, url }); } catch { /* dismissed */ }
+    } else {
+      try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* no clipboard */ }
+    }
+  };
+
+  // Platform-aware download / beta CTA reused across states.
+  const platformCta = (variant: 'full' | 'compact') =>
+    platform === 'android'
+      ? <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+      : <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant={variant} />;
 
   // =============================================
-  // Active Activity — with RSVP
+  // Active Activity — Kinetic redesign
   // =============================================
-  return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
-      {/* ============ HERO ============ */}
-      <div className="relative w-full h-[260px] sm:h-[300px] overflow-hidden">
-        <Image
-          src={heroPhoto}
-          alt=""
-          fill
-          priority
-          sizes="(max-width: 640px) 100vw, 480px"
-          className="object-cover"
-        />
-        {/* Layered scrim — darker at bottom to let title sit cleanly */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/35 to-black/75" />
 
-        {/* Top row: logo pill + tagline */}
-        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-4 z-10">
-          <Link href="/" aria-label="Konectr home">
-            <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur rounded-full pl-1.5 pr-2.5 py-1 shadow-sm">
-              <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center">
-                <Image src={LOGO_ICON_ORANGE} alt="Konectr" width={16} height={16} unoptimized />
-              </div>
-              <span className="text-[11px] font-bold text-[#1F1F1F] tracking-tight">Konectr</span>
-            </div>
-          </Link>
-          <span className="text-[11px] text-white/95 font-medium tracking-wide italic">
-            Let&apos;s make it real
-          </span>
+  // Loading → poster paints instantly (activity is server-provided); only the
+  // RSVP-vs-chatting decision is pending, so we skeleton the body. Prevents a
+  // returning RSVP'd user from flashing the claim form before localStorage reads.
+  if (rsvpState === 'loading') {
+    return (
+      <RsvpLayout vibe={vibe} photo={posterPhoto} venueName={heading}>
+        <div className="flex gap-3">
+          <div className="flex-1 h-[116px] rounded-[18px] bg-[#F0EEEC] animate-pulse" />
+          <div className="flex-1 h-[116px] rounded-[18px] bg-[#F0EEEC] animate-pulse" />
         </div>
+        <div className="h-[64px] rounded-[18px] bg-[#F0EEEC] animate-pulse mt-5" />
+        <div className="h-[52px] rounded-[13px] bg-[#F0EEEC] animate-pulse mt-6" />
+        <div className="h-[52px] rounded-[15px] bg-[#F0EEEC] animate-pulse mt-3" />
+      </RsvpLayout>
+    );
+  }
 
-        {/* Bottom: emoji chip + day label + title */}
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 z-10">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 backdrop-blur-sm text-xl ring-1 ring-white/25">
-              {emoji}
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-white/90 bg-[#FF774D] px-2 py-0.5 rounded">
-              {dayLabel}
-            </span>
-          </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white leading-tight font-[family-name:var(--font-heading)] line-clamp-2 drop-shadow-sm">
-            {activity.title}
-          </h1>
-        </div>
-      </div>
-
-      {/* ============ BODY ============ */}
-      <div className="flex-1 px-4 -mt-4 pb-8 relative z-10">
-        <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl shadow-black/[0.06] overflow-hidden">
-          <div className="p-5">
-            {/* Activity meta — datetime card on right, other details on left */}
-            <div className="flex items-stretch gap-3">
-              <div className="flex-1 min-w-0 space-y-2.5 text-sm text-[#1F1F1F]">
-                {activity.venue_name && (
-                  <MetaRow icon="📍" iconColor="#FF774D">
-                    {activity.venue_name}
-                  </MetaRow>
-                )}
-                <MetaRow icon="👤">
-                  Hosted by <strong className="font-semibold">{activity.creator_name}</strong>
-                </MetaRow>
-                <MetaRow icon="👥">
-                  {isFull ? (
-                    <span className="text-[#E53E3E] font-semibold">Activity is full</span>
-                  ) : activity.max_participants > 0 ? (
-                    <span><strong className="font-semibold">{spotsRemaining}</strong> of {activity.max_participants} spots left</span>
-                  ) : (
-                    <span>Open · <strong className="font-semibold">{participantCount}</strong> joined</span>
-                  )}
-                </MetaRow>
-              </div>
-
-              {/* Datetime card — bigger, visible, hard to miss */}
-              <div className="shrink-0 flex flex-col items-center justify-center bg-white border-2 border-[#F0F0F0] rounded-2xl px-4 py-3 min-w-[112px] text-center">
-                <span className="text-[12px] font-semibold text-[#555] leading-tight">
-                  {getRelativeDayPhrase(activity.start_time)}
-                </span>
-                <span className="text-[11px] text-[#999] mt-0.5 leading-tight">
-                  {formatShortDate(activity.start_time)}
-                </span>
-                <span className="text-[16px] font-bold text-[#FF774D] mt-1.5 leading-none tabular-nums">
-                  {formatTime(activity.start_time)}
-                </span>
-              </div>
-            </div>
-
-            {/* Description */}
-            {activity.description && activity.description !== activity.title && (
-              <p className="mt-4 pt-4 border-t border-[#F0F0F0] text-sm text-[#555] leading-relaxed">
-                {activity.description}
-              </p>
-            )}
-
-            {/* Social proof — preview shows latest 2 signups; tap to expand full list */}
-            {(participantNames.length > 0 || messageCount > 0) && (
-              <div className="mt-4 pt-4 border-t border-[#F0F0F0] space-y-2">
-                {participantNames.length > 0 && (() => {
-                  const previewNames = participantNames.slice(0, 2);
-                  const extraCount = participantCount - previewNames.length;
-                  const verb = participantCount === 1 ? 'is in' : 'are in';
-                  // Only show the chevron if there's more than the preview reveals
-                  const expandable = participantNames.length > previewNames.length || extraCount > 0;
-                  return (
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() => expandable && setShowAllParticipants((v) => !v)}
-                        disabled={!expandable}
-                        aria-expanded={expandable ? showAllParticipants : undefined}
-                        className={`flex items-start gap-2.5 w-full text-left ${expandable ? 'cursor-pointer' : 'cursor-default'}`}
-                      >
-                        <span className="text-base shrink-0 leading-none mt-0.5">🙋</span>
-                        <p className="flex-1 text-sm text-[#555] leading-relaxed">
-                          <strong className="text-[#1F1F1F] font-semibold">{previewNames.join(', ')}</strong>
-                          {extraCount > 0 && (
-                            <span> and {extraCount} more</span>
-                          )}
-                          {' '}<span className="text-[#999]">{verb}</span>
-                        </p>
-                        {expandable && (
-                          <ChevronDownIcon className={`shrink-0 mt-0.5 text-[#999] transition-transform duration-200 ${showAllParticipants ? 'rotate-180' : ''}`} />
-                        )}
-                      </button>
-                      {showAllParticipants && (
-                        <ul className="mt-3 ml-7 space-y-1.5">
-                          {participantNames.map((name, i) => (
-                            <li key={`${name}-${i}`} className="flex items-center gap-2 text-sm text-[#1F1F1F]">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#FF774D] shrink-0" />
-                              {name}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  );
-                })()}
-                {messageCount > 0 && (
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-base shrink-0">💬</span>
-                    <p className="text-xs text-[#777]">
-                      <strong className="text-[#555] font-semibold">{messageCount}</strong> {messageCount === 1 ? 'message' : 'messages'} in chat
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ============ RSVP ============ */}
-            {rsvpState === 'loading' ? (
-              <div className="mt-5 pt-5 border-t border-[#F0F0F0]">
-                <div className="h-12 bg-[#F5F5F5] rounded-xl animate-pulse" />
-              </div>
-            ) : rsvpState === 'post-rsvp' && storedRsvp ? (
-              // ============ POST-RSVP ============
-              <div className="mt-5 pt-5 border-t border-[#F0F0F0]">
-                {/* Confirmation */}
-                <div className="bg-gradient-to-br from-[#F0FFF4] to-[#E6F9EC] border border-[#C6F0D5] rounded-xl p-4 mb-4">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-[#22A05B] flex items-center justify-center shrink-0">
-                      <CheckIcon />
-                    </div>
-                    <div>
-                      <p className="font-bold text-[#1F1F1F] leading-tight">You&apos;re in, {storedRsvp.guestName}</p>
-                      <p className="text-xs text-[#557A66] mt-0.5">Your spot is reserved</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Activity Chatter — web chat panel */}
-                <div className="mb-4">
-                  <p className="text-[11px] uppercase tracking-wider font-semibold text-[#999] mb-2 px-1">
-                    Activity Chatter
+  // Post-RSVP → chatting (with the withdraw sheet layered above).
+  if (rsvpState === 'post-rsvp' && storedRsvp) {
+    return (
+      <>
+        <ChattingScreen
+          vibe={vibe}
+          photo={posterPhoto}
+          venueName={heading}
+          purpose={purpose}
+          timeLabel={timeLabel}
+          dayLabel={whenDay}
+          venueShort={venueShort}
+          guestName={storedRsvp.guestName}
+          crewNames={participantNames}
+          crewTotal={participantCount}
+          onAddToCalendar={handleAddToCalendar}
+          onShare={handleShare}
+          onWithdraw={() => setCancelPhase('confirming')}
+          chat={<WebChatPanel claimToken={storedRsvp.claimToken} guestName={storedRsvp.guestName} />}
+          belowChat={
+            <div className="mt-5 space-y-4">
+              {platform === 'android' ? (
+                <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+              ) : (
+                <div className="bg-[#FFF4F1] border border-[#F3E4DD] rounded-[16px] p-4 text-center">
+                  <p className="text-[12.5px] text-[#8A6A5A] font-medium mb-3 leading-relaxed">
+                    Get reminded, see who&apos;s coming, and keep chatting in the app
                   </p>
-                  <WebChatPanel
-                    claimToken={storedRsvp.claimToken}
-                    guestName={storedRsvp.guestName}
-                  />
+                  <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant="full" />
+                  <OpenInApp deepLink={deepLink} />
                 </div>
-
-                {/* Download / Android Waitlist CTA */}
-                {platform === 'android' ? (
-                  <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-                ) : (
-                  <div className="bg-gradient-to-br from-[#FFF8F5] to-[#FFEFE6] border border-[#FFD9C7] rounded-xl p-4 text-center">
-                    <p className="text-xs text-[#5A4438] font-medium mb-3 leading-relaxed">
-                      Get reminded, see who&apos;s coming, and join the chat
-                    </p>
-                    <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant="full" />
-                  </div>
-                )}
-
-                {/* Open in app (iOS/desktop) */}
-                {platform !== 'android' && (
-                  <div className="text-center mt-3">
-                    <a
-                      href={deepLink}
-                      className="inline-flex items-center gap-1.5 text-[#FF774D] font-semibold text-xs hover:underline"
-                    >
-                      Already have the app? Open in Konectr
-                      <ExternalIcon />
-                    </a>
-                  </div>
-                )}
-
-                {/* Claim code — quiet fallback */}
-                <div className="mt-4 pt-3 border-t border-[#F0F0F0] text-center">
-                  <p className="text-[10px] text-[#BBB] mb-1">Having trouble? Use your claim code</p>
-                  <button
-                    onClick={copyClaimCode}
-                    className="text-xs font-mono text-[#999] hover:text-[#FF774D] transition-colors"
-                  >
-                    {copied ? 'Copied!' : storedRsvp.claimToken}
-                  </button>
-                </div>
+              )}
+              {/* Claim code — quiet fallback */}
+              <div className="text-center">
+                <p className="text-[10px] text-[#BBB] mb-1">Having trouble? Use your claim code</p>
+                <button
+                  onClick={copyClaimCode}
+                  className="text-[12px] font-mono text-[#999] hover:text-[#FF774D] transition-colors"
+                >
+                  {copied ? 'Copied!' : storedRsvp.claimToken}
+                </button>
               </div>
-            ) : (
-              // ============ PRE-RSVP ============
-              <div className="mt-5 pt-5 border-t border-[#F0F0F0]">
-                {isFull ? (
-                  <div className="text-center">
-                    {platform === 'android' ? (
-                      <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-                    ) : (
-                      <>
-                        <p className="text-sm text-[#555] mb-3">
-                          This one&apos;s full — find another that fits.
-                        </p>
-                        <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant="compact" />
-                        <OpenInApp deepLink={deepLink} />
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    {/* Name input — focal */}
-                    <label htmlFor="guest-name" className="block text-[11px] uppercase tracking-wider font-semibold text-[#999] mb-2">
-                      Reserve your spot
-                    </label>
-                    <input
-                      id="guest-name"
-                      type="text"
-                      placeholder="Your first name"
-                      value={guestName}
-                      onChange={(e) => setGuestName(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
-                      maxLength={50}
-                      autoComplete="given-name"
-                      className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] text-[15px] text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-4 focus:ring-[#FF774D]/10 transition-all mb-3"
-                    />
+            </div>
+          }
+        />
+        {cancelPhase !== 'idle' && (
+          <WithdrawSheet
+            phase={cancelPhase}
+            withinLock={withinLock}
+            venueShort={venueShort}
+            errorMessage={cancelError}
+            onConfirm={handleCancelRsvp}
+            onRetry={handleCancelRsvp}
+            onDismiss={() => setCancelPhase('idle')}
+            onDone={() => {
+              removeStoredRsvp(shareCode);
+              setStoredRsvp(null);
+              setCancelPhase('idle');
+              setRsvpState('pre-rsvp');
+            }}
+          />
+        )}
+      </>
+    );
+  }
 
-                    {/* Phone — required (links your RSVP + chat) */}
-                    <div className="flex gap-1.5 mb-1.5">
-                      <select
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
-                        className="w-[88px] shrink-0 px-2 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all appearance-none"
-                        aria-label="Country code"
-                      >
-                        {countryCodes.map((cc) => (
-                          <option key={cc.code} value={cc.code}>
-                            {cc.flag} {cc.code}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        id="guest-phone"
-                        type="tel"
-                        placeholder="Phone number"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
-                        autoComplete="tel-national"
-                        required
-                        aria-required="true"
-                        className="flex-1 px-4 py-3 rounded-xl border-2 border-[#E5E5E5] bg-white text-[15px] text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-4 focus:ring-[#FF774D]/10 transition-all"
-                      />
-                    </div>
-                    <p className="text-[10px] text-[#999] px-0.5 mb-3">
-                      Never shared publicly. Used to link your RSVP and chat.
-                    </p>
-
-                    {/* Optional email disclosure — 1 click */}
-                    {!showOptional ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowOptional(true)}
-                        className="w-full text-left text-xs text-[#777] hover:text-[#FF774D] transition-colors mb-3 inline-flex items-center gap-1.5 py-1"
-                      >
-                        <span className="text-[#BBB]">+</span>
-                        Add email <span className="text-[#BBB]">(get a reminder before it starts)</span>
-                      </button>
-                    ) : (
-                      <div className="mb-3 p-3 bg-[#FAFAFA] rounded-xl">
-                        <input
-                          id="guest-email"
-                          type="email"
-                          inputMode="email"
-                          autoComplete="email"
-                          placeholder="Email — get a reminder"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && canSubmit && handleRsvp()}
-                          maxLength={254}
-                          className="w-full px-3 py-2.5 rounded-lg border border-[#E5E5E5] bg-white text-sm text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-2 focus:ring-[#FF774D]/15 transition-all"
-                        />
-                        <p className="text-[10px] text-[#999] px-0.5 mt-1.5">
-                          Optional. Never shared — only to send your reminder.
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Submit */}
-                    <button
-                      onClick={handleRsvp}
-                      disabled={!canSubmit || isSubmitting}
-                      className="w-full px-4 py-3.5 bg-[#FF774D] text-white rounded-xl text-[15px] font-bold hover:bg-[#E5693F] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 transition-all shadow-sm shadow-[#FF774D]/30"
-                    >
-                      {isSubmitting ? (
-                        <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin align-middle" />
-                      ) : (
-                        "I'm In"
-                      )}
-                    </button>
-
-                    {error && (
-                      <p className="text-xs text-red-500 mt-2 text-center">{error}</p>
-                    )}
-
-                    {/* Or download */}
-                    <div className="flex items-center gap-2 mt-5 mb-3">
-                      <div className="flex-1 h-px bg-[#F0F0F0]" />
-                      <span className="text-[10px] uppercase tracking-wider text-[#BBB]">or</span>
-                      <div className="flex-1 h-px bg-[#F0F0F0]" />
-                    </div>
-
-                    {platform === 'android' ? (
-                      <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-                    ) : (
-                      <>
-                        <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant="full" />
-                        <OpenInApp deepLink={deepLink} />
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
+  // Pre-RSVP → claim (loading shows the same shell; inputs are simply empty).
+  return (
+    <ClaimScreen
+      vibe={vibe}
+      photo={posterPhoto}
+      venueName={heading}
+      purpose={purpose}
+      timeLabel={timeLabel}
+      dayLabel={whenDay}
+      venueShort={venueShort}
+      crewNames={participantNames}
+      crewTotal={participantCount}
+      spotsLeft={spotsLeft}
+      isFull={isFull}
+      openInAppHref={platform !== 'android' ? deepLink : undefined}
+      fullSlot={
+        platform === 'android' ? (
+          <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
+        ) : (
+          <div className="text-center">
+            <p className="text-[14px] text-[#616161] mb-3">This one&apos;s full — grab another that fits.</p>
+            {platformCta('compact')}
           </div>
+        )
+      }
+      belowForm={
+        <div className="mt-6">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex-1 h-px bg-[#EDEBE9]" />
+            <span className="text-[10px] uppercase tracking-wider text-[#B5B0AB]">or</span>
+            <div className="flex-1 h-px bg-[#EDEBE9]" />
+          </div>
+          {platformCta('full')}
         </div>
-
-        <Footer />
-      </div>
-    </div>
+      }
+      form={{
+        name: guestName,
+        onName: setGuestName,
+        countryCode,
+        onCountryCode: setCountryCode,
+        countryCodes,
+        phone: phoneNumber,
+        onPhone: setPhoneNumber,
+        email,
+        showEmail: showOptional,
+        onShowEmail: () => setShowOptional(true),
+        onEmail: setEmail,
+        canSubmit,
+        isSubmitting,
+        error,
+        onSubmit: handleRsvp,
+      }}
+    />
   );
+
 }
 
 // =============================================
 // Shared Sub-Components
 // =============================================
-
-function MetaRow({ icon, iconColor, children }: { icon: string; iconColor?: string; children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-2.5 min-w-0">
-      <span
-        className="w-5 text-center text-sm shrink-0"
-        style={iconColor ? { color: iconColor } : { color: '#999' }}
-      >
-        {icon}
-      </span>
-      <span className="truncate text-[#1F1F1F]">{children}</span>
-    </div>
-  );
-}
 
 function SimpleStateLayout({
   emoji,
@@ -806,26 +606,10 @@ function OpenInApp({ deepLink }: { deepLink: string }) {
   );
 }
 
-function CheckIcon() {
-  return (
-    <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
-
 function ExternalIcon() {
   return (
     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-    </svg>
-  );
-}
-
-function ChevronDownIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
     </svg>
   );
 }
