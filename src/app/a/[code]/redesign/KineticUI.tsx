@@ -103,17 +103,20 @@ function initial(name: string): string {
 }
 
 // `total` = participant count (may exceed the named list — web guests aren't all
-// named). Shows up to 2 names + "& N more", up to 4 initial avatars.
+// named). Shows up to 2 names + "& N more", up to 4 initial avatars, and — when
+// there are more names than the preview — taps open to reveal the full list.
 export function CrewStack({ names, total, spotsLeft }: { names: string[]; total: number; spotsLeft: number }) {
+  const [open, setOpen] = useState(false);
   const preview = names.slice(0, 2);
   const avatars = names.slice(0, 4);
   const moreCount = Math.max(0, total - preview.length);
   const totalVerb = total === 1 ? 'is in' : 'are in';
+  const expandable = names.length > preview.length;
 
-  return (
-    <div className="flex items-center gap-3">
+  const summary = (
+    <>
       {avatars.length > 0 && (
-        <div className="flex">
+        <div className="flex shrink-0">
           {avatars.map((n, i) => {
             const t = AVATAR_TINTS[i % AVATAR_TINTS.length];
             return (
@@ -128,7 +131,7 @@ export function CrewStack({ names, total, spotsLeft }: { names: string[]; total:
           })}
         </div>
       )}
-      <div className="flex-1 text-[13.5px] text-[#616161] min-w-0">
+      <div className="flex-1 text-[13.5px] text-[#616161] min-w-0 text-left">
         {preview.length > 0 ? (
           <>
             <b className="font-[family-name:var(--font-heading)] font-bold text-[#1F1F1F]">{preview.join(', ')}</b>
@@ -140,10 +143,54 @@ export function CrewStack({ names, total, spotsLeft }: { names: string[]; total:
           <span>Be the first to grab a spot</span>
         )}
       </div>
-      {spotsLeft > 0 && (
-        <span className="shrink-0 bg-[#FFF4F1] text-[#B4441F] font-extrabold text-[11.5px] px-[11px] py-[6px] rounded-full whitespace-nowrap">
-          {spotsLeft} {spotsLeft === 1 ? 'spot' : 'spots'} left
-        </span>
+      {expandable && (
+        <svg
+          className={`shrink-0 w-[18px] h-[18px] text-[#9E9E9E] transition-transform ${open ? 'rotate-180' : ''}`}
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      )}
+    </>
+  );
+
+  return (
+    <div>
+      <div className="flex items-center gap-3">
+        {expandable ? (
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            className="flex items-center gap-3 flex-1 min-w-0"
+          >
+            {summary}
+          </button>
+        ) : (
+          <div className="flex items-center gap-3 flex-1 min-w-0">{summary}</div>
+        )}
+        {spotsLeft > 0 && (
+          <span className="shrink-0 bg-[#FFF4F1] text-[#B4441F] font-extrabold text-[11.5px] px-[11px] py-[6px] rounded-full whitespace-nowrap">
+            {spotsLeft} {spotsLeft === 1 ? 'spot' : 'spots'} left
+          </span>
+        )}
+      </div>
+
+      {open && (
+        <ul className="mt-3 ml-1 space-y-2">
+          {names.map((name, i) => (
+            <li key={`${name}-${i}`} className="flex items-center gap-2.5 text-[14px] text-[#1F1F1F]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF774D] shrink-0" />
+              {name}
+            </li>
+          ))}
+          {total > names.length && (
+            <li className="flex items-center gap-2.5 text-[14px] text-[#616161]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E0DCD8] shrink-0" />
+              + {total - names.length} more
+            </li>
+          )}
+        </ul>
       )}
     </div>
   );
