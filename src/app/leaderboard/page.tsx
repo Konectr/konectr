@@ -23,8 +23,9 @@ function formatWeekRange(weekStart: string, weekEnd: string): string {
   const sameMonth =
     new Date(`${weekStart}T00:00:00+08:00`).getMonth() ===
     new Date(`${weekEnd}T00:00:00+08:00`).getMonth();
+  // en-US puts the month first, so the shared month goes on the START date: "Jul 6–12"
   return sameMonth
-    ? `${fmt(weekStart, false)}–${fmt(weekEnd, true)}`
+    ? `${fmt(weekStart, true)}–${fmt(weekEnd, false)}`
     : `${fmt(weekStart, true)} – ${fmt(weekEnd, true)}`;
 }
 

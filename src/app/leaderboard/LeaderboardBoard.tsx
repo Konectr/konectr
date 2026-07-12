@@ -60,10 +60,12 @@ function Avatar({ entry, index, size = 44 }: { entry: LeaderboardEntry; index: n
 function GlanceSheet({
   entry,
   index,
+  period,
   onClose,
 }: {
   entry: LeaderboardEntry;
   index: number;
+  period: string;
   onClose: () => void;
 }) {
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -136,7 +138,7 @@ function GlanceSheet({
           </div>
           <div className="mt-1 text-[13.5px] text-[#616161] font-semibold">
             {entry.score} pts · {entry.verified_meetups} verified{' '}
-            {entry.verified_meetups === 1 ? 'meetup' : 'meetups'} this week
+            {entry.verified_meetups === 1 ? 'meetup' : 'meetups'} {period}
           </div>
 
           <p className="mt-5 text-[14px] leading-[1.55] text-[#444]">
@@ -356,7 +358,12 @@ export default function LeaderboardBoard({
       </div>
 
       {glance && (
-        <GlanceSheet entry={glance.entry} index={glance.index} onClose={() => setGlance(null)} />
+        <GlanceSheet
+          entry={glance.entry}
+          index={glance.index}
+          period={tab === 'this' ? 'this week' : 'last week'}
+          onClose={() => setGlance(null)}
+        />
       )}
     </main>
   );
