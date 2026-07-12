@@ -129,6 +129,42 @@ export async function cancelWebRsvp(
   return data as CancelWebRsvpResult;
 }
 
+// ============================================================================
+// Public Weekly Leaderboard (KL)
+// ============================================================================
+
+// Row from get_public_leaderboard RPC (anon-callable, opt-in users only).
+// Weekly aggregates ONLY — no venues, dates, or lifetime counts by privacy design.
+export interface LeaderboardEntry {
+  rank: number;
+  first_name: string;
+  photo_url: string | null;
+  score: number;
+  verified_meetups: number;
+  is_champion: boolean;
+  week_start: string; // KL-local Monday (date)
+  week_end: string;   // KL-local Sunday (date)
+}
+
+// weekOffset: 0 = current week (live), -1 = last week (final). Clamped server-side.
+export async function getPublicLeaderboard(weekOffset: 0 | -1): Promise<LeaderboardEntry[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_public_leaderboard', {
+      p_week_offset: weekOffset,
+    });
+
+    if (error) {
+      console.error('Leaderboard RPC error:', error);
+      return [];
+    }
+
+    return (data as LeaderboardEntry[]) ?? [];
+  } catch (err) {
+    console.error('Error fetching leaderboard:', err);
+    return [];
+  }
+}
+
 export async function getActivityRsvpTeaser(
   activityId: string
 ): Promise<RsvpTeaserResponse | null> {
