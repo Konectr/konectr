@@ -17,6 +17,8 @@ export interface ChattingScreenProps {
   venueShort: string;
   areaLabel?: string | null;
   guestName: string;
+  /** True only right after submitting the claim — gates the one-time celebration line. */
+  justClaimed?: boolean;
   crewNames: string[];
   crewTotal: number;
   /** Live chat surface (WebChatPanel) — falls back to a preview card when absent. */
@@ -35,24 +37,27 @@ export interface ChattingScreenProps {
 export default function ChattingScreen(p: ChattingScreenProps) {
   return (
     <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.venueName} posterKicker="You're in">
-      {/* Confirmation line */}
-      <div className="flex items-start gap-3">
-        <span className="shrink-0 w-10 h-10 rounded-full bg-[#1FA463] grid place-items-center shadow-[0_10px_24px_-10px_rgba(31,164,99,0.6)]">
-          <svg className="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="4 12 10 18 20 6" />
-          </svg>
-        </span>
-        <div>
-          <div className="font-[family-name:var(--font-heading)] font-black text-[19px] -tracking-[0.02em] leading-tight">
-            Nice, {p.guestName}. Your spot&apos;s locked.
-          </div>
-          <div className="text-[13.5px] text-[#616161] mt-[3px]">
-            We&apos;ll nudge you before it starts. Say hi to the crew below 👇
+      {/* Confirmation line — one-time celebration, only right after claiming.
+          Returning visitors land straight on the tiles (the poster already says "You're in"). */}
+      {p.justClaimed && (
+        <div className="flex items-start gap-3 mb-5">
+          <span className="shrink-0 w-10 h-10 rounded-full bg-[#1FA463] grid place-items-center shadow-[0_10px_24px_-10px_rgba(31,164,99,0.6)]">
+            <svg className="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="4 12 10 18 20 6" />
+            </svg>
+          </span>
+          <div>
+            <div className="font-[family-name:var(--font-heading)] font-black text-[19px] -tracking-[0.02em] leading-tight">
+              Nice, {p.guestName}. Your spot&apos;s locked.
+            </div>
+            <div className="text-[13.5px] text-[#616161] mt-[3px]">
+              We&apos;ll nudge you before it starts. Say hi to the crew below 👇
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="mt-5">
+      <div>
         <WhenWhereTiles timeLabel={p.timeLabel} dayLabel={p.dayLabel} venueShort={p.venueShort} areaLabel={p.areaLabel} />
       </div>
 

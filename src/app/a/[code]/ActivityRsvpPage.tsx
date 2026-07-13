@@ -162,6 +162,10 @@ interface Props {
 export default function ActivityRsvpPage({ activity, shareCode, withinLock = false }: Props) {
   const [rsvpState, setRsvpState] = useState<'loading' | 'pre-rsvp' | 'post-rsvp'>('loading');
   const [storedRsvp, setStoredRsvp] = useState<StoredRsvp | null>(null);
+  // True only for the session in which the claim was submitted — a refresh
+  // remounts the page and restores from localStorage with this false, so the
+  // celebration banner shows once, not on every return visit.
+  const [justClaimed, setJustClaimed] = useState(false);
   const [guestName, setGuestName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+60');
@@ -275,6 +279,7 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
         email: email.trim() || undefined,
       });
 
+      setJustClaimed(true);
       setRsvpState('post-rsvp');
     } catch {
       setError('Network error. Please try again.');
@@ -369,18 +374,20 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
   const canSubmit = guestName.trim().length > 0 && phoneNumber.trim().length >= 7;
 
   // ── Redesign props (Kinetic system). Heading auto = venue name (no host role);
-  // the "Here for…" purpose is the description; hero image keys to the activity. ──
+  // the "Here for…" purpose lives in details (description is legacy, empty since
+  // build 38); hero image keys to the activity. ──
+  const purposeText = activity.details || activity.description;
   const vibe = resolveVibe(activity.category);
   const posterPhoto = activityImage({
     vibe: vibe.key,
     venueName: activity.venue_name,
     title: activity.title,
-    purpose: activity.description,
+    purpose: purposeText,
     category: activity.category,
   });
   const heading = activity.venue_name || activity.title;
   const venueShort = activity.venue_name || activity.title;
-  const purpose = activity.description && activity.description !== activity.title ? activity.description : null;
+  const purpose = purposeText && purposeText !== activity.title ? purposeText : null;
   const timeLabel = formatTime(activity.start_time);
   const whenDay = `${getRelativeDayPhrase(activity.start_time)} · ${formatShortDate(activity.start_time)}`;
   const spotsLeft = isFull || activity.max_participants <= 0 ? 0 : spotsRemaining;
@@ -438,6 +445,7 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
           dayLabel={whenDay}
           venueShort={venueShort}
           guestName={storedRsvp.guestName}
+          justClaimed={justClaimed}
           crewNames={participantNames}
           crewTotal={participantCount}
           onAddToCalendar={handleAddToCalendar}
