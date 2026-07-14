@@ -30,4 +30,10 @@
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
 | #9108 | 8:18 AM | 🔄 | Social Proof Section — Expandable Participant List with Preview | ~475 |
+
+### Jul 12, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #9815 | 9:49 PM | 🔵 | Web RSVP phone storage architecture mapped; consent-gated storage pattern exists | ~522 |
 </claude-mem-context>

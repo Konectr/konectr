@@ -8,4 +8,10 @@
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
 | #8854 | 12:06 AM | 🔴 | Four P1 web bugs and one P0 seed data issue shipped to production | ~471 |
+
+### Jul 12, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #9815 | 9:49 PM | 🔵 | Web RSVP phone storage architecture mapped; consent-gated storage pattern exists | ~522 |
 </claude-mem-context>
