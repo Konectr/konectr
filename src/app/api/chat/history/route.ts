@@ -33,6 +33,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: msg }, { status: 500 });
     }
 
+    // Defense-in-depth: the Activity Chatter panel is a text-only guest chat.
+    // The get_web_chat_messages RPC already whitelists message_type='text', but
+    // we filter again here so system notices (e.g. "X is no longer attending")
+    // and location pins can never surface as guest bubbles on the public share
+    // page — even if the RPC is ever changed to return other message types.
+    if (data && Array.isArray(data.messages)) {
+      data.messages = data.messages.filter(
+        (m: { message_type?: string }) => !m.message_type || m.message_type === 'text'
+      );
+    }
+
     return NextResponse.json(data ?? { messages: [], messages_sent: 0, messages_remaining: 10 });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Internal error';
