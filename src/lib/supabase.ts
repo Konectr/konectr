@@ -14,6 +14,7 @@ export interface SharedActivity {
   user_id: string;
   title: string;
   description: string | null;
+  details: string | null; // "Here for…" purpose text (description is legacy, empty since build 38)
   category: string;
   venue_type: string | null;
   venue_name: string | null;

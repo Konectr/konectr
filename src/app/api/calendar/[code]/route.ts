@@ -53,7 +53,7 @@ export async function GET(
   const summary = escapeIcsText(activity.title);
   const location = escapeIcsText(activity.venue_name || 'Konectr activity');
   const description = escapeIcsText(
-    `Hosted by ${activity.creator_name} on Konectr.\n\n${activity.description || ''}\n\nView activity: ${url}`
+    `Hosted by ${activity.creator_name} on Konectr.\n\n${activity.details || activity.description || ''}\n\nView activity: ${url}`
   );
 
   const lines = [
