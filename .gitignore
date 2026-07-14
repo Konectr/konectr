@@ -47,3 +47,11 @@ graphify-out/
 # Session artifacts (brainstorm mockups, preview screenshots) — local only
 .superpowers/
 .preview-shots/
+
+# claude-mem stub firewall — these paths are always junk inside the web repo
+/konectr-mvp/
+/konectr-web/
+/konectr_mobile/
+/lib/
+/Development/
+/Marketing/
