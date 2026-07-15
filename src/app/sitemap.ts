@@ -44,5 +44,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   );
 
-  return [...staticEntries, ...blogEntries];
+  // Non-locale campaign / standalone routes (excluded from next-intl routing)
+  const standaloneEntries = [
+    {
+      url: `${baseUrl}/hyrox`,
+      lastModified: now,
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    },
+  ];
+
+  return [...staticEntries, ...blogEntries, ...standaloneEntries];
 }

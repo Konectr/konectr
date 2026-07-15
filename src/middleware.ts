@@ -22,7 +22,8 @@ export const config = {
     // - /venue-interview (hidden form - no locale prefix)
     // - /unsubscribe (email unsub handler - no locale prefix)
     // - /leaderboard (public weekly leaderboard - no locale prefix)
+    // - /hyrox (HYROX KL campaign hub - no locale prefix)
     // - Static files (images, etc.)
-    '/((?!api|_next|_vercel|a/|r/|venue-interview|unsubscribe|leaderboard|.*\\..*).*)'
+    '/((?!api|_next|_vercel|a/|r/|venue-interview|unsubscribe|leaderboard|hyrox|.*\\..*).*)'
   ]
 };

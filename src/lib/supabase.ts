@@ -166,6 +166,82 @@ export async function getPublicLeaderboard(weekOffset: 0 | -1): Promise<Leaderbo
   }
 }
 
+// ============================================================================
+// Campaign by-tag reads (HYROX KL Dec 2026 — konectr.app/hyrox)
+// ============================================================================
+
+// Row from get_venues_by_tag RPC (anon-callable). Non-sensitive venue business
+// data only — no owner contact fields (see migration 20260716000100).
+export interface CampaignVenue {
+  venue_id: string;
+  venue_name: string;
+  address: string | null;
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  category: string | null;
+  photo_url: string | null;
+  website: string | null;
+  google_place_id: string | null;
+  tags: string[];
+}
+
+// Row from get_public_activities_by_tag RPC (anon-callable). Same field surface
+// as the share-code teaser RPCs, bounded to public + active + upcoming.
+export interface CampaignActivity {
+  id: string;
+  share_code: string;
+  title: string;
+  details: string | null; // "Here for…" purpose text
+  venue_id: string | null;
+  venue_name: string | null;
+  venue_type: string | null;
+  location_lat: number | null;
+  location_lng: number | null;
+  start_time: string;
+  end_time: string;
+  max_participants: number;
+  spots_available: number;
+  creator_display_name: string | null;
+  tags: string[];
+}
+
+export async function getVenuesByTag(tag: string): Promise<CampaignVenue[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_venues_by_tag', {
+      p_tag: tag,
+    });
+
+    if (error) {
+      console.error('get_venues_by_tag RPC error:', error);
+      return [];
+    }
+
+    return (data as CampaignVenue[]) ?? [];
+  } catch (err) {
+    console.error('Error fetching venues by tag:', err);
+    return [];
+  }
+}
+
+export async function getPublicActivitiesByTag(tag: string): Promise<CampaignActivity[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_public_activities_by_tag', {
+      p_tag: tag,
+    });
+
+    if (error) {
+      console.error('get_public_activities_by_tag RPC error:', error);
+      return [];
+    }
+
+    return (data as CampaignActivity[]) ?? [];
+  } catch (err) {
+    console.error('Error fetching public activities by tag:', err);
+    return [];
+  }
+}
+
 export async function getActivityRsvpTeaser(
   activityId: string
 ): Promise<RsvpTeaserResponse | null> {
