@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
-import { detectPlatform, type Platform } from '@/lib/smartLink';
+import { detectPlatform, getSmartProfileLinkProps, type Platform } from '@/lib/smartLink';
 import AndroidWaitlistCTA from './AndroidWaitlistCTA';
 import TestFlightRequestCTA from './TestFlightRequestCTA';
 import WebChatPanel from './WebChatPanel';
@@ -341,6 +341,8 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
 
   const ended = isActivityEnded(activity.end_time);
   const deepLink = `konectr://activity/${shareCode}`;
+  // Host row: tap tries the app profile, falls back to store/waitlist sign-up.
+  const creatorLink = activity.user_id ? getSmartProfileLinkProps(activity.user_id) : null;
 
   // =============================================
   // Ended State
@@ -448,6 +450,10 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
           justClaimed={justClaimed}
           crewNames={participantNames}
           crewTotal={participantCount}
+          creatorName={activity.creator_name}
+          creatorPhotoUrl={activity.creator_photo_url}
+          creatorLinkHref={creatorLink?.href}
+          onCreatorLinkClick={creatorLink?.onClick}
           onAddToCalendar={handleAddToCalendar}
           onShare={handleShare}
           onWithdraw={() => setCancelPhase('confirming')}
@@ -512,6 +518,10 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
       crewNames={participantNames}
       crewTotal={participantCount}
       spotsLeft={spotsLeft}
+      creatorName={activity.creator_name}
+      creatorPhotoUrl={activity.creator_photo_url}
+      creatorLinkHref={creatorLink?.href}
+      onCreatorLinkClick={creatorLink?.onClick}
       isFull={isFull}
       openInAppHref={platform !== 'android' ? deepLink : undefined}
       fullSlot={

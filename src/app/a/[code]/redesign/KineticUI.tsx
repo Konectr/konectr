@@ -2,7 +2,7 @@
 // Proprietary and confidential.
 'use client';
 
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import type { Vibe } from './vibes';
 
 // Kinetic Brand Design System v3.0 tokens (lib/core/theme/kinetic_colors.dart):
@@ -193,6 +193,70 @@ export function CrewStack({ names, total, spotsLeft }: { names: string[]; total:
         </ul>
       )}
     </div>
+  );
+}
+
+// Who's hosting — the creator has a real account (unlike web guests), so a real
+// photo may exist; falls back to an initial ring in the brand tint. Tapping
+// tries the app (public profile) and falls back to the beta/waitlist path.
+export function HostRow({
+  name,
+  photoUrl,
+  href,
+  onClick,
+}: {
+  name: string;
+  photoUrl?: string | null;
+  href?: string;
+  onClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
+}) {
+  const firstName = name.trim().split(/\s+/)[0] || name;
+  const t = AVATAR_TINTS[0];
+
+  const body = (
+    <>
+      {photoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element -- avatar comes from the Supabase public CDN; next/image remote-pattern config not worth it for a 28px thumb
+        <img
+          src={photoUrl}
+          alt=""
+          className="w-7 h-7 rounded-full object-cover shadow-[0_0_0_2px_#FAFAFA] shrink-0"
+        />
+      ) : (
+        <span
+          className="w-7 h-7 rounded-full grid place-items-center font-[family-name:var(--font-heading)] font-extrabold text-[11px] shadow-[0_0_0_2px_#FAFAFA] shrink-0"
+          style={{ background: t.bg, color: t.fg }}
+        >
+          {initial(firstName)}
+        </span>
+      )}
+      <span className="text-[13px] text-[#616161]">
+        Hosted by{' '}
+        <b className="font-[family-name:var(--font-heading)] font-bold text-[#1F1F1F]">{firstName}</b>
+      </span>
+      {href && (
+        <svg
+          className="w-[14px] h-[14px] text-[#B5B0AB] shrink-0"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
+        >
+          <path d="M9 18l6-6-6-6" />
+        </svg>
+      )}
+    </>
+  );
+
+  if (!href) {
+    return <div className="flex items-center gap-[9px]">{body}</div>;
+  }
+  return (
+    <a
+      href={href}
+      onClick={onClick}
+      aria-label={`View ${firstName}'s profile in the Konectr app`}
+      className="flex items-center gap-[9px] group hover:opacity-80 transition-opacity"
+    >
+      {body}
+    </a>
   );
 }
 

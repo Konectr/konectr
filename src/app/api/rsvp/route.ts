@@ -131,6 +131,12 @@ export async function POST(request: NextRequest) {
     const message = err instanceof Error ? err.message : 'Failed to create RSVP';
 
     // Map known errors to appropriate status codes
+    if (message.includes('Already RSVP')) {
+      return NextResponse.json(
+        { error: "You've already grabbed a spot with this number — check the device you RSVP'd from." },
+        { status: 409 }
+      );
+    }
     if (message.includes('Activity is full')) {
       return NextResponse.json({ error: 'This activity is full' }, { status: 409 });
     }

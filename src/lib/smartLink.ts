@@ -85,6 +85,45 @@ export function getSmartDownloadProps(shareCode: string): SmartDownloadProps {
 }
 
 /**
+ * Variant for the host row on the RSVP page — deep-links to the creator's
+ * public profile (`konectr://profile/{userId}`). Same try-app-then-fallback
+ * behavior: users with the app land on the profile; everyone else is routed
+ * to the store/waitlist to sign up first.
+ */
+export function getSmartProfileLinkProps(userId: string): SmartDownloadProps {
+  return {
+    href: WAITLIST_FALLBACK,
+    onClick: (e) => {
+      e.preventDefault();
+      if (typeof window === 'undefined') return;
+
+      const platform = detectPlatform();
+      const storeUrl = getStoreUrl(platform);
+
+      if (platform === 'desktop') {
+        window.location.href = storeUrl;
+        return;
+      }
+
+      const deepLink = `konectr://profile/${userId}`;
+      const fallback = window.setTimeout(() => {
+        window.location.href = storeUrl;
+      }, DEEP_LINK_FALLBACK_MS);
+
+      const onVisibilityChange = () => {
+        if (document.hidden) {
+          window.clearTimeout(fallback);
+          document.removeEventListener('visibilitychange', onVisibilityChange);
+        }
+      };
+      document.addEventListener('visibilitychange', onVisibilityChange);
+
+      window.location.href = deepLink;
+    },
+  };
+}
+
+/**
  * Variant for the referral page — same logic but deep-links to
  * `konectr://referral/{code}` instead of `konectr://activity/{code}`.
  */

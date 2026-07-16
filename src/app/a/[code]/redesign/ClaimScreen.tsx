@@ -2,10 +2,10 @@
 // Proprietary and confidential.
 'use client';
 
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import type { Vibe } from './vibes';
 import RsvpLayout from './RsvpLayout';
-import { WhenWhereTiles, HereFor, CrewStack, TrustLine } from './KineticUI';
+import { WhenWhereTiles, HereFor, CrewStack, TrustLine, HostRow } from './KineticUI';
 
 export interface CountryCode {
   code: string;
@@ -44,6 +44,11 @@ export interface ClaimScreenProps {
   crewNames: string[];
   crewTotal: number;
   spotsLeft: number;
+  /** Who created the activity — name + optional avatar; tap opens their app profile. */
+  creatorName?: string | null;
+  creatorPhotoUrl?: string | null;
+  creatorLinkHref?: string;
+  onCreatorLinkClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
   form: ClaimForm;
   /** When full: replaces the form (e.g. "this one's full" + beta CTA). */
   isFull?: boolean;
@@ -68,6 +73,17 @@ export default function ClaimScreen(p: ClaimScreenProps) {
       {p.purpose && (
         <div className="mt-5">
           <HereFor text={p.purpose} />
+        </div>
+      )}
+
+      {p.creatorName && (
+        <div className="mt-4">
+          <HostRow
+            name={p.creatorName}
+            photoUrl={p.creatorPhotoUrl}
+            href={p.creatorLinkHref}
+            onClick={p.onCreatorLinkClick}
+          />
         </div>
       )}
 

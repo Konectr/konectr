@@ -2,10 +2,10 @@
 // Proprietary and confidential.
 'use client';
 
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import type { Vibe } from './vibes';
 import RsvpLayout from './RsvpLayout';
-import { WhenWhereTiles, HereFor, CrewStack } from './KineticUI';
+import { WhenWhereTiles, HereFor, CrewStack, HostRow } from './KineticUI';
 
 export interface ChattingScreenProps {
   vibe: Vibe;
@@ -21,6 +21,11 @@ export interface ChattingScreenProps {
   justClaimed?: boolean;
   crewNames: string[];
   crewTotal: number;
+  /** Who created the activity — name + optional avatar; tap opens their app profile. */
+  creatorName?: string | null;
+  creatorPhotoUrl?: string | null;
+  creatorLinkHref?: string;
+  onCreatorLinkClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
   /** Live chat surface (WebChatPanel) — falls back to a preview card when absent. */
   chat?: ReactNode;
   /** Rendered under the chat — platform/beta CTA, open-in-app, claim code. */
@@ -80,6 +85,17 @@ export default function ChattingScreen(p: ChattingScreenProps) {
       {p.purpose && (
         <div className="mt-5">
           <HereFor text={p.purpose} />
+        </div>
+      )}
+
+      {p.creatorName && (
+        <div className="mt-4">
+          <HostRow
+            name={p.creatorName}
+            photoUrl={p.creatorPhotoUrl}
+            href={p.creatorLinkHref}
+            onClick={p.onCreatorLinkClick}
+          />
         </div>
       )}
 
