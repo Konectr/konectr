@@ -3,15 +3,12 @@
 
 import { Metadata } from 'next';
 import { getPublicLeaderboard } from '@/lib/supabase';
+import { MYT_TZ, klWallClock } from '@/lib/datetime';
 import LeaderboardBoard from './LeaderboardBoard';
 
 // ISR: the board is weekly-aggregate data — 5-minute revalidation absorbs
 // WhatsApp click bursts while keeping "This week · live" honest enough.
 export const revalidate = 300;
-
-// Konectr is Malaysia-only: week labels pinned to Asia/Kuala_Lumpur
-// (Vercel renders in UTC — see /a/[code]/page.tsx for the same pattern).
-const MYT_TZ = 'Asia/Kuala_Lumpur';
 
 function formatWeekRange(weekStart: string, weekEnd: string): string {
   const fmt = (d: string, withMonth: boolean) =>
@@ -51,8 +48,7 @@ export default async function LeaderboardPage() {
 
   // Week labels come from the RPC when it has rows; fall back to computing the
   // current KL week so the header renders on an empty board too.
-  const now = new Date();
-  const klNow = new Date(now.toLocaleString('en-US', { timeZone: MYT_TZ }));
+  const klNow = klWallClock();
   const dow = (klNow.getDay() + 6) % 7; // 0 = Monday
   const monday = new Date(klNow);
   monday.setDate(klNow.getDate() - dow);

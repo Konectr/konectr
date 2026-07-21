@@ -3,14 +3,12 @@
 
 import { Metadata } from 'next';
 import { getVenuesByTag, getPublicActivitiesByTag } from '@/lib/supabase';
+import { klWallClock } from '@/lib/datetime';
 import HyroxContent from './HyroxContent';
 
 // ISR: gym directory + upcoming sessions are slow-moving. 5-minute revalidation
 // absorbs Threads/IG click bursts and keeps the countdown honest to the day.
 export const revalidate = 300;
-
-// Konectr is Malaysia-only: countdown + session times pinned to Asia/Kuala_Lumpur.
-const MYT_TZ = 'Asia/Kuala_Lumpur';
 
 // AirAsia HYROX Kuala Lumpur — race day 1 (MITEC). Fixed GMT+8 midnight.
 const RACE_DATE_ISO = '2026-12-12T00:00:00+08:00';
@@ -18,8 +16,7 @@ const RACE_DATE_ISO = '2026-12-12T00:00:00+08:00';
 // Whole days from "now" (KL date) to race day. Server-computed under ISR 300,
 // so day granularity is stable between revalidations.
 function daysUntilRace(): number {
-  const now = new Date();
-  const klNow = new Date(now.toLocaleString('en-US', { timeZone: MYT_TZ }));
+  const klNow = klWallClock();
   const todayKL = new Date(klNow.getFullYear(), klNow.getMonth(), klNow.getDate());
   const race = new Date(RACE_DATE_ISO);
   const raceKL = new Date(race.getFullYear(), race.getMonth(), race.getDate());

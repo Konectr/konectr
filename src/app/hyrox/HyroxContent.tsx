@@ -10,33 +10,13 @@
 // Graphite #1F1F1F · Cloud White #FAFAFA · tint #FFF4F1 · hover #E6693F.
 
 import type { CampaignActivity, CampaignVenue } from '@/lib/supabase';
+import { formatTime, formatWeekdayDate } from '@/lib/datetime';
 import TestFlightRequestCTA from '../a/[code]/TestFlightRequestCTA';
 import AndroidWaitlistCTA from '../a/[code]/AndroidWaitlistCTA';
-
-// Konectr is Malaysia-only: session times always shown in Asia/Kuala_Lumpur.
-const MYT_TZ = 'Asia/Kuala_Lumpur';
 
 // Attribution share code for CTA email captures from this campaign page
 // (writes utm_campaign='hyrox' via the waitlist RPCs).
 const CAMPAIGN_TAG = 'hyrox';
-
-function formatSessionDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    timeZone: MYT_TZ,
-  });
-}
-
-function formatSessionTime(dateString: string): string {
-  return new Date(dateString).toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: MYT_TZ,
-  });
-}
 
 function truncate(text: string, max = 120): string {
   const t = text.trim();
@@ -125,7 +105,7 @@ function SessionCard({ session }: { session: CampaignActivity }) {
       <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] text-[#444] font-medium">
         <span className="inline-flex items-center gap-1.5">
           <span aria-hidden>📅</span>
-          {formatSessionDate(session.start_time)} · {formatSessionTime(session.start_time)}
+          {formatWeekdayDate(session.start_time)} · {formatTime(session.start_time)}
         </span>
         {session.venue_name && (
           <span className="inline-flex items-center gap-1.5">
