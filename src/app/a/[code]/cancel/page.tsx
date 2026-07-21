@@ -4,18 +4,13 @@
 
 import { Metadata } from 'next';
 import { getActivityByShareCode } from '@/lib/supabase';
+import { isLateWithdrawal } from '@/lib/datetime';
 import CancelRsvpClient from './CancelRsvpClient';
 
 export const metadata: Metadata = {
   title: 'Cancel your RSVP - Konectr',
   robots: { index: false, follow: false },
 };
-
-// Within the 24h cancellation lockout? (helper keeps the impure clock read out of
-// the component render body — the cancel_web_rsvp RPC is the authoritative gate.)
-function isWithinCancelLock(startTime: string): boolean {
-  return new Date(startTime).getTime() - new Date().getTime() < 24 * 60 * 60 * 1000;
-}
 
 type Props = {
   params: Promise<{ code: string }>;
@@ -27,8 +22,8 @@ export default async function CancelRsvpPage({ params, searchParams }: Props) {
   const { token } = await searchParams;
   const activity = await getActivityByShareCode(code);
 
-  // 24h-lockout prediction (server-side → render-pure); RPC is the authoritative gate.
-  const withinLock = activity ? isWithinCancelLock(activity.start_time) : false;
+  // Late-withdrawal prediction (server-side → render-pure); RPC is the authoritative gate.
+  const isLate = activity ? isLateWithdrawal(activity.start_time) : false;
 
   return (
     <CancelRsvpClient
@@ -36,7 +31,7 @@ export default async function CancelRsvpPage({ params, searchParams }: Props) {
       token={token ?? null}
       activityTitle={activity?.title ?? null}
       venueName={activity?.venue_name ?? null}
-      withinLock={withinLock}
+      isLate={isLate}
     />
   );
 }

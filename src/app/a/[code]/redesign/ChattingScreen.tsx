@@ -5,7 +5,7 @@
 import type { MouseEvent, ReactNode } from 'react';
 import type { Vibe } from './vibes';
 import RsvpLayout from './RsvpLayout';
-import { WhenWhereTiles, HereFor, CrewStack, HostRow } from './KineticUI';
+import { WhenWhereTiles, HereFor, CrewStack, StartedByRow } from './KineticUI';
 
 export interface ChattingScreenProps {
   vibe: Vibe;
@@ -90,7 +90,7 @@ export default function ChattingScreen(p: ChattingScreenProps) {
 
       {p.creatorName && (
         <div className="mt-4">
-          <HostRow
+          <StartedByRow
             name={p.creatorName}
             photoUrl={p.creatorPhotoUrl}
             href={p.creatorLinkHref}

@@ -4,11 +4,24 @@
 // Proprietary and confidential.
 
 import { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
 import { detectPlatform, getSmartProfileLinkProps, type Platform } from '@/lib/smartLink';
+import {
+  formatTime,
+  getRelativeDayPhrase,
+  formatShortDate,
+  isActivityEnded,
+} from '@/lib/datetime';
+import {
+  getStoredRsvp,
+  storeRsvp,
+  removeStoredRsvp,
+  getStoredUserProfile,
+  storeUserProfile,
+  type StoredRsvp,
+} from '@/lib/rsvpStorage';
+import { countryCodes } from './countryCodes';
 import AndroidWaitlistCTA from './AndroidWaitlistCTA';
 import TestFlightRequestCTA from './TestFlightRequestCTA';
 import WebChatPanel from './WebChatPanel';
@@ -18,148 +31,18 @@ import RsvpLayout from './redesign/RsvpLayout';
 import ClaimScreen from './redesign/ClaimScreen';
 import ChattingScreen from './redesign/ChattingScreen';
 import WithdrawSheet from './redesign/WithdrawSheet';
-
-// Brand assets
-const LOGO_ICON_ORANGE = '/logos/konectr-icon-orange.svg';
-
-// Country codes (synced with mobile: auth_constants.dart)
-const countryCodes = [
-  { code: '+60', name: 'Malaysia', flag: '🇲🇾' },
-  { code: '+65', name: 'Singapore', flag: '🇸🇬' },
-  { code: '+1', name: 'USA', flag: '🇺🇸' },
-  { code: '+44', name: 'UK', flag: '🇬🇧' },
-  { code: '+86', name: 'China', flag: '🇨🇳' },
-];
-
-// Konectr is Malaysia-only: every activity time is displayed in Asia/Kuala_Lumpur
-// (fixed GMT+8, no DST), regardless of the viewer's device TZ or the render server
-// (Vercel = UTC). Stored start_time/end_time are true UTC — we always format them in MYT.
-const MYT_TZ = 'Asia/Kuala_Lumpur';
-const MYT_OFFSET_MS = 8 * 60 * 60 * 1000;
-
-// Returns a Date whose getUTC* fields read the Asia/KL wall-clock of `instant`, so
-// day-boundary / hour arithmetic below can use getUTC* deterministically (no DST in MY).
-function asMyt(instant: Date): Date {
-  return new Date(instant.getTime() + MYT_OFFSET_MS);
-}
-
-function formatTime(dateString: string): string {
-  return new Date(dateString).toLocaleTimeString('en-US', {
-    hour: 'numeric', minute: '2-digit', hour12: true, timeZone: MYT_TZ,
-  });
-}
-
-// Natural-language relative day for the datetime card — "Tonight", "Tomorrow",
-// "This Friday", "Next Wednesday", or the bare weekday for activities ≥2 weeks out (all MYT).
-function getRelativeDayPhrase(dateString: string): string {
-  const d = asMyt(new Date(dateString));
-  const now = asMyt(new Date());
-  const startOfToday = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  const target = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-  const diffDays = Math.round((target - startOfToday) / 86_400_000);
-
-  if (diffDays <= 0) return d.getUTCHours() >= 17 ? 'Tonight' : 'Today';
-  if (diffDays === 1) return 'Tomorrow';
-  const weekday = new Date(dateString).toLocaleDateString('en-US', { weekday: 'long', timeZone: MYT_TZ });
-  if (diffDays <= 6) return `This ${weekday}`;
-  if (diffDays <= 13) return `Next ${weekday}`;
-  return weekday;
-}
-
-function formatShortDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', timeZone: MYT_TZ,
-  });
-}
-
-function isActivityEnded(endTime: string): boolean {
-  return new Date(endTime) < new Date();
-}
-
-// =============================================
-// localStorage helpers
-// =============================================
-const RSVP_STORAGE_KEY = 'konectr_rsvps';
-const USER_PROFILE_KEY = 'konectr_user_profile';
-
-interface StoredRsvp {
-  claimToken: string;
-  guestName: string;
-  rsvpAt: string;
-  participantCount: number;
-  participantNames: string[];
-  messageCount: number;
-}
-
-interface StoredUserProfile {
-  guestName: string;
-  phoneNumber: string;
-  countryCode: string;
-  email?: string;
-}
-
-function getStoredRsvp(shareCode: string): StoredRsvp | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const stored = localStorage.getItem(RSVP_STORAGE_KEY);
-    if (!stored) return null;
-    const rsvps = JSON.parse(stored);
-    return rsvps[shareCode] || null;
-  } catch {
-    return null;
-  }
-}
-
-function storeRsvp(shareCode: string, rsvp: StoredRsvp): void {
-  try {
-    const stored = localStorage.getItem(RSVP_STORAGE_KEY);
-    const rsvps = stored ? JSON.parse(stored) : {};
-    rsvps[shareCode] = rsvp;
-    localStorage.setItem(RSVP_STORAGE_KEY, JSON.stringify(rsvps));
-  } catch {
-    // localStorage unavailable
-  }
-}
-
-function removeStoredRsvp(shareCode: string): void {
-  try {
-    const stored = localStorage.getItem(RSVP_STORAGE_KEY);
-    if (!stored) return;
-    const rsvps = JSON.parse(stored);
-    delete rsvps[shareCode];
-    localStorage.setItem(RSVP_STORAGE_KEY, JSON.stringify(rsvps));
-  } catch {
-    // localStorage unavailable
-  }
-}
-
-function getStoredUserProfile(): StoredUserProfile | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const stored = localStorage.getItem(USER_PROFILE_KEY);
-    if (!stored) return null;
-    return JSON.parse(stored);
-  } catch {
-    return null;
-  }
-}
-
-function storeUserProfile(profile: StoredUserProfile): void {
-  try {
-    localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
-  } catch {
-    // localStorage unavailable
-  }
-}
+import SimpleStateLayout from './redesign/SimpleStateLayout';
+import OpenInApp from './redesign/OpenInApp';
 
 interface Props {
   activity: SharedActivity | null;
   shareCode: string;
-  // Within the 24h lockout? Computed server-side (render-pure); RPC stays authoritative.
-  withinLock?: boolean;
+  // Inside the 3h cutoff → late withdrawal? Computed server-side (render-pure);
+  // the spot is always released, RPC stays authoritative.
+  isLate?: boolean;
 }
 
-export default function ActivityRsvpPage({ activity, shareCode, withinLock = false }: Props) {
+export default function ActivityRsvpPage({ activity, shareCode, isLate = false }: Props) {
   const [rsvpState, setRsvpState] = useState<'loading' | 'pre-rsvp' | 'post-rsvp'>('loading');
   const [storedRsvp, setStoredRsvp] = useState<StoredRsvp | null>(null);
   // True only for the session in which the claim was submitted — a refresh
@@ -176,9 +59,9 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
   const [copied, setCopied] = useState(false);
   const [teaserData, setTeaserData] = useState<RsvpTeaserResponse | null>(null);
   const [platform, setPlatform] = useState<Platform | null>(null);
-  // Cancel-my-RSVP flow (24h lockout enforced server-side)
+  // Withdraw-my-RSVP flow — spot always released; 3h cutoff (late) enforced server-side.
   const [cancelPhase, setCancelPhase] = useState<
-    'idle' | 'confirming' | 'working' | 'withdrawn' | 'flagged' | 'error'
+    'idle' | 'confirming' | 'working' | 'withdrawn' | 'error'
   >('idle');
   const [cancelError, setCancelError] = useState<string | null>(null);
 
@@ -312,8 +195,6 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
         removeStoredRsvp(shareCode);
         setCancelPhase('withdrawn');
         if (activity) getActivityRsvpTeaser(activity.id).then((d) => d && setTeaserData(d));
-      } else if (data?.outcome === 'flagged_locked') {
-        setCancelPhase('flagged');
       } else {
         setCancelError((data && data.error) || 'Something went wrong. Please try again.');
         setCancelPhase('error');
@@ -487,7 +368,7 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
         {cancelPhase !== 'idle' && (
           <WithdrawSheet
             phase={cancelPhase}
-            withinLock={withinLock}
+            isLate={isLate}
             venueShort={venueShort}
             errorMessage={cancelError}
             onConfirm={handleCancelRsvp}
@@ -564,78 +445,4 @@ export default function ActivityRsvpPage({ activity, shareCode, withinLock = fal
     />
   );
 
-}
-
-// =============================================
-// Shared Sub-Components
-// =============================================
-
-function SimpleStateLayout({
-  emoji,
-  title,
-  subtitle,
-  platform,
-  shareCode,
-  activityId,
-}: {
-  emoji: string;
-  title: string;
-  subtitle: string;
-  platform: Platform | null;
-  shareCode: string;
-  activityId?: string;
-}) {
-  return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center p-6">
-      <div className="max-w-sm w-full bg-white rounded-2xl shadow-lg p-6 text-center">
-        <Link href="/" className="inline-flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 rounded-lg bg-[#FFF5F2] flex items-center justify-center">
-            <Image src={LOGO_ICON_ORANGE} alt="Konectr" width={20} height={20} unoptimized />
-          </div>
-          <span className="text-base font-bold text-[#1F1F1F]">Konectr</span>
-        </Link>
-        <div className="mb-6">
-          <div className="text-5xl mb-3">{emoji}</div>
-          <h1 className="text-xl font-bold text-[#1F1F1F] mb-2">{title}</h1>
-          <p className="text-[#666] text-sm leading-relaxed">{subtitle}</p>
-        </div>
-        {platform === 'android' ? (
-          <AndroidWaitlistCTA shareCode={shareCode} activityId={activityId} />
-        ) : (
-          <TestFlightRequestCTA shareCode={shareCode} activityId={activityId} variant="compact" />
-        )}
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
-function OpenInApp({ deepLink }: { deepLink: string }) {
-  return (
-    <div className="mt-3 text-center">
-      <a
-        href={deepLink}
-        className="inline-flex items-center gap-1.5 text-[#FF774D] font-semibold text-xs hover:underline"
-      >
-        Already have the app? Open in Konectr
-        <ExternalIcon />
-      </a>
-    </div>
-  );
-}
-
-function ExternalIcon() {
-  return (
-    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-    </svg>
-  );
-}
-
-function Footer() {
-  return (
-    <p className="mt-6 text-center text-[#999] text-xs">
-      <Link href="/" className="hover:text-[#FF774D]">konectr.app</Link> · Let&apos;s make it real
-    </p>
-  );
 }

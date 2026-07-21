@@ -9,22 +9,26 @@ interface Props {
   token: string | null;
   activityTitle: string | null;
   venueName: string | null;
-  // Within the 24h lockout? Computed server-side (render-pure); RPC stays authoritative.
-  withinLock: boolean;
+  // Inside the 3h cutoff → late withdrawal? Computed server-side (render-pure);
+  // the spot is always released, RPC stays authoritative.
+  isLate: boolean;
 }
 
-type Phase = 'idle' | 'working' | 'withdrawn' | 'flagged' | 'error';
+type Phase = 'idle' | 'working' | 'withdrawn' | 'error';
 
 export default function CancelRsvpClient({
   shareCode,
   token,
   activityTitle,
   venueName,
-  withinLock,
+  isLate,
 }: Props) {
   const [code, setCode] = useState(token ?? '');
   const [phase, setPhase] = useState<Phase>('idle');
   const [error, setError] = useState<string | null>(null);
+  // Whether the completed withdrawal was late (RPC-authoritative; falls back to
+  // the server-rendered prediction). Drives the success copy.
+  const [wasLate, setWasLate] = useState(isLate);
 
   async function submit() {
     const t = code.trim();
@@ -43,9 +47,8 @@ export default function CancelRsvpClient({
       });
       const data = await res.json();
       if (data?.outcome === 'withdrawn' || data?.outcome === 'already_withdrawn') {
+        setWasLate(Boolean(data?.late));
         setPhase('withdrawn');
-      } else if (data?.outcome === 'flagged_locked') {
-        setPhase('flagged');
       } else {
         setError((data && data.error) || 'Something went wrong. Please try again.');
         setPhase('error');
@@ -72,22 +75,9 @@ export default function CancelRsvpClient({
             <p className="text-2xl mb-2">👋</p>
             <p className="font-bold text-[#1F1F1F] mb-1">Your RSVP is cancelled</p>
             <p className="text-xs text-[#777] mb-4">
-              Your spot&apos;s been freed up. Thanks for letting us know.
-            </p>
-            <Link
-              href={`/a/${shareCode}`}
-              className="text-[#FF774D] text-xs font-semibold underline underline-offset-2"
-            >
-              Back to the activity
-            </Link>
-          </div>
-        ) : phase === 'flagged' ? (
-          <div className="text-center py-2">
-            <p className="text-2xl mb-2">🕒</p>
-            <p className="font-bold text-[#1F1F1F] mb-1">We&apos;ve let the host know</p>
-            <p className="text-xs text-[#777] mb-4">
-              Since it&apos;s within 24 hours, your spot stays reserved — but the host and the group
-              now know you can&apos;t make it.
+              {wasLate
+                ? "Your spot has been released. Since it was close to start time, we've let the group know immediately."
+                : "Your spot's been freed up. Thanks for letting us know."}
             </p>
             <Link
               href={`/a/${shareCode}`}
@@ -98,10 +88,10 @@ export default function CancelRsvpClient({
           </div>
         ) : (
           <>
-            {withinLock ? (
+            {isLate ? (
               <p className="text-xs text-[#5A4438] leading-relaxed mb-4 bg-[#FFFBF9] border border-[#F0E0D8] rounded-lg p-3">
-                This activity is within <strong>24 hours</strong>. Your spot stays reserved, but
-                we&apos;ll let the host and the group know you can&apos;t make it.
+                It&apos;s less than <strong>3 hours</strong> to start — your spot still frees up, and
+                the group will be notified right away.
               </p>
             ) : (
               <p className="text-xs text-[#777] leading-relaxed mb-4">
@@ -137,8 +127,8 @@ export default function CancelRsvpClient({
             >
               {phase === 'working'
                 ? 'Cancelling…'
-                : withinLock
-                  ? 'Let the host know'
+                : isLate
+                  ? 'Withdraw & let the group know'
                   : 'Cancel my RSVP'}
             </button>
             <div className="text-center mt-3">

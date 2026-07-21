@@ -196,10 +196,11 @@ export function CrewStack({ names, total, spotsLeft }: { names: string[]; total:
   );
 }
 
-// Who's hosting — the creator has a real account (unlike web guests), so a real
-// photo may exist; falls back to an initial ring in the brand tint. Tapping
-// tries the app (public profile) and falls back to the beta/waitlist path.
-export function HostRow({
+// Who started this — attribution only (Konectr has no host role). The creator
+// has a real account (unlike web guests), so a real photo may exist; falls back
+// to an initial ring in the brand tint. Tapping tries the app (public profile)
+// and falls back to the beta/waitlist path.
+export function StartedByRow({
   name,
   photoUrl,
   href,
@@ -231,7 +232,7 @@ export function HostRow({
         </span>
       )}
       <span className="text-[13px] text-[#616161]">
-        Hosted by{' '}
+        Started by{' '}
         <b className="font-[family-name:var(--font-heading)] font-bold text-[#1F1F1F]">{firstName}</b>
       </span>
       {href && (

@@ -5,7 +5,7 @@
 import type { MouseEvent, ReactNode } from 'react';
 import type { Vibe } from './vibes';
 import RsvpLayout from './RsvpLayout';
-import { WhenWhereTiles, HereFor, CrewStack, TrustLine, HostRow } from './KineticUI';
+import { WhenWhereTiles, HereFor, CrewStack, TrustLine, StartedByRow } from './KineticUI';
 
 export interface CountryCode {
   code: string;
@@ -78,7 +78,7 @@ export default function ClaimScreen(p: ClaimScreenProps) {
 
       {p.creatorName && (
         <div className="mt-4">
-          <HostRow
+          <StartedByRow
             name={p.creatorName}
             photoUrl={p.creatorPhotoUrl}
             href={p.creatorLinkHref}

@@ -5,16 +5,16 @@
 import { useEffect, useRef } from 'react';
 
 // State 3 — withdraw your own intent. Konectr has no host, so "cancelling" only
-// ever means pulling your OWN spot; the group isn't cancelled. Inside the 24h
-// lockout the seat is held + the crew is notified (server-authoritative); outside
-// it the seat frees immediately. Phases mirror ActivityRsvpPage's `cancelPhase`.
+// ever means pulling your OWN spot; the group isn't cancelled. The seat is ALWAYS
+// released; inside the 3h cutoff the withdrawal is "late" so the crew is notified
+// immediately (server-authoritative). Phases mirror ActivityRsvpPage's `cancelPhase`.
 
-export type WithdrawPhase = 'confirming' | 'working' | 'withdrawn' | 'flagged' | 'error';
+export type WithdrawPhase = 'confirming' | 'working' | 'withdrawn' | 'error';
 
 export interface WithdrawSheetProps {
   phase: WithdrawPhase;
-  /** Within the 24h lockout window (seat held, crew notified). */
-  withinLock: boolean;
+  /** Inside the 3h cutoff — spot still freed, but the crew is notified right away. */
+  isLate: boolean;
   venueShort: string;
   errorMessage?: string | null;
   onConfirm: () => void;
@@ -92,15 +92,14 @@ export default function WithdrawSheet(p: WithdrawSheetProps) {
 
         {p.phase === 'confirming' && <Confirming {...p} />}
         {p.phase === 'working' && <Working />}
-        {p.phase === 'withdrawn' && <Withdrawn onDone={p.onDone ?? p.onDismiss} />}
-        {p.phase === 'flagged' && <Flagged venueShort={p.venueShort} onDismiss={p.onDismiss} />}
+        {p.phase === 'withdrawn' && <Withdrawn isLate={p.isLate} onDone={p.onDone ?? p.onDismiss} />}
         {p.phase === 'error' && <ErrorState message={p.errorMessage} onRetry={p.onRetry ?? p.onConfirm} onDismiss={p.onDismiss} />}
       </div>
     </div>
   );
 }
 
-function Confirming({ withinLock, venueShort, onConfirm, onDismiss }: WithdrawSheetProps) {
+function Confirming({ isLate, venueShort, onConfirm, onDismiss }: WithdrawSheetProps) {
   return (
     <div className="mt-3">
       <div className="w-12 h-12 rounded-[15px] bg-[#FFF4F1] grid place-items-center text-[24px]">👋</div>
@@ -108,26 +107,16 @@ function Confirming({ withinLock, venueShort, onConfirm, onDismiss }: WithdrawSh
         Give up your spot?
       </h2>
       <p className="text-[14.5px] leading-[1.5] text-[#616161] mt-2">
-        {withinLock ? (
-          <>
-            It&apos;s under <b className="text-[#1F1F1F]">24 hours</b> to go, so your seat stays held and the
-            crew at <b className="text-[#1F1F1F]">{venueShort}</b> gets a heads-up you can&apos;t make it. This
-            helps keep plans reliable for everyone.
-          </>
-        ) : (
-          <>
-            No worries — your seat at <b className="text-[#1F1F1F]">{venueShort}</b> frees up for someone else
-            right away. The plan carries on without you; there&apos;s no host to cancel on.
-          </>
-        )}
+        No worries — your seat at <b className="text-[#1F1F1F]">{venueShort}</b> frees up for someone else
+        right away. The plan carries on without you; there&apos;s no host to cancel on.
       </p>
 
-      {withinLock && (
+      {isLate && (
         <div className="mt-4 flex items-start gap-[10px] bg-[#FFF9E9] border border-[#F6E4AE] rounded-[14px] p-[13px]">
           <span className="text-[16px] leading-none mt-[1px]">⏱️</span>
           <span className="text-[12.5px] leading-[1.45] text-[#8A6D1F]">
-            Inside the 24-hour window, your spot can&apos;t be freed — but letting the group know is the
-            right call.
+            It&apos;s less than <b className="text-[#8A6D1F]">3 hours</b> to start — the group will be notified
+            right away.
           </span>
         </div>
       )}
@@ -136,7 +125,7 @@ function Confirming({ withinLock, venueShort, onConfirm, onDismiss }: WithdrawSh
         onClick={onConfirm}
         className="w-full mt-5 rounded-[15px] py-[16px] font-[family-name:var(--font-heading)] font-black text-[16px] text-white bg-[#1F1F1F] hover:bg-[#000] active:scale-[0.98] transition-all"
       >
-        {withinLock ? 'Let the crew know' : 'Yes, free up my spot'}
+        {isLate ? 'Withdraw & let them know' : 'Yes, free up my spot'}
       </button>
       <button
         onClick={onDismiss}
@@ -157,7 +146,7 @@ function Working() {
   );
 }
 
-function Withdrawn({ onDone }: { onDone: () => void }) {
+function Withdrawn({ isLate, onDone }: { isLate: boolean; onDone: () => void }) {
   return (
     <div className="mt-3">
       <div className="w-12 h-12 rounded-[15px] bg-[#E9F7EF] grid place-items-center">
@@ -169,34 +158,20 @@ function Withdrawn({ onDone }: { onDone: () => void }) {
         Done — you&apos;re out.
       </h2>
       <p className="text-[14.5px] leading-[1.5] text-[#616161] mt-2">
-        Your spot&apos;s been released. Changed your mind? You can grab it again while there&apos;s room.
+        {isLate ? (
+          <>
+            Your spot&apos;s been released. Since it was close to start time, we&apos;ve let the group know
+            right away.
+          </>
+        ) : (
+          <>Your spot&apos;s been released. Changed your mind? You can grab it again while there&apos;s room.</>
+        )}
       </p>
       <button
         onClick={onDone}
         className="w-full mt-5 rounded-[15px] py-[16px] font-[family-name:var(--font-heading)] font-black text-[16px] text-white bg-[#FF774D] hover:bg-[#E6693F] active:scale-[0.98] transition-all"
       >
         Back to the plan
-      </button>
-    </div>
-  );
-}
-
-function Flagged({ venueShort, onDismiss }: { venueShort: string; onDismiss: () => void }) {
-  return (
-    <div className="mt-3">
-      <div className="w-12 h-12 rounded-[15px] bg-[#FFF9E9] grid place-items-center text-[24px]">📣</div>
-      <h2 className="font-[family-name:var(--font-heading)] font-black text-[23px] -tracking-[0.03em] mt-4">
-        The crew&apos;s been told.
-      </h2>
-      <p className="text-[14.5px] leading-[1.5] text-[#616161] mt-2">
-        Because it&apos;s under 24 hours to go, your seat at <b className="text-[#1F1F1F]">{venueShort}</b> stays
-        held — but everyone knows you can&apos;t make it. Thanks for the heads-up.
-      </p>
-      <button
-        onClick={onDismiss}
-        className="w-full mt-5 rounded-[15px] py-[16px] font-[family-name:var(--font-heading)] font-black text-[16px] text-white bg-[#1F1F1F] hover:bg-[#000] active:scale-[0.98] transition-all"
-      >
-        Got it
       </button>
     </div>
   );

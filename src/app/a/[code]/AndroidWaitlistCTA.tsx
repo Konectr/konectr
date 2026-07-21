@@ -81,7 +81,7 @@ export default function AndroidWaitlistCTA({ shareCode, activityId }: Props) {
         </div>
         <p className="text-xs text-[#666] leading-relaxed">
           We&apos;ll email <strong className="text-[#1F1F1F]">{email}</strong> the moment
-          Konectr launches on Android. In the meantime, the host will keep you posted via WhatsApp.
+          Konectr launches on Android. In the meantime, the crew will keep you posted via WhatsApp.
         </p>
       </div>
     );

@@ -1,8 +1,9 @@
 // © Konectr 2026. All rights reserved.
-// API route: POST /api/rsvp/cancel → cancels a web RSVP.
-// The 24-hour lockout is enforced SERVER-SIDE inside the cancel_web_rsvp RPC:
-//   > 24h before start → 'withdrawn'      (spot freed)
-//   < 24h before start → 'flagged_locked' (spot held, host + group notified)
+// API route: POST /api/rsvp/cancel → withdraws a web RSVP.
+// The spot is ALWAYS released. The 3-hour cutoff is enforced SERVER-SIDE inside
+// the cancel_web_rsvp RPC and only sets `late`:
+//   > 3h before start → { outcome: 'withdrawn', late: false }
+//   < 3h before start → { outcome: 'withdrawn', late: true }  (group notified now)
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cancelWebRsvp } from '@/lib/supabase';
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
           { status: 410 }
         );
       default:
-        // 'withdrawn' | 'flagged_locked' | 'already_withdrawn'
+        // 'withdrawn' (with `late`) | 'already_withdrawn'
         return NextResponse.json(result);
     }
   } catch (err: unknown) {

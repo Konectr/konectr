@@ -102,16 +102,16 @@ export async function createWebRsvp(
   return data as WebRsvpResponse;
 }
 
-// Result of cancel_web_rsvp RPC (24h lockout enforced server-side)
+// Result of cancel_web_rsvp RPC. The spot is ALWAYS released; `late` (inside the
+// 3h cutoff, enforced server-side) only means the group was notified immediately.
 export interface CancelWebRsvpResult {
   outcome:
-    | 'withdrawn'        // outside 24h — spot freed
-    | 'flagged_locked'   // inside 24h — spot held, host + group notified
+    | 'withdrawn'        // spot freed (always)
     | 'already_withdrawn'
     | 'activity_unavailable'
     | 'not_found'
     | 'rate_limited';
-  locked?: boolean;
+  late?: boolean;
 }
 
 export async function cancelWebRsvp(

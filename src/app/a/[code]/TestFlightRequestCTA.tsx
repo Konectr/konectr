@@ -150,7 +150,7 @@ export default function TestFlightRequestCTA({ shareCode, activityId, variant = 
             <p className="text-xs text-[#666] leading-relaxed">
               We&apos;ll send your TestFlight invite to{' '}
               <strong className="text-[#1F1F1F]">{email}</strong> as soon as the beta opens.
-              In the meantime, the host will keep you posted.
+              In the meantime, the crew will keep you posted.
             </p>
           </div>
         ) : (

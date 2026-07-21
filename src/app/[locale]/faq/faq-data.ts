@@ -176,7 +176,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What if I need to cancel?",
-        answer: "24+ hours before: cancel freely. Within 24 hours: small reliability score impact. Repeated no-shows without notice can lead to restrictions. If emergencies happen, just message the group—people understand."
+        answer: "You can withdraw anytime — your spot opens up for someone else and the plan carries on without you. Within 3 hours of start time, the group is notified right away and the late withdrawal counts toward your reliability record. Repeated no-shows without notice can lead to restrictions. If emergencies happen, just message the group—people understand."
       },
       {
         question: "Can I bring a friend?",

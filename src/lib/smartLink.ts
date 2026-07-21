@@ -85,7 +85,7 @@ export function getSmartDownloadProps(shareCode: string): SmartDownloadProps {
 }
 
 /**
- * Variant for the host row on the RSVP page — deep-links to the creator's
+ * Variant for the started-by row on the RSVP page — deep-links to the creator's
  * public profile (`konectr://profile/{userId}`). Same try-app-then-fallback
  * behavior: users with the app land on the profile; everyone else is routed
  * to the store/waitlist to sign up first.
