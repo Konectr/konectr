@@ -206,6 +206,47 @@ export interface CampaignActivity {
   tags: string[];
 }
 
+// Row from get_active_campaign RPC (anon-callable). Marketing config for the
+// active campaign instance — no PII. Decouples the generic 'hyrox' tag from the
+// KL Dec 2026 instance (see migration 20260722000000_campaigns_config).
+export interface Campaign {
+  campaign_key: string;
+  tag_name: string;
+  certified_tag: string | null;
+  style_tag: string | null;
+  race_name: string;
+  short_label: string;
+  date_label: string;
+  venue_label: string;
+  venue_short_label: string;
+  city: string | null;
+  city_order: string[];
+  event_start: string;
+  event_end: string;
+  sponsor: string | null;
+  feature_flag_key: string;
+  interest_name: string;
+  disclaimer: string;
+  country: string | null;
+}
+
+export async function getActiveCampaign(): Promise<Campaign | null> {
+  try {
+    const { data, error } = await supabase.rpc('get_active_campaign');
+
+    if (error) {
+      console.error('get_active_campaign RPC error:', error);
+      return null;
+    }
+
+    const rows = (data as Campaign[]) ?? [];
+    return rows.length > 0 ? rows[0] : null;
+  } catch (err) {
+    console.error('Error fetching active campaign:', err);
+    return null;
+  }
+}
+
 export async function getVenuesByTag(tag: string): Promise<CampaignVenue[]> {
   try {
     const { data, error } = await supabase.rpc('get_venues_by_tag', {

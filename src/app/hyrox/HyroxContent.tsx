@@ -1,22 +1,19 @@
 // © Konectr 2026. All rights reserved.
 // Proprietary and confidential.
 //
-// Public HYROX KL campaign hub (konectr.app/hyrox). Landing target for all
-// Threads/IG marketing. Server-rendered directory of Malaysian HYROX gyms +
-// live upcoming HYROX training sessions on Konectr + app CTAs.
+// Public HYROX campaign hub (konectr.app/hyrox). Landing target for all
+// Threads/IG marketing. Server-rendered directory of HYROX gyms + live upcoming
+// HYROX training sessions on Konectr + app CTAs. City/dates/labels come from the
+// active `campaigns` row (get_active_campaign) — no hardcoded instance literals.
 //
 // Kinetic Brand Design System v3.0 tokens (same palette as /leaderboard +
 // /a/[code]/redesign): Sunset Orange #FF774D · Solar Amber #FFC845 ·
 // Graphite #1F1F1F · Cloud White #FAFAFA · tint #FFF4F1 · hover #E6693F.
 
-import type { CampaignActivity, CampaignVenue } from '@/lib/supabase';
+import type { Campaign, CampaignActivity, CampaignVenue } from '@/lib/supabase';
 import { formatTime, formatWeekdayDate } from '@/lib/datetime';
 import TestFlightRequestCTA from '../a/[code]/TestFlightRequestCTA';
 import AndroidWaitlistCTA from '../a/[code]/AndroidWaitlistCTA';
-
-// Attribution share code for CTA email captures from this campaign page
-// (writes utm_campaign='hyrox' via the waitlist RPCs).
-const CAMPAIGN_TAG = 'hyrox';
 
 function truncate(text: string, max = 120): string {
   const t = text.trim();
@@ -29,18 +26,17 @@ function firstName(name: string | null): string {
   return name.trim().split(/\s+/)[0] || 'A member';
 }
 
-// Preferred city ordering; everything else falls to alphabetical after these.
-const CITY_ORDER = ['Kuala Lumpur', 'Petaling Jaya', 'Johor Bahru', 'George Town'];
-
-function cityRank(city: string): number {
-  const i = CITY_ORDER.indexOf(city);
-  return i === -1 ? CITY_ORDER.length : i;
-}
-
-// Group venues by city, ordered by CITY_ORDER then alphabetical; venues within
-// a city sorted by name (the RPC already orders by city, name — this makes the
-// grouping explicit and stable regardless of RPC ordering).
-function groupByCity(venues: CampaignVenue[]): { city: string; venues: CampaignVenue[] }[] {
+// Group venues by city, ordered by the campaign's city_order then alphabetical;
+// venues within a city sorted by name (the RPC already orders by city, name —
+// this makes the grouping explicit and stable regardless of RPC ordering).
+function groupByCity(
+  venues: CampaignVenue[],
+  cityOrder: string[],
+): { city: string; venues: CampaignVenue[] }[] {
+  const rank = (city: string): number => {
+    const i = cityOrder.indexOf(city);
+    return i === -1 ? cityOrder.length : i;
+  };
   const map = new Map<string, CampaignVenue[]>();
   for (const v of venues) {
     const city = (v.city && v.city.trim()) || 'Other';
@@ -53,8 +49,8 @@ function groupByCity(venues: CampaignVenue[]): { city: string; venues: CampaignV
       venues: list.slice().sort((a, b) => a.venue_name.localeCompare(b.venue_name)),
     }))
     .sort((a, b) => {
-      const ra = cityRank(a.city);
-      const rb = cityRank(b.city);
+      const ra = rank(a.city);
+      const rb = rank(b.city);
       if (ra !== rb) return ra - rb;
       return a.city.localeCompare(b.city);
     });
@@ -134,13 +130,15 @@ function GymTier({
   title,
   subtitle,
   venues,
+  cityOrder,
 }: {
   title: string;
   subtitle: string;
   venues: CampaignVenue[];
+  cityOrder: string[];
 }) {
   if (venues.length === 0) return null;
-  const groups = groupByCity(venues);
+  const groups = groupByCity(venues, cityOrder);
 
   return (
     <div className="mt-8 first:mt-0">
@@ -195,11 +193,13 @@ function GymTier({
 // Page
 // ---------------------------------------------------------------------------
 export default function HyroxContent({
+  campaign,
   countdownDays,
   sessions,
   certifiedGyms,
   styleGyms,
 }: {
+  campaign: Campaign;
   countdownDays: number;
   sessions: CampaignActivity[];
   certifiedGyms: CampaignVenue[];
@@ -207,6 +207,7 @@ export default function HyroxContent({
 }) {
   const hasSessions = sessions.length > 0;
   const hasAnyGym = certifiedGyms.length > 0 || styleGyms.length > 0;
+  const country = campaign.country ?? 'Malaysia';
 
   return (
     <main className="min-h-[100dvh] bg-[#FAFAFA]">
@@ -224,10 +225,10 @@ export default function HyroxContent({
           </a>
 
           <h1 className="mt-5 font-[family-name:var(--font-heading)] font-black text-[30px] sm:text-[34px] leading-[1.08] -tracking-[0.02em] text-white">
-            Training for HYROX Kuala Lumpur?
+            Training for {campaign.race_name}?
           </h1>
           <p className="mt-2.5 text-[14px] sm:text-[15px] text-white/90 font-semibold">
-            Malaysia&apos;s first HYROX race · Dec 12–13, 2026 · MITEC
+            {campaign.date_label} · {campaign.venue_label}
           </p>
 
           {countdownDays > 0 && (
@@ -273,7 +274,7 @@ export default function HyroxContent({
           <div className="flex items-center gap-2">
             <span aria-hidden className="text-[20px]">📍</span>
             <h2 className="font-[family-name:var(--font-heading)] font-black text-[20px] -tracking-[0.02em] text-[#1F1F1F]">
-              Find a HYROX gym in Malaysia
+              Find a HYROX gym in {country}
             </h2>
           </div>
 
@@ -283,11 +284,13 @@ export default function HyroxContent({
                 title="HYROX Certified"
                 subtitle="Official partner gyms with certified equipment and stations."
                 venues={certifiedGyms}
+                cityOrder={campaign.city_order}
               />
               <GymTier
                 title="HYROX-style training"
                 subtitle="Gyms running functional-fitness training built for HYROX."
                 venues={styleGyms}
+                cityOrder={campaign.city_order}
               />
             </div>
           ) : (
@@ -297,9 +300,9 @@ export default function HyroxContent({
                 Directory coming online
               </p>
               <p className="mt-1.5 text-[13.5px] leading-[1.5] text-[#616161]">
-                We&apos;re mapping HYROX certified and HYROX-style gyms across Malaysia
-                right now. Check back soon — or get the app and start a training session
-                at your own gym.
+                We&apos;re mapping HYROX certified and HYROX-style gyms across {country}
+                {' '}right now. Check back soon — or get the app and start a training
+                session at your own gym.
               </p>
             </div>
           )}
@@ -316,19 +319,18 @@ export default function HyroxContent({
           </p>
 
           <div className="mt-5 max-w-[340px] mx-auto">
-            <TestFlightRequestCTA shareCode={CAMPAIGN_TAG} variant="full" />
+            <TestFlightRequestCTA shareCode={campaign.tag_name} variant="full" />
           </div>
 
           <div className="mt-4 max-w-[340px] mx-auto text-left">
-            <AndroidWaitlistCTA shareCode={CAMPAIGN_TAG} />
+            <AndroidWaitlistCTA shareCode={campaign.tag_name} />
           </div>
         </section>
 
-        {/* ── Footer disclaimer (verbatim) ────────────────────────────────── */}
+        {/* ── Footer disclaimer (from campaign row, verbatim) ─────────────── */}
         <footer className="mt-8 text-center">
           <p className="text-[11.5px] leading-[1.55] text-[#9E9E9E] font-medium">
-            HYROX® is a registered trademark of its owner. Konectr is an independent app
-            and is not affiliated with, endorsed by, or sponsored by HYROX or AirAsia.
+            {campaign.disclaimer}
           </p>
           <p className="mt-4 text-[12px] text-[#9E9E9E] font-medium">
             <a href="https://konectr.app" className="hover:text-[#FF774D] transition-colors">
