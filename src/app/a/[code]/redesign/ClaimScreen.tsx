@@ -41,6 +41,9 @@ export interface ClaimScreenProps {
   dayLabel: string;
   venueShort: string;
   areaLabel?: string | null;
+  /** Coords for the maps-directions chooser on the WHERE tile (venueName reused as the label). */
+  venueLat?: number | null;
+  venueLng?: number | null;
   crewNames: string[];
   crewTotal: number;
   spotsLeft: number;
@@ -68,7 +71,15 @@ export default function ClaimScreen(p: ClaimScreenProps) {
 
   return (
     <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.venueName}>
-      <WhenWhereTiles timeLabel={p.timeLabel} dayLabel={p.dayLabel} venueShort={p.venueShort} areaLabel={p.areaLabel} />
+      <WhenWhereTiles
+        timeLabel={p.timeLabel}
+        dayLabel={p.dayLabel}
+        venueShort={p.venueShort}
+        areaLabel={p.areaLabel}
+        venueName={p.venueName}
+        venueLat={p.venueLat}
+        venueLng={p.venueLng}
+      />
 
       {p.purpose && (
         <div className="mt-5">

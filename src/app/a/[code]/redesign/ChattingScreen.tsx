@@ -16,6 +16,9 @@ export interface ChattingScreenProps {
   dayLabel: string;
   venueShort: string;
   areaLabel?: string | null;
+  /** Coords for the maps-directions chooser on the WHERE tile (venueName reused as the label). */
+  venueLat?: number | null;
+  venueLng?: number | null;
   guestName: string;
   /** True only right after submitting the claim — gates the one-time celebration line. */
   justClaimed?: boolean;
@@ -63,22 +66,44 @@ export default function ChattingScreen(p: ChattingScreenProps) {
       )}
 
       <div>
-        <WhenWhereTiles timeLabel={p.timeLabel} dayLabel={p.dayLabel} venueShort={p.venueShort} areaLabel={p.areaLabel} />
+        <WhenWhereTiles
+          timeLabel={p.timeLabel}
+          dayLabel={p.dayLabel}
+          venueShort={p.venueShort}
+          areaLabel={p.areaLabel}
+          venueName={p.venueName}
+          venueLat={p.venueLat}
+          venueLng={p.venueLng}
+        />
+        {/* venueName above is the poster heading (venue name / title fallback). */}
       </div>
 
-      {/* Calendar + share */}
+      {/* Calendar + share — icon-only (labels omitted by design; discoverable) */}
       <div className="flex gap-[9px] mt-3">
         <button
           onClick={p.onAddToCalendar}
-          className="flex-1 flex items-center justify-center gap-2 bg-white border-[1.5px] border-[#E0E0E0] rounded-[13px] py-[13px] text-[14px] font-bold text-[#1F1F1F] active:scale-[0.98] transition-transform"
+          aria-label="Add to calendar"
+          title="Add to calendar"
+          className="w-11 h-11 flex items-center justify-center bg-white border-[1.5px] border-[#E0E0E0] rounded-[13px] text-[#1F1F1F] active:scale-[0.95] transition-transform hover:border-[#F3C6B6]"
         >
-          🗓️ Add to calendar
+          <svg className="w-[20px] h-[20px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+          </svg>
         </button>
         <button
           onClick={p.onShare}
-          className="flex-1 flex items-center justify-center gap-2 bg-white border-[1.5px] border-[#E0E0E0] rounded-[13px] py-[13px] text-[14px] font-bold text-[#1F1F1F] active:scale-[0.98] transition-transform"
+          aria-label="Share"
+          title="Share"
+          className="w-11 h-11 flex items-center justify-center bg-white border-[1.5px] border-[#E0E0E0] rounded-[13px] text-[#1F1F1F] active:scale-[0.95] transition-transform hover:border-[#F3C6B6]"
         >
-          ↗ Share
+          <svg className="w-[19px] h-[19px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+            <polyline points="16 6 12 2 8 6" />
+            <line x1="12" y1="2" x2="12" y2="15" />
+          </svg>
         </button>
       </div>
 
