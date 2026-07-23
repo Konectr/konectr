@@ -62,11 +62,11 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How do I create an account?",
-        answer: "Download from the App Store (Android coming Q2 2026), sign up with phone or email, add your interests and a photo. Takes about 2 minutes."
+        answer: "Konectr is in public beta on iOS — join via the TestFlight link at konectr.app. Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
       },
       {
         question: "Do I need to verify my identity?",
-        answer: "Phone verification is required. Optional photo verification (coming soon) will earn you a trust badge, and hosts often prefer verified members for their activities."
+        answer: "Email verification is required — you sign in with a one-time code, no passwords. Optional photo verification (coming soon) will earn you a trust badge, and other members feel more comfortable joining plans with verified people."
       },
       {
         question: "What makes Konectr different from other social apps?",
@@ -78,7 +78,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "How complete does my profile need to be?",
-        answer: "The more complete your profile, the better your matches. To use Pulse (AI matching), you need 100% profile completeness — that means a photo, bio, interests, and availability. Even without Pulse, a complete profile helps hosts and other members decide to join your activities."
+        answer: "The more complete your profile, the better your matches. To use Pulse (AI matching), you need 100% profile completeness — that means a photo, bio, interests, and availability. Even without Pulse, a complete profile helps other members decide to join your activities."
       }
     ]
   },
@@ -91,8 +91,8 @@ export const faqCategories: FAQCategory[] = [
         answer: "Small groups (3-6 typical), activity-focused conversation topics, and everyone's there for the same reason. Many of our most active users are introverts who prefer this structured approach over traditional social settings."
       },
       {
-        question: "Can I create my own activities (become a host)?",
-        answer: "Yes! Anyone can create activities and become a host. Choose from vetted venues, set your group size, pick a time slot, and publish. Earn special Captain badges as you host more activities."
+        question: "Can I start my own activities?",
+        answer: "Yes! Anyone can start an activity — there's no host role on Konectr. Pick a venue, set your group size, choose a time, and publish. Anyone who can see it joins instantly, and you're all equal members of the plan."
       },
       {
         question: "How does the matching work?",
@@ -120,10 +120,10 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What happens after an activity ends?",
-        answer: "Activity auto-completes 2 hours after end time. You'll earn XP and progress toward badges, rate the experience, leave kudos, and choose who to add to your Circle. Group chat archives become read-only."
+        answer: "Activity auto-completes 2 hours after end time. You'll earn XP and progress toward badges, leave kudos, and choose who to add to your Circle. Group chat archives become read-only."
       },
       {
-        question: "Can I host private activities?",
+        question: "Can I keep an activity private?",
         answer: "Yes. Choose 'Public' (visible to matching users) or 'Circle Only' (visible only to your friends). Circle-only is great for reunions or testing new activity ideas."
       }
     ]
@@ -134,7 +134,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How do I know the people I meet are safe?",
-        answer: "Phone verification required, optional photo verification (coming soon) with trust badges. All meetups at public vetted venues only. Badge system tracks positive participation. Three-strike system for violations: 3 reports = warning, 6 = suspension, 9 = six-month ban. Zero tolerance for harassment with 24-hour report review."
+        answer: "Email verification required, optional photo verification (coming soon) with trust badges. All meetups at public vetted venues only. Badge system tracks positive participation. Three-strike system for violations: 3 reports = warning, 6 = suspension, 9 = six-month ban. Zero tolerance for harassment with 24-hour report review."
       },
       {
         question: "What are vetted venues?",
@@ -172,7 +172,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How many people are typically at an activity?",
-        answer: "3-8 people. Hosts set their preferred size. Activities need minimum signups (usually 2-3) to run—no awkward empty venues."
+        answer: "3-8 people. Whoever starts the plan sets the group size. Activities need minimum signups (usually 2-3) to run—no awkward empty venues."
       },
       {
         question: "What if I need to cancel?",
@@ -184,15 +184,15 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What if no one talks to me?",
-        answer: "Hosts are encouraged to include everyone. Small groups (3-6) mean you can't get lost. Many activities have icebreakers built in. If it still happens, let us know—we'll follow up."
+        answer: "There's no host — everyone's a peer, so nobody's a guest. Small groups (3-6) mean you can't get lost. Many activities have icebreakers built in. If it still happens, let us know—we'll follow up."
       },
       {
         question: "How do I know what to expect at an activity?",
-        answer: "Every listing shows: venue with photos, group size, duration, vibe tags (Chill, Active, Social, Creative, Focus, Adventure), what's included, what to bring, and host notes. Plus reviews from past participants."
+        answer: "Every listing shows: venue with photos, group size, duration, vibe tags (Chill, Active, Social, Creative, Focus, Adventure), what's included, what to bring, and notes from whoever started it."
       },
       {
         question: "What's the etiquette for a first activity?",
-        answer: "Arrive on time, introduce yourself to the host first, put your phone away, ask questions and listen. After: rate honestly, add people you vibed with to your Circle."
+        answer: "Arrive on time, introduce yourself to the group, put your phone away, ask questions and listen. After: add people you vibed with to your Circle."
       },
       {
         question: "Can I suggest new venue types?",
@@ -200,7 +200,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What if the activity is cancelled?",
-        answer: "Host cancels: you get notified immediately, no impact on your reliability. Not enough signups: you're notified before the scheduled time. Consider hosting your own version."
+        answer: "If everyone else withdraws, the plan ends and you're notified immediately — no impact on your reliability. Not enough signups: you're notified before the scheduled time. Consider starting your own version."
       },
       {
         question: "Can I join an activity that's already in progress?",
@@ -222,11 +222,11 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "How do badges help me?",
-        answer: "Trust signals for hosts and attendees. Personal milestones to track your journey. Conversation starters. Some hosts set badge requirements for their activities."
+        answer: "Trust signals for people deciding whether to join your plans. Personal milestones to track your journey. Conversation starters."
       },
       {
         question: "What are XP points and how do I earn them?",
-        answer: "XP (experience points) measure your overall engagement on Konectr. You earn XP by attending activities, hosting, adding people to your Circle, maintaining streaks, completing your profile, and referring friends. XP determines your tier level and unlocks perks as you progress."
+        answer: "XP (experience points) measure your overall engagement on Konectr. You earn XP by attending activities, starting them, adding people to your Circle, maintaining streaks, completing your profile, and referring friends. XP determines your tier level and unlocks perks as you progress."
       },
       {
         question: "What are the tier levels?",
@@ -274,7 +274,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "When is Android coming?",
-        answer: "Q2 2026. We're starting iOS-first to nail the experience. Join waitlist at konectr.app for early access."
+        answer: "We're iOS-first for now to nail the experience. Android is in development — join the waitlist at konectr.app and we'll email you the moment it's ready."
       },
       {
         question: "What new features are coming?",
@@ -288,7 +288,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "The app is crashing/slow. What do I do?",
-        answer: "Force close and restart. Check for App Store updates. Restart your phone. Check your internet. Still broken? Email hello@konectr.app with device model, iOS version, and screenshots."
+        answer: "Force close and restart. Check TestFlight for updates. Restart your phone. Check your internet. Still broken? Email hello@konectr.app with device model, iOS version, and screenshots."
       },
       {
         question: "I'm not receiving notifications. Help!",

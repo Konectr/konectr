@@ -113,7 +113,7 @@ function SessionCard({ session }: { session: CampaignActivity }) {
 
       <div className="mt-3 flex items-center justify-between">
         <span className="text-[12.5px] text-[#6B6B6B] font-medium">
-          Hosted by {firstName(session.creator_display_name)}
+          Started by {firstName(session.creator_display_name)}
         </span>
         <span className="text-[13px] font-[family-name:var(--font-heading)] font-extrabold text-[#FF774D]">
           Join →
