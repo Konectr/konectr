@@ -14,6 +14,7 @@ import type { Campaign, CampaignActivity, CampaignVenue } from '@/lib/supabase';
 import { formatTime, formatWeekdayDate } from '@/lib/datetime';
 import TestFlightRequestCTA from '../a/[code]/TestFlightRequestCTA';
 import AndroidWaitlistCTA from '../a/[code]/AndroidWaitlistCTA';
+import GymDirectory from './GymDirectory';
 
 function truncate(text: string, max = 120): string {
   const t = text.trim();
@@ -24,44 +25,6 @@ function truncate(text: string, max = 120): string {
 function firstName(name: string | null): string {
   if (!name) return 'A member';
   return name.trim().split(/\s+/)[0] || 'A member';
-}
-
-// Group venues by city, ordered by the campaign's city_order then alphabetical;
-// venues within a city sorted by name (the RPC already orders by city, name —
-// this makes the grouping explicit and stable regardless of RPC ordering).
-function groupByCity(
-  venues: CampaignVenue[],
-  cityOrder: string[],
-): { city: string; venues: CampaignVenue[] }[] {
-  const rank = (city: string): number => {
-    const i = cityOrder.indexOf(city);
-    return i === -1 ? cityOrder.length : i;
-  };
-  const map = new Map<string, CampaignVenue[]>();
-  for (const v of venues) {
-    const city = (v.city && v.city.trim()) || 'Other';
-    if (!map.has(city)) map.set(city, []);
-    map.get(city)!.push(v);
-  }
-  return Array.from(map.entries())
-    .map(([city, list]) => ({
-      city,
-      venues: list.slice().sort((a, b) => a.venue_name.localeCompare(b.venue_name)),
-    }))
-    .sort((a, b) => {
-      const ra = rank(a.city);
-      const rb = rank(b.city);
-      if (ra !== rb) return ra - rb;
-      return a.city.localeCompare(b.city);
-    });
-}
-
-function normalizeUrl(url: string): string {
-  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
-}
-
-function prettyUrl(url: string): string {
-  return url.replace(/^https?:\/\//i, '').replace(/\/$/, '');
 }
 
 // ---------------------------------------------------------------------------
@@ -120,72 +83,6 @@ function SessionCard({ session }: { session: CampaignActivity }) {
         </span>
       </div>
     </a>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Gym tier group
-// ---------------------------------------------------------------------------
-function GymTier({
-  title,
-  subtitle,
-  venues,
-  cityOrder,
-}: {
-  title: string;
-  subtitle: string;
-  venues: CampaignVenue[];
-  cityOrder: string[];
-}) {
-  if (venues.length === 0) return null;
-  const groups = groupByCity(venues, cityOrder);
-
-  return (
-    <div className="mt-8 first:mt-0">
-      <h3 className="font-[family-name:var(--font-heading)] font-black text-[18px] -tracking-[0.02em] text-[#1F1F1F]">
-        {title}
-      </h3>
-      <p className="mt-0.5 text-[13px] text-[#6B6B6B] font-medium">{subtitle}</p>
-
-      {groups.map((group) => (
-        <div key={group.city} className="mt-5">
-          <div className="text-[12px] font-extrabold uppercase tracking-[0.08em] text-[#9E9E9E]">
-            {group.city}
-          </div>
-          <ul className="mt-2 space-y-2">
-            {group.venues.map((v) => (
-              <li
-                key={v.venue_id}
-                className="bg-white border border-[#F0EEEC] rounded-[14px] px-4 py-3"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="font-[family-name:var(--font-heading)] font-extrabold text-[15px] text-[#1F1F1F]">
-                      {v.venue_name}
-                    </div>
-                    {v.address && (
-                      <div className="mt-0.5 text-[12.5px] leading-[1.45] text-[#6B6B6B]">
-                        {v.address}
-                      </div>
-                    )}
-                  </div>
-                  {v.website && (
-                    <a
-                      href={normalizeUrl(v.website)}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
-                      className="shrink-0 text-[12.5px] font-bold text-[#FF774D] hover:text-[#E6693F] transition-colors"
-                    >
-                      {prettyUrl(v.website).length > 22 ? 'Website ↗' : `${prettyUrl(v.website)} ↗`}
-                    </a>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
   );
 }
 
@@ -279,20 +176,11 @@ export default function HyroxContent({
           </div>
 
           {hasAnyGym ? (
-            <div className="mt-5">
-              <GymTier
-                title="HYROX Certified"
-                subtitle="Official partner gyms with certified equipment and stations."
-                venues={certifiedGyms}
-                cityOrder={campaign.city_order}
-              />
-              <GymTier
-                title="HYROX-style training"
-                subtitle="Gyms running functional-fitness training built for HYROX."
-                venues={styleGyms}
-                cityOrder={campaign.city_order}
-              />
-            </div>
+            <GymDirectory
+              certifiedGyms={certifiedGyms}
+              styleGyms={styleGyms}
+              cityOrder={campaign.city_order}
+            />
           ) : (
             <div className="mt-4 bg-[#FFF4F1] rounded-[16px] p-5 text-center">
               <div className="text-[30px]">🏗️</div>

@@ -23,10 +23,16 @@ const getCampaign = cache(getActiveCampaign);
 
 // Whole days from "now" (KL date) to event day. Server-computed under ISR 300,
 // so day granularity is stable between revalidations.
+//
+// BOTH sides must go through klWallClock. Reading the race instant with plain
+// getFullYear/getMonth/getDate uses the SERVER's timezone: a race starting
+// Dec 11 00:00 MYT is Dec 10 16:00 UTC, so on Vercel (UTC) the raw getters
+// resolved it to Dec 10 and the countdown rendered a day short — correct on a
+// KL laptop, wrong in production.
 function daysUntilEvent(eventStartIso: string): number {
   const klNow = klWallClock();
   const todayKL = new Date(klNow.getFullYear(), klNow.getMonth(), klNow.getDate());
-  const race = new Date(eventStartIso);
+  const race = klWallClock(new Date(eventStartIso));
   const raceKL = new Date(race.getFullYear(), race.getMonth(), race.getDate());
   const ms = raceKL.getTime() - todayKL.getTime();
   return Math.max(0, Math.round(ms / (24 * 60 * 60 * 1000)));
