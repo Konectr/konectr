@@ -14,6 +14,10 @@ interface ChatMessage {
   is_from_web: boolean;
   is_self: boolean;
   created_at: string;
+  // Only 'text' messages are rendered in the web Activity Chatter. System
+  // notices ("X is no longer attending") and location pins are filtered out
+  // by the get_web_chat_messages RPC and again in /api/chat/history.
+  message_type?: string;
 }
 
 interface HistoryResponse {
