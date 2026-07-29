@@ -2,7 +2,10 @@
 // Proprietary and confidential.
 
 import { Metadata } from 'next';
+import { headers } from 'next/headers';
+import { after } from 'next/server';
 import { getActivityByShareCode } from '@/lib/supabase';
+import { recordShareLinkView } from '@/lib/shareLinkTelemetry';
 import { formatWeekdayDate, formatTime, isLateWithdrawal } from '@/lib/datetime';
 import ActivityRsvpPage from './ActivityRsvpPage';
 
@@ -44,6 +47,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ActivityPreviewPage({ params }: Props) {
   const { code } = await params;
   const activity = await getActivityByShareCode(code);
+
+  // FI-41 platform telemetry. Deliberately in the page component, NOT in
+  // generateMetadata — Next calls that separately and we would double-count every
+  // visit. `after()` runs this once the response has been sent, so it costs the
+  // visitor nothing; recordShareLinkView swallows its own errors so telemetry can
+  // never break the conversion path.
+  const headerList = await headers();
+  const userAgent = headerList.get('user-agent');
+  const referrer = headerList.get('referer');
+  after(() => recordShareLinkView({ shareCode: code, userAgent, referrer }));
 
   // Late-withdrawal prediction for the withdraw copy (computed server-side to keep
   // the client render pure; the cancel_web_rsvp RPC is the authoritative gate).
