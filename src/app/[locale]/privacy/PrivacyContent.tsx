@@ -46,7 +46,9 @@ const sections = [
         category: "Personal Information",
         icon: "👤",
         items: [
-          "Phone number (for authentication)",
+          // Auth moved from SMS OTP to email OTP in June 2026.
+          "Email address (for sign-in and account recovery)",
+          "Phone number (optional, if you choose to add it)",
           "Name (display name for your profile)",
           "Age (to verify you are 18+)",
           "Gender (for profile display)",
@@ -70,7 +72,10 @@ const sections = [
           "Venues visited (to suggest similar activities)",
           "Activities created (hosting history)",
           "Matches made (to improve matching algorithm)",
-          "Messages sent (stored encrypted, auto-deleted after 90 days)",
+          // Was: "stored encrypted, auto-deleted after 90 days". Neither held —
+          // nothing deleted messages, and "encrypted" invited an end-to-end
+          // reading we do not support. See the retention table below.
+          "Messages sent (retained while the conversation exists)",
         ],
       },
       {
@@ -214,25 +219,43 @@ const sections = [
   {
     id: "retention",
     title: "10. Data Retention",
+    // CORRECTED 2026-08-05. The previous version of this table described
+    // automatic deletion schedules that were never implemented: messages
+    // "auto-deleted after 90 days" (88 of 142 were older), activity history
+    // "anonymized after 6 months" (220 rows older, oldest Dec 2024), location
+    // "auto-deleted after 30 days" (390 of 583 older). A published retention
+    // period is a commitment under PDPA 2010 — do not state one here unless a
+    // mechanism enforces it AND you have confirmed that mechanism has actually
+    // run. See docs/ACCOUNT_DELETION_DESIGN.md.
     retentionItems: [
-      { data: "Active accounts", period: "Retained while account is open" },
+      { data: "Active accounts", period: "Retained while your account is open" },
       {
         data: "Deleted accounts",
-        period: "Soft delete 30 days, hard delete after, backups removed within 90 days",
+        period:
+          "Hidden immediately, 30 days to change your mind, then permanently erased",
       },
       {
         data: "Messages",
-        period: "Auto-deleted after 90 days of conversation inactivity",
+        period:
+          "Retained while the conversation exists. If you delete your account, your messages stay in other people's conversations but are no longer linked to you",
       },
       {
-        data: "Activity history",
-        period: "Retained for 6 months, then anonymized",
+        data: "Activity and availability history",
+        period: "Retained while your account is open",
       },
       {
         data: "Location data",
-        period: "Auto-deleted after 30 days of inactivity",
+        period: "Approximate only; retained while your account is open",
       },
-      { data: "Crash logs", period: "Retained for 90 days, then deleted" },
+      {
+        data: "Crash logs",
+        period: "Retained for 90 days by our crash reporting provider",
+      },
+      {
+        data: "Safety reports",
+        period:
+          "Retained after account deletion, so that deleting an account cannot erase a report",
+      },
     ],
   },
   {
@@ -290,8 +313,8 @@ export function PrivacyContent() {
       <section className="pt-12 pb-4">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-muted-foreground text-sm">
-            Last Updated: November 30, 2025 &middot; Effective Date: December
-            10, 2025
+            Last Updated: August 5, 2026 &middot; Effective Date: December 10,
+            2025
           </p>
         </div>
       </section>
