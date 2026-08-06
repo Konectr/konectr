@@ -18,50 +18,20 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-
-  const title = {
-    default: "Konectr - Real Adventures with Real People",
-    template: "%s | Konectr",
-  };
-
-  const description =
-    "Meet new people in Kuala Lumpur through real activities. Konectr helps you find friends for coffee, hiking, fitness & more. Join free.";
-
+// Canonical, hreflang, and OpenGraph/Twitter tags are set PER PAGE via
+// buildPageMetadata (src/lib/metadata.ts). Do not add alternates/openGraph
+// here: layout-level values shadow every page that doesn't override them,
+// which is exactly the every-page-canonicals-to-the-homepage bug this
+// replaced (SEO remediation, Aug 2026).
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title,
-    description,
+    title: {
+      default: "Konectr - Real Adventures with Real People",
+      template: "%s | Konectr",
+    },
+    description:
+      "Meet new people in Kuala Lumpur through real activities. Konectr helps you find friends for coffee, hiking, fitness & more. Join free.",
     metadataBase: new URL(baseUrl),
-    alternates: {
-      canonical: `${baseUrl}/${locale}`,
-      languages: Object.fromEntries(
-        locales.map((loc) => [loc, `${baseUrl}/${loc}`])
-      ),
-    },
-    openGraph: {
-      title: "Konectr - Real Adventures with Real People",
-      description,
-      url: `${baseUrl}/${locale}`,
-      siteName: "Konectr",
-      locale: locale,
-      type: "website",
-      images: [
-        {
-          url: "/og-image.jpg",
-          width: 1200,
-          height: 630,
-          alt: "Konectr - Real Adventures with Real People",
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: "Konectr - Real Adventures with Real People",
-      description,
-      images: ["/og-image.jpg"],
-      site: "@konectrapp",
-    },
     robots: {
       index: true,
       follow: true,

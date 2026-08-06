@@ -32,9 +32,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'KL Weekly Leaderboard - Konectr',
     description,
+    alternates: {
+      canonical: 'https://konectr.app/leaderboard',
+    },
     openGraph: {
       title: 'Konectr KL Weekly Leaderboard 🏆',
       description,
+      url: 'https://konectr.app/leaderboard',
       type: 'website',
     },
   };

@@ -9,6 +9,7 @@ import { allPosts as staticPosts, getPostBySlug as getStaticPostBySlug } from "@
 import { locales } from "@/i18n/config";
 import { BlogPostContent } from "./BlogPostContent";
 import { generateBreadcrumbSchema } from "@/lib/seo";
+import { buildPageMetadata, trimDescription } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -18,19 +19,31 @@ type Props = {
 export const revalidate = 60;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const post = await getPostBySlug(slug) ?? getStaticPostBySlug(slug) ?? null;
 
   if (!post) {
     return {
       title: "Post Not Found - Konectr Blog",
+      robots: { index: false, follow: false },
     };
   }
 
-  return {
-    title: `${post.title} - Konectr Blog`,
-    description: post.excerpt,
-  };
+  // Post dates are human-formatted strings ("January 15, 2025"); OG wants ISO.
+  const parsedDate = new Date(post.date);
+  const publishedTime = isNaN(parsedDate.getTime())
+    ? undefined
+    : parsedDate.toISOString();
+
+  return buildPageMetadata({
+    locale,
+    path: `/blog/${slug}`,
+    title: `${post.title} | Konectr Blog`,
+    description: trimDescription(post.excerpt),
+    ogType: "article",
+    publishedTime,
+    images: post.image ? [post.image] : undefined,
+  });
 }
 
 export async function generateStaticParams() {

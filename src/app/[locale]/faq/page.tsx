@@ -7,16 +7,22 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { FAQContent } from "./FAQContent";
 import { faqCategories } from "./faq-data";
 import { generateBreadcrumbSchema } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "FAQ - Konectr",
-  description:
-    "Got questions about Konectr? 55+ answers about meeting people, safety, activities, badges, and how the app works in Kuala Lumpur.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/faq",
+    title: "Konectr FAQs — Pricing, Safety, How Matching Works",
+    description:
+      "Answers to common questions about Konectr: is it free, how matching works, safety measures, and how to join the KL beta.",
+  });
+}
 
 function getFaqJsonLd() {
   const allFaqs = faqCategories.flatMap((cat) => cat.faqs);

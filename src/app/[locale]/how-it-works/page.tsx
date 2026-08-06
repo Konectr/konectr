@@ -6,16 +6,22 @@ import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { HowItWorksContent } from "./HowItWorksContent";
 import { generateBreadcrumbSchema, generateHowToSchema } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "How It Works - Konectr",
-  description:
-    "Make friends in 3 steps: pick your vibe, see who's nearby, and meet at a public venue. Small groups of 2-5 people. Konectr KL.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/how-it-works",
+    title: "How Konectr Works — Activity-First Matching in KL",
+    description:
+      "Pick your vibe, see who's free now, meet at the spot. How Konectr turns intent into real-life meetups in Kuala Lumpur in three steps.",
+  });
+}
 
 export default async function HowItWorksPage({ params }: Props) {
   const { locale } = await params;

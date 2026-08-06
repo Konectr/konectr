@@ -8,12 +8,7 @@ import { BlogContent } from "./BlogContent";
 import { getAllPosts } from "@/lib/notion";
 import { allPosts as staticPosts } from "@/content/blog";
 import { generateBreadcrumbSchema } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "Blog - Konectr",
-  description:
-    "Tips for making friends as an adult in KL. Konectr blog covers activities, social life, expat guides, and the friendship recession.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 // Revalidate every 60 seconds (ISR)
 export const revalidate = 60;
@@ -21,6 +16,17 @@ export const revalidate = 60;
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/blog",
+    title: "Konectr Blog — Making Friends & Social Life in KL",
+    description:
+      "Tips and stories on making friends as an adult in Kuala Lumpur: activities, expat life, and beating the friendship recession.",
+  });
+}
 
 export default async function BlogPage({ params }: Props) {
   const { locale } = await params;

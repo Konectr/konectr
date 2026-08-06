@@ -5,16 +5,22 @@ import { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import FeedbackBoardContent from "./FeedbackBoardContent";
 import { generateBreadcrumbSchema } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "Feedback Board | Konectr",
-  description:
-    "See what Konectr users are requesting. Feature requests, bug reports, and community feedback — all public and transparent.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/feedback",
+    title: "Feedback Board | Konectr",
+    description:
+      "See what Konectr users are requesting. Feature requests, bug reports, and community feedback — all public and transparent.",
+  });
+}
 
 export default async function FeedbackPage({ params }: Props) {
   const { locale } = await params;

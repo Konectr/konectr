@@ -6,16 +6,22 @@ import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { SafetyContent } from "./SafetyContent";
 import { generateBreadcrumbSchema } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "Safety - Konectr",
-  description:
-    "Your safety matters. Phone-verified profiles, public venues only, 3-strike policy. How Konectr protects you when meeting new people in KL.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/safety",
+    title: "Safety & Community Guidelines | Konectr",
+    description:
+      "How Konectr keeps real-world meetups in KL safe: verified profiles, public venues, reporting with a 24-hour response commitment, and clear community rules.",
+  });
+}
 
 export default async function SafetyPage({ params }: Props) {
   const { locale } = await params;

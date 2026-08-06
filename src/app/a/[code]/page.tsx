@@ -36,9 +36,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${activity.title} - Join on Konectr`,
     description: richDescription,
+    alternates: {
+      canonical: `https://konectr.app/a/${code}`,
+    },
     openGraph: {
       title: `${activity.title} - Konectr`,
       description: richDescription,
+      url: `https://konectr.app/a/${code}`,
       type: 'website',
     },
   };

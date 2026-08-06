@@ -6,19 +6,25 @@ import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DeleteAccountContent } from "./DeleteAccountContent";
 import { generateBreadcrumbSchema } from "@/lib/seo";
-
-// Required by Google Play: apps that allow account creation must provide a
-// publicly reachable account-deletion URL that works WITHOUT installing the app.
-// Declared in the Play Data Safety form. Do not remove or gate this route.
-export const metadata: Metadata = {
-  title: "Delete Your Account - Konectr",
-  description:
-    "How to delete your Konectr account and what happens to your data. Delete in the app or request deletion by email. 30-day grace period, PDPA 2010 compliant.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+// Required by Google Play: apps that allow account creation must provide a
+// publicly reachable account-deletion URL that works WITHOUT installing the app.
+// Declared in the Play Data Safety form. Do not remove or gate this route.
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/delete-account",
+    title: "Delete Your Account | Konectr",
+    description:
+      "How to delete your Konectr account and what happens to your data. Delete in the app or request deletion by email. 30-day grace period, PDPA 2010 compliant.",
+  });
+}
 
 export default async function DeleteAccountPage({ params }: Props) {
   const { locale } = await params;

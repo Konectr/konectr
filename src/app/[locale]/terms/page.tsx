@@ -6,16 +6,22 @@ import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { TermsContent } from "./TermsContent";
 import { generateBreadcrumbSchema } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "Terms of Service - Konectr",
-  description:
-    "Konectr Terms of Service. Read our rules for using the app, account policies, safety guidelines, and community standards for meeting new people in Kuala Lumpur.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/terms",
+    title: "Terms of Service | Konectr",
+    description:
+      "Konectr Terms of Service. Read our rules for using the app, account policies, safety guidelines, and community standards for meeting new people in Kuala Lumpur.",
+  });
+}
 
 export default async function TermsPage({ params }: Props) {
   const { locale } = await params;

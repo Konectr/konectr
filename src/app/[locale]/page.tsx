@@ -1,8 +1,10 @@
 // © Konectr 2026. All rights reserved.
 // Proprietary and confidential.
 
+import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { setRequestLocale } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/metadata";
 import { Hero } from "@/components/sections/Hero";
 
 // Dynamic imports for below-the-fold sections (code splitting)
@@ -44,6 +46,17 @@ function SectionSkeleton({ dark = false }: { dark?: boolean }) {
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "",
+    title: "Konectr — Meet New People in Kuala Lumpur | Real Activities",
+    description:
+      "Meet new people in Kuala Lumpur through real activities. Konectr matches you for coffee, hikes, fitness and more — right now. Join the free beta.",
+  });
+}
 
 export default async function Home({ params }: Props) {
   const { locale } = await params;

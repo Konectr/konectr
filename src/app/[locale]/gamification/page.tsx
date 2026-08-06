@@ -6,16 +6,22 @@ import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { GamificationContent } from "./GamificationContent";
 import { generateBreadcrumbSchema } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "Gamification - Konectr",
-  description:
-    "Earn badges, build streaks, and level up your social life with Konectr's gamification system. 6 tiers from Basic to Legendary.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/gamification",
+    title: "Badges, Streaks & Rewards | Konectr",
+    description:
+      "How Konectr's badge and progression system works: earn reputation through real meetups, not ratings.",
+  });
+}
 
 export default async function GamificationPage({ params }: Props) {
   const { locale } = await params;

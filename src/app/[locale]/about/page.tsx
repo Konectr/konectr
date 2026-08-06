@@ -6,16 +6,22 @@ import { setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { AboutContent } from "./AboutContent";
 import { generateBreadcrumbSchema } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "About Us - Konectr",
-  description:
-    "Konectr is a social app helping adults make real friends in KL through shared activities. Founded by an expat who knows how hard it is.",
-};
+import { buildPageMetadata } from "@/lib/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/about",
+    title: "Our Story — Why We Built Konectr in Kuala Lumpur",
+    description:
+      "Konectr started with real meetups in KL, not code. Read why we're building the activity-first way to make friends in Kuala Lumpur.",
+  });
+}
 
 export default async function AboutPage({ params }: Props) {
   const { locale } = await params;

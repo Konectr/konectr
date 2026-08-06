@@ -18,10 +18,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: "You've Been Invited to Konectr!",
     description: `Join Konectr with referral code ${code}. Meet real people for real activities in Kuala Lumpur. Download the app and start connecting.`,
+    alternates: {
+      canonical: `https://konectr.app/r/${code}`,
+    },
     openGraph: {
       title: "You've Been Invited to Konectr!",
       description:
         "Your friend invited you to Konectr — the app for meeting real people through real activities in KL.",
+      url: `https://konectr.app/r/${code}`,
       type: "website",
     },
   };
