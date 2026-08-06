@@ -18,29 +18,5 @@
         }
       ]
     }
-  ],
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "konectrapp.com"
-        }
-      ],
-      "destination": "https://konectr.app/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.konectrapp.com"
-        }
-      ],
-      "destination": "https://konectr.app/:path*",
-      "permanent": true
-    }
   ]
 }

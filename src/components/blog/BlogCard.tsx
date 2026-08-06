@@ -4,7 +4,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
+// next-intl Link prefixes the active locale, so /blog/[slug] links resolve
+// directly instead of bouncing through the middleware's 307 locale redirect.
+import { Link } from "@/i18n/navigation";
 import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 
 export interface BlogPost {

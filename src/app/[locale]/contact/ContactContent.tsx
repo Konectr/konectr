@@ -6,7 +6,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 
 const contactMethods = [

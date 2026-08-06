@@ -6,7 +6,7 @@
 import { motion } from "framer-motion";
 import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 const values = [
   {

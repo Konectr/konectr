@@ -6,7 +6,9 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
-import Link from "next/link";
+// next-intl Link prefixes the active locale, so internal links resolve
+// directly instead of bouncing through the middleware's 307 locale redirect.
+import { Link } from "@/i18n/navigation";
 import type { BlogPostFull } from "@/lib/notion";
 import type { BlogPost } from "@/components/blog/BlogCard";
 import { BlogCard } from "@/components/blog/BlogCard";
