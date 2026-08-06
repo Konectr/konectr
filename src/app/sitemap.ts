@@ -3,16 +3,22 @@
 
 import { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
-import { getAllSlugs } from "@/content/blog";
+import { getAllPosts } from "@/lib/notion";
+import { allPosts as staticPosts } from "@/content/blog";
 
 const baseUrl = "https://konectr.app";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const slugs = getAllSlugs();
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Same dual source as the blog pages: Notion first, static fallback —
+  // a Notion-only post must appear here, not just on the rendered index.
+  let posts = await getAllPosts();
+  if (posts.length === 0) {
+    posts = staticPosts;
+  }
   const now = new Date();
 
   // Static pages
-  const staticPages = ["", "/about", "/how-it-works", "/safety", "/gamification", "/contact", "/blog", "/faq", "/feedback", "/terms", "/privacy"];
+  const staticPages = ["", "/about", "/how-it-works", "/safety", "/gamification", "/contact", "/blog", "/faq", "/feedback", "/terms", "/privacy", "/delete-account"];
 
   // Generate entries for all locales and static pages
   const staticEntries = staticPages.flatMap((page) =>
@@ -29,20 +35,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   );
 
-  // Generate entries for all blog posts across all locales
-  const blogEntries = slugs.flatMap((slug) =>
-    locales.map((locale) => ({
-      url: `${baseUrl}/${locale}/blog/${slug}`,
-      lastModified: now,
+  // Generate entries for all blog posts across all locales; post dates are
+  // human-formatted strings, so fall back to build time when unparseable.
+  const blogEntries = posts.flatMap((post) => {
+    const parsed = new Date(post.date);
+    const lastModified = isNaN(parsed.getTime()) ? now : parsed;
+    return locales.map((locale) => ({
+      url: `${baseUrl}/${locale}/blog/${post.slug}`,
+      lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.6,
       alternates: {
         languages: Object.fromEntries(
-          locales.map((loc) => [loc, `${baseUrl}/${loc}/blog/${slug}`])
+          locales.map((loc) => [loc, `${baseUrl}/${loc}/blog/${post.slug}`])
         ),
       },
-    }))
-  );
+    }));
+  });
 
   // Non-locale campaign / standalone routes (excluded from next-intl routing)
   const standaloneEntries = [
@@ -51,6 +60,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "daily" as const,
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/leaderboard`,
+      lastModified: now,
+      changeFrequency: "daily" as const,
+      priority: 0.6,
     },
   ];
 

@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { APP_STRUCTURED_DATA } from "@/lib/seo";
+import { brand } from "@/config/brand";
 
 const baseUrl = "https://konectr.app";
 
@@ -64,13 +65,9 @@ export default async function LocaleLayout({ children, params }: Props) {
       name: "Konectr",
       url: "https://konectr.app",
       logo: "https://konectr.app/logos/konectr-icon-orange.svg",
-      sameAs: [
-        "https://www.facebook.com/konectrapp",
-        "https://www.instagram.com/konectrapp",
-        "https://twitter.com/konectrapp",
-        "https://www.linkedin.com/company/konectr",
-        "https://www.tiktok.com/@konectrapp",
-      ],
+      // Same source as the footer icons — hand-copied URLs here had drifted
+      // from the real profiles.
+      sameAs: Object.values(brand.social),
     },
     {
       "@context": "https://schema.org",

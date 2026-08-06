@@ -104,6 +104,10 @@ export default async function BlogPostPage({ params }: Props) {
     datePublished: post.date,
     ...(post.image && { image: post.image }),
     url: `https://konectr.app/${locale}/blog/${slug}`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://konectr.app/${locale}/blog/${slug}`,
+    },
   };
 
   const breadcrumbSchema = generateBreadcrumbSchema([
