@@ -26,8 +26,8 @@ const getCampaign = cache(getActiveCampaign);
 //
 // BOTH sides must go through klWallClock. Reading the race instant with plain
 // getFullYear/getMonth/getDate uses the SERVER's timezone: a race starting
-// Dec 11 00:00 MYT is Dec 10 16:00 UTC, so on Vercel (UTC) the raw getters
-// resolved it to Dec 10 and the countdown rendered a day short — correct on a
+// Dec 10 00:00 MYT is Dec 9 16:00 UTC, so on Vercel (UTC) the raw getters
+// resolved it to Dec 9 and the countdown rendered a day short — correct on a
 // KL laptop, wrong in production.
 function daysUntilEvent(eventStartIso: string): number {
   const klNow = klWallClock();
