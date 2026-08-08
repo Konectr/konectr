@@ -54,21 +54,33 @@ export function generateHowToSchema(
 }
 
 /**
- * SoftwareApplication structured data for the Konectr mobile app.
- * Signals to Google/AI engines that this is a mobile app, enabling app rich results.
+ * MobileApplication structured data for the Konectr mobile app (Track A3).
+ * MobileApplication is the more specific schema.org subtype of
+ * SoftwareApplication for app-store-distributed apps — better for app rich
+ * results and AI-engine citation. No aggregateRating: ratings must be genuine
+ * and on-page, or Google can issue a manual penalty.
  */
 export const APP_STRUCTURED_DATA = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "MobileApplication",
   name: "Konectr",
+  alternateName: "Konectr App",
   operatingSystem: "iOS",
   applicationCategory: "SocialNetworkingApplication",
+  downloadUrl: "https://testflight.apple.com/join/7qCJt3wE",
+  installUrl: "https://testflight.apple.com/join/7qCJt3wE",
   description:
-    "Meet real people for real activities in Kuala Lumpur. Konectr matches you with nearby people who share your vibe for spontaneous meetups.",
+    "Konectr is an activity-first social meetup app, live in Kuala Lumpur. Declare an intent — what activity (coffee, hike, gym, dinner), what time, what area, what vibe — and match with others doing the same thing nearby. No swiping; badges, not star ratings.",
   offers: {
     "@type": "Offer",
     price: "0",
-    priceCurrency: "USD",
+    priceCurrency: "MYR",
+  },
+  countriesSupported: "MY",
+  publisher: {
+    "@type": "Organization",
+    name: "Konectr",
+    url: "https://konectr.app",
   },
   author: {
     "@type": "Organization",
