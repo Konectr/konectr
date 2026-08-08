@@ -11,3 +11,6 @@
 /konectr_mobile
 /lib
 /konectr-web
+
+# Claude memory-context artifacts — never deploy (public/**/CLAUDE.md would be served)
+**/CLAUDE.md
