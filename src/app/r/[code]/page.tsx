@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import SmartDownloadLink from "@/components/SmartDownloadLink";
+import { SHARE_OG_IMAGE } from "@/lib/metadata";
 
 const LOGO_ICON_ORANGE = "/logos/konectr-icon-orange.svg";
 
@@ -27,6 +28,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         "Your friend invited you to Konectr — the app for meeting real people through real activities in KL.",
       url: `https://konectr.app/r/${code}`,
       type: "website",
+      images: [SHARE_OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "You've Been Invited to Konectr!",
+      description:
+        "Your friend invited you to Konectr — the app for meeting real people through real activities in KL.",
+      images: [SHARE_OG_IMAGE.url],
+      site: "@konectrapp",
     },
   };
 }

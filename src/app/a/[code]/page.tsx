@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { after } from 'next/server';
 import { getActivityByShareCode } from '@/lib/supabase';
+import { SHARE_OG_IMAGE } from '@/lib/metadata';
 import { recordShareLinkView } from '@/lib/shareLinkTelemetry';
 import { formatWeekdayDate, formatTime, isLateWithdrawal } from '@/lib/datetime';
 import ActivityRsvpPage from './ActivityRsvpPage';
@@ -17,10 +18,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
   const activity = await getActivityByShareCode(code);
 
+  // A dead or mistyped share code still gets pasted into WhatsApp, so this
+  // branch needs the preview card too.
   if (!activity) {
     return {
       title: 'Activity Not Found - Konectr',
       description: 'This activity could not be found.',
+      openGraph: {
+        title: 'Konectr',
+        description: 'This activity could not be found.',
+        url: `https://konectr.app/a/${code}`,
+        type: 'website',
+        images: [SHARE_OG_IMAGE],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'Konectr',
+        description: 'This activity could not be found.',
+        images: [SHARE_OG_IMAGE.url],
+        site: '@konectrapp',
+      },
     };
   }
 
@@ -44,6 +61,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: richDescription,
       url: `https://konectr.app/a/${code}`,
       type: 'website',
+      images: [SHARE_OG_IMAGE],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${activity.title} - Konectr`,
+      description: richDescription,
+      images: [SHARE_OG_IMAGE.url],
+      site: '@konectrapp',
     },
   };
 }

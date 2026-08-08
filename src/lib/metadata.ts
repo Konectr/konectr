@@ -18,6 +18,17 @@ const DEFAULT_OG_IMAGE = {
   alt: "Konectr - Real Adventures with Real People",
 };
 
+// Share-link card for /a/[code] and /r/[code]. The URL must be ABSOLUTE: those
+// routes sit outside the [locale] layout that sets metadataBase, so a relative
+// path is never resolved — and WhatsApp/iMessage silently drop a non-absolute
+// og:image, which is why shared invites unfurled with no picture at all.
+export const SHARE_OG_IMAGE = {
+  url: `${BASE_URL}/og-share.jpg`,
+  width: 1200,
+  height: 630,
+  alt: "Konectr - The Offline First App",
+};
+
 type PageMetadataInput = {
   locale: string;
   /** Path after the locale prefix, starting with "/" ("" for the homepage). */
