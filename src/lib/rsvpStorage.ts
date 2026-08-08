@@ -18,11 +18,14 @@ export interface StoredRsvp {
   messageCount: number;
 }
 
+// Email is the identity field since 2026-08-08 (phone went optional). Profiles
+// written before that have a phone and no email — the claim form treats those as
+// incomplete and reopens the fields rather than offering one-tap RSVP.
 export interface StoredUserProfile {
   guestName: string;
-  phoneNumber: string;
-  countryCode: string;
-  email?: string;
+  email: string;
+  phoneNumber?: string;
+  countryCode?: string;
 }
 
 export function getStoredRsvp(shareCode: string): StoredRsvp | null {

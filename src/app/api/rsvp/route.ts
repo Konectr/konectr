@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createWebRsvp, getActivityByShareCode } from '@/lib/supabase';
+import { isValidEmail } from '@/lib/utils';
 import { createHash } from 'crypto';
 
 // Sanitize name: allow letters (including accented), spaces, hyphens, apostrophes
@@ -10,9 +11,6 @@ const NAME_REGEX = /^[\p{L}\s'\-]+$/u;
 
 // Phone digits only (after country code is stripped)
 const PHONE_DIGITS_REGEX = /^\d{7,15}$/;
-
-// Tight RFC-lite email regex (same server-side regex as RPC)
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 function hashIp(ip: string): string {
   return createHash('sha256').update(ip).digest('hex');
@@ -69,44 +67,45 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate phone (required)
-    if (!phone_number || typeof phone_number !== 'string' || !phone_number.trim()) {
+    // Validate email (required since 2026-08-08 — it is the dedupe key and the
+    // address every reminder goes to)
+    if (!email || typeof email !== 'string' || !email.trim()) {
       return NextResponse.json(
-        { error: 'Phone number is required' },
+        { error: 'Email is required' },
         { status: 400 }
       );
     }
-    if (!country_code || typeof country_code !== 'string') {
+    if (!isValidEmail(email)) {
       return NextResponse.json(
-        { error: 'Country code is required with phone number' },
+        { error: 'Please enter a valid email' },
         { status: 400 }
       );
     }
+    const normalizedEmail: string = email.trim().toLowerCase();
 
-    // Validate digits using normalizePhone's cleaning logic
-    const e164Phone = normalizePhone(country_code, phone_number);
-    const digitsOnly = e164Phone.replace(/^\+/, '');
-
-    if (!PHONE_DIGITS_REGEX.test(digitsOnly)) {
-      return NextResponse.json(
-        { error: 'Please enter a valid phone number' },
-        { status: 400 }
-      );
-    }
-
-    const phoneHash: string = hashPhone(e164Phone);
-
-    // Validate email (optional — if provided, must be valid RFC-lite)
-    let normalizedEmail: string | null = null;
-    if (email && typeof email === 'string' && email.trim()) {
-      const candidate = email.trim().toLowerCase();
-      if (candidate.length > 254 || !EMAIL_REGEX.test(candidate)) {
+    // Validate phone (optional — but a phone that IS supplied must be valid;
+    // never silently drop a typo, it would break app auto-join later)
+    let phoneHash: string | null = null;
+    if (phone_number && typeof phone_number === 'string' && phone_number.trim()) {
+      if (!country_code || typeof country_code !== 'string') {
         return NextResponse.json(
-          { error: 'Please enter a valid email' },
+          { error: 'Country code is required with phone number' },
           { status: 400 }
         );
       }
-      normalizedEmail = candidate;
+
+      // Validate digits using normalizePhone's cleaning logic
+      const e164Phone = normalizePhone(country_code, phone_number);
+      const digitsOnly = e164Phone.replace(/^\+/, '');
+
+      if (!PHONE_DIGITS_REGEX.test(digitsOnly)) {
+        return NextResponse.json(
+          { error: 'Please enter a valid phone number' },
+          { status: 400 }
+        );
+      }
+
+      phoneHash = hashPhone(e164Phone);
     }
 
     const activity = await getActivityByShareCode(share_code);
@@ -123,17 +122,18 @@ export async function POST(request: NextRequest) {
     const ip = forwardedFor?.split(',')[0]?.trim() || 'unknown';
     const ipHash = hashIp(ip);
 
-    // Create RSVP via Supabase RPC (with phone hash + optional email)
+    // Create RSVP via Supabase RPC (email required, phone hash optional)
     const result = await createWebRsvp(activity.id, trimmedName, ipHash, phoneHash, normalizedEmail);
 
     return NextResponse.json(result);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to create RSVP';
 
-    // Map known errors to appropriate status codes
+    // Map known errors to appropriate status codes. Dedupe fires on email OR
+    // phone, so the copy stays field-agnostic.
     if (message.includes('Already RSVP')) {
       return NextResponse.json(
-        { error: "You've already grabbed a spot with this number — check the device you RSVP'd from." },
+        { error: "You've already grabbed a spot for this one — check the device you RSVP'd from." },
         { status: 409 }
       );
     }

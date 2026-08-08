@@ -20,12 +20,19 @@ export interface ClaimForm {
   countryCode: string;
   onCountryCode: (v: string) => void;
   countryCodes: CountryCode[];
+  /** Phone is optional (2026-08-08) — collapsed behind a disclosure. */
   phone: string;
   onPhone: (v: string) => void;
+  showPhone: boolean;
+  onShowPhone: () => void;
+  /** Email is the required identity field + dedupe key. */
   email: string;
-  showEmail: boolean;
-  onShowEmail: () => void;
   onEmail: (v: string) => void;
+  onEmailBlur: () => void;
+  emailError?: string | null;
+  /** Known guest (name + email on this device) → one-tap chip instead of inputs. */
+  isReturning: boolean;
+  onEdit: () => void;
   canSubmit: boolean;
   isSubmitting: boolean;
   error?: string | null;
@@ -110,68 +117,98 @@ export default function ClaimScreen(p: ClaimScreenProps) {
             Grab a spot <span className="text-[#FF774D]">&amp;</span> you&apos;re matched.
           </div>
 
-          <input
-            value={f.name}
-            onChange={(e) => f.onName(e.target.value)}
-            onKeyDown={submitOnEnter}
-            maxLength={50}
-            autoComplete="given-name"
-            aria-label="Your first name"
-            className="w-full border-[1.5px] border-[#E0E0E0] bg-white rounded-[13px] px-4 py-[15px] text-[15px] text-[#1F1F1F] mt-[11px] placeholder:text-[#737373] focus:outline-none focus:border-[#FF774D]"
-            placeholder="Your first name"
-          />
-
-          <div className="flex gap-[9px] mt-[9px]">
-            <div className="relative shrink-0">
-              <select
-                value={f.countryCode}
-                onChange={(e) => f.onCountryCode(e.target.value)}
-                aria-label="Country code"
-                className="h-full appearance-none border-[1.5px] border-[#E0E0E0] bg-white rounded-[13px] pl-[13px] pr-7 text-[14px] font-semibold text-[#1F1F1F] focus:outline-none focus:border-[#FF774D]"
+          {f.isReturning ? (
+            /* Returning guest — name + email already on this device, so no typing. */
+            <div className="mt-3 flex items-center gap-3 border-[1.5px] border-[#EDEBE9] bg-[#FAFAFA] rounded-[14px] px-[14px] py-[13px]">
+              <div
+                aria-hidden="true"
+                className="w-10 h-10 shrink-0 grid place-items-center rounded-full bg-[#FFF4F1] border-[1.5px] border-[#F3E4DD] text-[#FF774D] font-black text-[15px]"
               >
-                {f.countryCodes.map((cc) => (
-                  <option key={cc.code} value={cc.code}>{cc.flag} {cc.code}</option>
-                ))}
-              </select>
-              <span className="pointer-events-none absolute right-[9px] top-1/2 -translate-y-1/2 text-[#B5B0AB] text-[11px]">▾</span>
+                {f.name.trim().charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[15px] font-bold text-[#1F1F1F] -tracking-[0.01em] truncate">{f.name}</div>
+                <div className="text-[12.5px] text-[#737373] truncate">{f.email}</div>
+              </div>
+              <button
+                type="button"
+                onClick={f.onEdit}
+                className="shrink-0 text-[12.5px] font-bold text-[#FF774D] hover:opacity-70 transition-opacity"
+              >
+                Edit →
+              </button>
             </div>
-            <input
-              value={f.phone}
-              onChange={(e) => f.onPhone(e.target.value)}
-              onKeyDown={submitOnEnter}
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel-national"
-              required
-              aria-required="true"
-              aria-label="Phone number"
-              className="flex-1 min-w-0 border-[1.5px] border-[#E0E0E0] bg-white rounded-[13px] px-4 py-[15px] text-[15px] text-[#1F1F1F] placeholder:text-[#737373] focus:outline-none focus:border-[#FF774D]"
-              placeholder="Phone number"
-            />
-          </div>
-
-          {/* Optional email disclosure */}
-          {!f.showEmail ? (
-            <button
-              type="button"
-              onClick={f.onShowEmail}
-              className="mt-[10px] inline-flex items-center gap-1.5 text-[12.5px] text-[#6E6E6E] hover:text-[#FF774D] transition-colors"
-            >
-              <span className="text-[#8A8580]">+</span> Add email <span className="text-[#8A8580]">(get a reminder before it starts)</span>
-            </button>
           ) : (
-            <input
-              value={f.email}
-              onChange={(e) => f.onEmail(e.target.value)}
-              onKeyDown={submitOnEnter}
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              maxLength={254}
-              aria-label="Email for a reminder"
-              className="w-full border-[1.5px] border-[#E0E0E0] bg-white rounded-[13px] px-4 py-[13px] text-[15px] text-[#1F1F1F] mt-[10px] placeholder:text-[#737373] focus:outline-none focus:border-[#FF774D]"
-              placeholder="Email — get a reminder"
-            />
+            <>
+              <input
+                value={f.name}
+                onChange={(e) => f.onName(e.target.value)}
+                onKeyDown={submitOnEnter}
+                maxLength={50}
+                autoComplete="given-name"
+                aria-label="Your first name"
+                className="w-full border-[1.5px] border-[#E0E0E0] bg-white rounded-[13px] px-4 py-[15px] text-[15px] text-[#1F1F1F] mt-[11px] placeholder:text-[#737373] focus:outline-none focus:border-[#FF774D]"
+                placeholder="Your first name"
+              />
+
+              <input
+                value={f.email}
+                onChange={(e) => f.onEmail(e.target.value)}
+                onBlur={f.onEmailBlur}
+                onKeyDown={submitOnEnter}
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                maxLength={254}
+                required
+                aria-required="true"
+                aria-label="Email — where your reminder goes"
+                aria-invalid={f.emailError ? true : undefined}
+                className={`w-full border-[1.5px] bg-white rounded-[13px] px-4 py-[15px] text-[15px] text-[#1F1F1F] mt-[9px] placeholder:text-[#737373] focus:outline-none ${
+                  f.emailError ? 'border-[#D64545]' : 'border-[#E0E0E0] focus:border-[#FF774D]'
+                }`}
+                placeholder="Email — where your reminder goes"
+              />
+              {f.emailError && <p className="text-[12.5px] text-[#D64545] mt-[7px]">{f.emailError}</p>}
+
+              {/* Optional phone disclosure */}
+              {!f.showPhone ? (
+                <button
+                  type="button"
+                  onClick={f.onShowPhone}
+                  className="mt-[10px] inline-flex items-center gap-1.5 text-[12.5px] text-[#6E6E6E] hover:text-[#FF774D] transition-colors"
+                >
+                  <span className="text-[#8A8580]">+</span> Add phone <span className="text-[#8A8580]">(optional)</span>
+                </button>
+              ) : (
+                <div className="flex gap-[9px] mt-[9px]">
+                  <div className="relative shrink-0">
+                    <select
+                      value={f.countryCode}
+                      onChange={(e) => f.onCountryCode(e.target.value)}
+                      aria-label="Country code"
+                      className="h-full appearance-none border-[1.5px] border-[#E0E0E0] bg-white rounded-[13px] pl-[13px] pr-7 text-[14px] font-semibold text-[#1F1F1F] focus:outline-none focus:border-[#FF774D]"
+                    >
+                      {f.countryCodes.map((cc) => (
+                        <option key={cc.code} value={cc.code}>{cc.flag} {cc.code}</option>
+                      ))}
+                    </select>
+                    <span className="pointer-events-none absolute right-[9px] top-1/2 -translate-y-1/2 text-[#B5B0AB] text-[11px]">▾</span>
+                  </div>
+                  <input
+                    value={f.phone}
+                    onChange={(e) => f.onPhone(e.target.value)}
+                    onKeyDown={submitOnEnter}
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel-national"
+                    aria-label="Phone number (optional)"
+                    className="flex-1 min-w-0 border-[1.5px] border-[#E0E0E0] bg-white rounded-[13px] px-4 py-[15px] text-[15px] text-[#1F1F1F] placeholder:text-[#737373] focus:outline-none focus:border-[#FF774D]"
+                    placeholder="Phone number (optional)"
+                  />
+                </div>
+              )}
+            </>
           )}
 
           <TrustLine />

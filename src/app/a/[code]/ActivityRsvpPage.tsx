@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
 import { detectPlatform, getSmartProfileLinkProps, type Platform } from '@/lib/smartLink';
+import { isValidEmail } from '@/lib/utils';
 import {
   formatTime,
   getRelativeDayPhrase,
@@ -53,7 +54,13 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+60');
   const [email, setEmail] = useState('');
-  const [showOptional, setShowOptional] = useState(false);
+  // Phone is optional — collapsed unless this device already saved one.
+  const [showPhone, setShowPhone] = useState(false);
+  // A previous RSVP left name + email on this device → offer one-tap instead of
+  // a form. `editing` is the escape hatch behind "Edit →".
+  const [hasStoredIdentity, setHasStoredIdentity] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [emailBlurred, setEmailBlurred] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -79,12 +86,17 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
 
     const userProfile = getStoredUserProfile();
     if (userProfile) {
-      setGuestName(userProfile.guestName);
-      setPhoneNumber(userProfile.phoneNumber);
-      setCountryCode(userProfile.countryCode);
-      if (userProfile.email) setEmail(userProfile.email);
-      // Email is the only optional field behind the disclosure now — expand if present
-      if (userProfile.email) setShowOptional(true);
+      setGuestName(userProfile.guestName || '');
+      setEmail(userProfile.email || '');
+      if (userProfile.phoneNumber) setPhoneNumber(userProfile.phoneNumber);
+      if (userProfile.countryCode) setCountryCode(userProfile.countryCode);
+      // Phone is the only field behind the disclosure now — expand if saved.
+      if (userProfile.phoneNumber) setShowPhone(true);
+      // Pre-2026-08-08 profiles have a phone but no email; those can't one-tap,
+      // so they fall through to the prefilled form.
+      if (userProfile.guestName?.trim() && userProfile.email?.trim()) {
+        setHasStoredIdentity(true);
+      }
     }
 
     const existing = getStoredRsvp(shareCode);
@@ -115,7 +127,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
   }, [activity]);
 
   const handleRsvp = useCallback(async () => {
-    if (!guestName.trim() || !phoneNumber.trim() || !activity) return;
+    if (!guestName.trim() || !isValidEmail(email) || !activity) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -124,11 +136,12 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
       const body: Record<string, string> = {
         share_code: shareCode,
         guest_name: guestName.trim(),
-        phone_number: phoneNumber.trim(),
-        country_code: countryCode,
+        email: email.trim(),
       };
-      if (email.trim()) {
-        body.email = email.trim();
+      // Phone is optional — only send it (with its country code) when supplied.
+      if (phoneNumber.trim()) {
+        body.phone_number = phoneNumber.trim();
+        body.country_code = countryCode;
       }
 
       const res = await fetch('/api/rsvp', {
@@ -157,10 +170,11 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
 
       storeUserProfile({
         guestName: guestName.trim(),
-        phoneNumber: phoneNumber.trim(),
-        countryCode,
-        email: email.trim() || undefined,
+        email: email.trim(),
+        ...(phoneNumber.trim() ? { phoneNumber: phoneNumber.trim(), countryCode } : {}),
       });
+      setHasStoredIdentity(true);
+      setEditing(false);
 
       setJustClaimed(true);
       setRsvpState('post-rsvp');
@@ -169,7 +183,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     } finally {
       setIsSubmitting(false);
     }
-  }, [guestName, phoneNumber, countryCode, email, activity, shareCode]);
+  }, [guestName, email, phoneNumber, countryCode, activity, shareCode]);
 
   const copyClaimCode = useCallback(() => {
     if (!storedRsvp) return;
@@ -254,7 +268,16 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     ?? (activity.max_participants > 0 ? activity.max_participants - participantCount : -1);
   const isFull = spotsRemaining <= 0 && activity.max_participants > 0;
 
-  const canSubmit = guestName.trim().length > 0 && phoneNumber.trim().length >= 7;
+  // Email is the required field; a phone, if typed at all, must still look real.
+  const canSubmit =
+    guestName.trim().length > 0 &&
+    isValidEmail(email) &&
+    (phoneNumber.trim().length === 0 || phoneNumber.trim().length >= 7);
+  const isReturning = hasStoredIdentity && !editing;
+  const emailError =
+    emailBlurred && email.trim().length > 0 && !isValidEmail(email)
+      ? 'Please enter a valid email'
+      : null;
 
   // ── Redesign props (Kinetic system). Heading auto = venue name (no host role);
   // the "Here for…" purpose lives in details (description is legacy, empty since
@@ -437,10 +460,14 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
         countryCodes,
         phone: phoneNumber,
         onPhone: setPhoneNumber,
+        showPhone,
+        onShowPhone: () => setShowPhone(true),
         email,
-        showEmail: showOptional,
-        onShowEmail: () => setShowOptional(true),
         onEmail: setEmail,
+        onEmailBlur: () => setEmailBlurred(true),
+        emailError,
+        isReturning,
+        onEdit: () => setEditing(true),
         canSubmit,
         isSubmitting,
         error,
