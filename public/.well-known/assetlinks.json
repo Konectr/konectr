@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.konectr.konectrMobile",
       "sha256_cert_fingerprints": [
-        "2B:9E:A1:BF:39:6F:78:2C:24:87:B7:6D:40:F8:55:DF:05:C8:AF:F7:84:2D:AD:73:5D:1D:E2:B1:8D:22:47:28"
+        "2B:9E:A1:BF:39:6F:78:2C:24:87:B7:6D:40:F8:55:DF:05:C8:AF:F7:84:2D:AD:73:5D:1D:E2:B1:8D:22:47:28",
+        "59:CF:2D:11:28:8B:7A:F8:32:7A:6E:6D:7E:27:23:FB:D9:53:5B:F9:2F:CA:B0:8D:B9:CA:AD:A0:97:94:CC:26"
       ]
     }
   }
