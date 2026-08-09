@@ -219,10 +219,25 @@ npm run lint
 
 ## Deployment Commands
 
-> ⚠️ **Git auto-deploy is BROKEN as of 2026-04-27.** Pushing to `nextjs-website` no longer triggers a Vercel production build (latest auto-deploy was 9 days stale on Apr 26). Until the Vercel ↔ GitHub integration is fixed, **always deploy manually** via `vercel --prod`. Verify with `curl -sL https://konectr.app/en/ | grep "Launching"` before assuming the change is live.
+> ✅ **Git auto-deploy WORKS — pushing to `main` ships to production.** Verified 2026-08-09: `git push` of `a8a4150` produced a `src=git` production deployment that reached READY on its own, and the three pushes before it did the same.
+>
+> The old "auto-deploy is BROKEN as of 2026-04-27" warning that lived here was **stale for months**. Its root cause (FI-25, `docs/CHANGELOG.md:1119`) was that Vercel's Production Branch was still `nextjs-website` while development had moved to `main` — so pushes landed on a branch nothing was watching. The branch setting has since been corrected to `main`; nobody updated this doc, so every session kept deploying by hand and kept re-asserting the breakage. Confirm any future suspicion against the API rather than this file:
+>
+> ```bash
+> # productionBranch should be "main"
+> curl -s "https://api.vercel.com/v9/projects/$PROJ?teamId=$TEAM" -H "Authorization: Bearer $TOK" | jq '.link.productionBranch'
+> # recent deploys — src=git means auto-deploy fired
+> curl -s "https://api.vercel.com/v6/deployments?projectId=$PROJ&teamId=$TEAM&limit=5" -H "Authorization: Bearer $TOK" \
+>   | jq -r '.deployments[] | "\(.target) \(.state) src=\(.source) \(.meta.githubCommitRef)"'
+> ```
+>
+> `vercel --prod` still works and is the right tool for deploying uncommitted local work, but it is no longer required for anything that has been pushed.
 
 ```bash
-# Deploy to production (use this — git auto-deploy is broken)
+# Normal path: push to main and Vercel builds it. No manual step needed.
+git push origin main
+
+# Manual deploy — only for work that is NOT committed/pushed
 cd /Users/devsmac/Konectr/Development/konectr-web && vercel --prod --yes
 
 # Deploy preview (generates unique URL)
@@ -1057,8 +1072,8 @@ Forms with many fields need adequate height. A form with 9+ fields needs at leas
 
 ---
 
-**Last Deployed**: 2026-08-08 (manual via `vercel --prod --yes` — `og:image` on `/a/[code]` + `/r/[code]`; shared links previously unfurled with no preview image)
-**Deployment Method**: ⚠️ Manual only — `vercel --prod --yes` (git auto-deploy is currently broken, see Deployment Commands section)
+**Last Deployed**: 2026-08-09 (**automatic on push** — `a8a4150`, locked-photo placeholder in `WebChatPanel.tsx` for web RSVP guests)
+**Deployment Method**: ✅ Push to `main` — Vercel builds and promotes it. `vercel --prod --yes` only for uncommitted local work. (The long-standing "manual only" note was stale; see Deployment Commands.)
 
 ---
 
