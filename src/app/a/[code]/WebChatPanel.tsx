@@ -14,6 +14,12 @@ interface ChatMessage {
   is_from_web: boolean;
   is_self: boolean;
   created_at: string;
+  /** 'text' or 'image'. Photos are shown as a locked placeholder — guests have
+   *  no account, so the storage bucket refuses them by design. */
+  message_type?: string;
+  /** Number of photos the bubble stands for. 0 once the app's nightly purge
+   *  has removed them (activity photos are deleted when the chat closes). */
+  photo_count?: number | null;
 }
 
 interface HistoryResponse {
@@ -173,9 +179,17 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
                       )}
                     </div>
                   )}
-                  <div className="text-sm leading-snug whitespace-pre-wrap break-words">
-                    {m.content}
-                  </div>
+                  {m.message_type === 'image' ? (
+                    <PhotoPlaceholder
+                      count={m.photo_count ?? 0}
+                      caption={m.content}
+                      onDark={m.is_self}
+                    />
+                  ) : (
+                    <div className="text-sm leading-snug whitespace-pre-wrap break-words">
+                      {m.content}
+                    </div>
+                  )}
                   <div
                     className={`text-[9px] mt-1 ${
                       m.is_self ? 'text-white/70' : 'text-[#BBB]'
@@ -227,6 +241,64 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
         )}
         {error && <p className="text-[10px] text-red-500 mt-1 text-center">{error}</p>}
       </div>
+    </div>
+  );
+}
+
+/**
+ * What a photo message looks like to someone without the app.
+ *
+ * Guests are anonymous, and the chat-images bucket only answers to signed-in
+ * members of the conversation — so there is genuinely nothing to show them.
+ * Rather than hiding the message (which is what happened before, and left a
+ * guest with no idea photos had been shared), the gap becomes the install
+ * prompt the whole web-RSVP funnel exists to create.
+ *
+ * A count of 0 means the photos have already expired: activity photos are
+ * deleted when the chat closes, so "get the app" would be a lie.
+ */
+function PhotoPlaceholder({
+  count,
+  caption,
+  onDark,
+}: {
+  count: number;
+  caption: string;
+  onDark: boolean;
+}) {
+  const expired = count === 0;
+  // The server writes "📷 Photo" / "📷 N photos" into content when nobody typed
+  // a caption; showing that as if it were a caption reads as someone's words.
+  const hasCaption = caption && !caption.startsWith('📷 ');
+
+  return (
+    <div className="text-sm leading-snug">
+      <div
+        className={`flex items-center gap-2 rounded-lg px-2.5 py-2 ${
+          onDark
+            ? 'bg-white/15 text-white'
+            : 'bg-[#FFF4F1] text-[#1F1F1F] border border-[#FFD9CD]'
+        }`}
+      >
+        <span aria-hidden="true" className="text-base leading-none">
+          {expired ? '🖼' : '🔒'}
+        </span>
+        <div className="min-w-0">
+          <div className="text-xs font-semibold">
+            {expired
+              ? 'Photo no longer available'
+              : count > 1
+                ? `${count} photos shared in this chat`
+                : 'Photo shared in this chat'}
+          </div>
+          <div className={`text-[10px] ${onDark ? 'text-white/75' : 'text-[#8A8A8A]'}`}>
+            {expired ? 'Removed when this chat closed' : 'Get the app to view'}
+          </div>
+        </div>
+      </div>
+      {hasCaption && (
+        <div className="mt-1 whitespace-pre-wrap break-words">{caption}</div>
+      )}
     </div>
   );
 }
