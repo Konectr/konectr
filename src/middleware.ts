@@ -23,7 +23,8 @@ export const config = {
     // - /unsubscribe (email unsub handler - no locale prefix)
     // - /leaderboard (public weekly leaderboard - no locale prefix)
     // - /hyrox (HYROX KL campaign hub - no locale prefix)
+    // - /c (campaign hub landings /c/[key] - no locale prefix)
     // - Static files (images, etc.)
-    '/((?!api|_next|_vercel|a/|r/|venue-interview|unsubscribe|leaderboard|hyrox|.*\\..*).*)'
+    '/((?!api|_next|_vercel|a/|r/|c/|venue-interview|unsubscribe|leaderboard|hyrox|.*\\..*).*)'
   ]
 };

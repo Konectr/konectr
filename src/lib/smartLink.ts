@@ -160,3 +160,40 @@ export function getSmartReferralDownloadProps(code: string): SmartDownloadProps 
     },
   };
 }
+
+/**
+ * Variant for /c/[key] campaign hub pages — deep-links to
+ * `konectr://c/{campaignKey}` so users with the app land in that hub.
+ */
+export function getSmartCampaignLinkProps(campaignKey: string): SmartDownloadProps {
+  return {
+    href: WAITLIST_FALLBACK,
+    onClick: (e) => {
+      e.preventDefault();
+      if (typeof window === 'undefined') return;
+
+      const platform = detectPlatform();
+      const storeUrl = getStoreUrl(platform);
+
+      if (platform === 'desktop') {
+        window.location.href = storeUrl;
+        return;
+      }
+
+      const deepLink = `konectr://c/${campaignKey}`;
+      const fallback = window.setTimeout(() => {
+        window.location.href = storeUrl;
+      }, DEEP_LINK_FALLBACK_MS);
+
+      const onVisibilityChange = () => {
+        if (document.hidden) {
+          window.clearTimeout(fallback);
+          document.removeEventListener('visibilitychange', onVisibilityChange);
+        }
+      };
+      document.addEventListener('visibilitychange', onVisibilityChange);
+
+      window.location.href = deepLink;
+    },
+  };
+}

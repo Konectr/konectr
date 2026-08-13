@@ -228,6 +228,10 @@ export interface Campaign {
   interest_name: string;
   disclaimer: string;
   country: string | null;
+  // Added by 20260813090000_campaign_hub_generalization. Absent from the
+  // legacy get_active_campaign RPC — treat as optional.
+  kind?: 'event' | 'evergreen';
+  hub_config?: Record<string, unknown>;
 }
 
 export async function getActiveCampaign(): Promise<Campaign | null> {
@@ -243,6 +247,28 @@ export async function getActiveCampaign(): Promise<Campaign | null> {
     return rows.length > 0 ? rows[0] : null;
   } catch (err) {
     console.error('Error fetching active campaign:', err);
+    return null;
+  }
+}
+
+// One active campaign by campaign_key — backs the /c/[key] hub landing pages
+// (get_campaign_by_key RPC, anon-callable, added by the hub generalization
+// migration; returns null until that migration is applied).
+export async function getCampaignByKey(key: string): Promise<Campaign | null> {
+  try {
+    const { data, error } = await supabase.rpc('get_campaign_by_key', {
+      p_key: key,
+    });
+
+    if (error) {
+      console.error('get_campaign_by_key RPC error:', error);
+      return null;
+    }
+
+    const rows = (data as Campaign[]) ?? [];
+    return rows.length > 0 ? rows[0] : null;
+  } catch (err) {
+    console.error('Error fetching campaign by key:', err);
     return null;
   }
 }

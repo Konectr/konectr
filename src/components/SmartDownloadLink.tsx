@@ -5,13 +5,14 @@
 
 import type { ReactNode } from 'react';
 import {
+  getSmartCampaignLinkProps,
   getSmartDownloadProps,
   getSmartReferralDownloadProps,
 } from '@/lib/smartLink';
 
 interface SmartDownloadLinkProps {
   code: string;
-  kind?: 'activity' | 'referral';
+  kind?: 'activity' | 'referral' | 'campaign';
   className?: string;
   children: ReactNode;
 }
@@ -24,7 +25,9 @@ export default function SmartDownloadLink({
 }: SmartDownloadLinkProps) {
   const props = kind === 'referral'
     ? getSmartReferralDownloadProps(code)
-    : getSmartDownloadProps(code);
+    : kind === 'campaign'
+      ? getSmartCampaignLinkProps(code)
+      : getSmartDownloadProps(code);
   return (
     <a {...props} className={className}>
       {children}
