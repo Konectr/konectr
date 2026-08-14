@@ -7,7 +7,7 @@
 //
 // Two modes, auto-switched by NEXT_PUBLIC_TESTFLIGHT_URL:
 //  - Pre-launch (env UNSET, until TestFlight public link goes live ~Jun 24):
-//    "Konectr App (beta)" expands an inline panel to REQUEST a beta invite
+//    "Konectr (beta)" expands an inline panel to REQUEST a beta invite
 //    (email capture → /api/testflight-request → waitlist_users).
 //  - Live (env SET): the same button opens the TestFlight public link directly.
 
@@ -119,7 +119,7 @@ export default function TestFlightRequestCTA({ shareCode, activityId, variant = 
         className={buttonClasses}
       >
         <AppleIcon />
-        Konectr App (beta)
+        Konectr (beta)
       </a>
     );
   }
@@ -137,7 +137,7 @@ export default function TestFlightRequestCTA({ shareCode, activityId, variant = 
         className={buttonClasses}
       >
         <AppleIcon />
-        Konectr App (beta)
+        Konectr (beta)
       </button>
 
       {open && (

@@ -290,7 +290,7 @@ export default function FeedbackTicketDetailContent({ ticketId }: Props) {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Download Konectr App
+                        Download Konectr
                       </a>
                     </Button>
                   </div>

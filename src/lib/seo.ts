@@ -64,7 +64,6 @@ export const APP_STRUCTURED_DATA = {
   "@context": "https://schema.org",
   "@type": "MobileApplication",
   name: "Konectr",
-  alternateName: "Konectr App",
   operatingSystem: "iOS",
   applicationCategory: "SocialNetworkingApplication",
   downloadUrl: "https://testflight.apple.com/join/7qCJt3wE",
