@@ -1,0 +1,87 @@
+// © Konectr 2026. All rights reserved.
+// Client half of /thanks — fires the waitlist conversion event to every
+// enabled tracker exactly once per mount. All calls are defensive: PostHog is
+// prod-only, ad pixels are consent-gated, so any of these may be absent.
+
+'use client';
+
+import { useEffect } from 'react';
+import Link from 'next/link';
+
+declare global {
+  interface Window {
+    posthog?: { capture: (event: string, props?: Record<string, unknown>) => void };
+  }
+}
+
+// Full send_to value for the Google Ads conversion action, e.g. "AW-123/AbCd".
+const GADS_CONVERSION_SIGNUP = process.env.NEXT_PUBLIC_GADS_CONVERSION_SIGNUP;
+
+const FIRED_KEY = 'konectr_thanks_fired';
+
+export default function ThanksContent() {
+  useEffect(() => {
+    // Trackers load asynchronously (PostHog afterInteractive, ad pixels only
+    // after the consent read) — a single fire-on-mount races them and loses
+    // the conversion. Retry each tracker until it exists, up to 10s; fire each
+    // at most once. Session-flagged so refresh/remount never double-counts.
+    try {
+      if (sessionStorage.getItem(FIRED_KEY)) return;
+    } catch {
+      // storage unavailable — fall through, worst case is a re-fire on refresh
+    }
+    const fired = { ph: false, fb: false, g: !GADS_CONVERSION_SIGNUP };
+    const attempt = () => {
+      try {
+        if (!fired.ph && window.posthog) {
+          window.posthog.capture('waitlist_joined', { source: 'tally_redirect' });
+          fired.ph = true;
+        }
+        if (!fired.fb && window.fbq) {
+          window.fbq('track', 'CompleteRegistration');
+          fired.fb = true;
+        }
+        if (!fired.g && window.gtag) {
+          window.gtag('event', 'conversion', { send_to: GADS_CONVERSION_SIGNUP });
+          fired.g = true;
+        }
+        if (fired.ph || fired.fb || fired.g) {
+          sessionStorage.setItem(FIRED_KEY, '1');
+        }
+      } catch {
+        // tracking must never break the page
+      }
+      return fired.ph && fired.fb && fired.g;
+    };
+    if (attempt()) return;
+    const interval = window.setInterval(() => {
+      if (attempt()) window.clearInterval(interval);
+    }, 500);
+    const stop = window.setTimeout(() => window.clearInterval(interval), 10_000);
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(stop);
+    };
+  }, []);
+
+  return (
+    <main className="min-h-[100dvh] bg-background flex items-center justify-center px-6">
+      <div className="max-w-md w-full bg-card border border-border rounded-3xl p-10 text-center">
+        <div className="text-5xl mb-4">🎉</div>
+        <h1 className="text-2xl font-bold text-foreground mb-3">
+          You&apos;re on the list!
+        </h1>
+        <p className="text-muted-foreground mb-8">
+          We&apos;ll email you as soon as it&apos;s your turn. Keep an eye on
+          your inbox — real plans move fast.
+        </p>
+        <Link
+          href="/"
+          className="inline-block px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:opacity-90"
+        >
+          Back to konectr.app
+        </Link>
+      </div>
+    </main>
+  );
+}

@@ -8,6 +8,19 @@ export type Platform = 'ios' | 'android' | 'desktop';
 const WAITLIST_FALLBACK = 'https://konectr.app/#waitlist';
 const DEEP_LINK_FALLBACK_MS = 2000;
 
+// The download tap is the primary paid-traffic intent action — report it to
+// PostHog (always, prod-gated upstream) and Meta (only if the consent-gated
+// pixel loaded). Desktop clicks route to the waitlist, not a store, so only
+// the mobile paths call this. Defensive: tracking must never block navigation.
+function trackDownloadClick(kind: string, platform: Platform) {
+  try {
+    window.posthog?.capture('download_click', { kind, platform });
+    window.fbq?.('track', 'Lead', { content_name: `download_${kind}` });
+  } catch {
+    // ignore
+  }
+}
+
 /**
  * Detect the user's platform from the User-Agent.
  * SSR-safe: returns 'desktop' when navigator is unavailable.
@@ -64,6 +77,7 @@ export function getSmartDownloadProps(shareCode: string): SmartDownloadProps {
         return;
       }
 
+      trackDownloadClick('activity', platform);
       const deepLink = `konectr://activity/${shareCode}`;
 
       // If the deep link succeeds, the page loses visibility; cancel fallback.
@@ -105,6 +119,7 @@ export function getSmartProfileLinkProps(userId: string): SmartDownloadProps {
         return;
       }
 
+      trackDownloadClick('profile', platform);
       const deepLink = `konectr://profile/${userId}`;
       const fallback = window.setTimeout(() => {
         window.location.href = storeUrl;
@@ -143,6 +158,7 @@ export function getSmartReferralDownloadProps(code: string): SmartDownloadProps 
         return;
       }
 
+      trackDownloadClick('referral', platform);
       const deepLink = `konectr://referral/${code}`;
       const fallback = window.setTimeout(() => {
         window.location.href = storeUrl;
@@ -180,6 +196,7 @@ export function getSmartCampaignLinkProps(campaignKey: string): SmartDownloadPro
         return;
       }
 
+      trackDownloadClick('campaign', platform);
       const deepLink = `konectr://c/${campaignKey}`;
       const fallback = window.setTimeout(() => {
         window.location.href = storeUrl;

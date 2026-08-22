@@ -12,6 +12,12 @@ const NAME_REGEX = /^[\p{L}\s'\-]+$/u;
 // Phone digits only (after country code is stripped)
 const PHONE_DIGITS_REGEX = /^\d{7,15}$/;
 
+// utm values come from the client's sessionStorage capture — untrusted input,
+// so type-check and truncate (the RPC truncates again server-side).
+function sanitizeUtm(v: unknown): string | null {
+  return typeof v === 'string' && v.trim() ? v.trim().slice(0, 200) : null;
+}
+
 function hashIp(ip: string): string {
   return createHash('sha256').update(ip).digest('hex');
 }
@@ -123,7 +129,11 @@ export async function POST(request: NextRequest) {
     const ipHash = hashIp(ip);
 
     // Create RSVP via Supabase RPC (email required, phone hash optional)
-    const result = await createWebRsvp(activity.id, trimmedName, ipHash, phoneHash, normalizedEmail);
+    const result = await createWebRsvp(activity.id, trimmedName, ipHash, phoneHash, normalizedEmail, {
+      utm_source: sanitizeUtm(body.utm_source),
+      utm_medium: sanitizeUtm(body.utm_medium),
+      utm_campaign: sanitizeUtm(body.utm_campaign),
+    });
 
     return NextResponse.json(result);
   } catch (err: unknown) {

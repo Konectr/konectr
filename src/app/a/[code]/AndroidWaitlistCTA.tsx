@@ -4,6 +4,7 @@
 // Proprietary and confidential.
 
 import { useState, useEffect, useCallback } from 'react';
+import { getUtmFields } from '@/lib/attribution';
 
 const STORAGE_KEY = 'konectr_android_waitlist_email';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -49,6 +50,7 @@ export default function AndroidWaitlistCTA({ shareCode, activityId }: Props) {
           email: trimmed,
           share_code: shareCode,
           activity_id: activityId,
+          ...getUtmFields(),
         }),
       });
 

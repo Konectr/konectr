@@ -8,6 +8,7 @@ import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
 import { detectPlatform, getSmartProfileLinkProps, type Platform } from '@/lib/smartLink';
 import { isValidEmail } from '@/lib/utils';
+import { getUtmFields } from '@/lib/attribution';
 import {
   formatTime,
   getRelativeDayPhrase,
@@ -147,7 +148,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
       const res = await fetch('/api/rsvp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ ...body, ...getUtmFields() }),
       });
 
       const data = await res.json();

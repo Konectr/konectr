@@ -9,6 +9,12 @@ import { supabase } from '@/lib/supabase';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+// utm values come from the client's sessionStorage capture — untrusted input,
+// so type-check and truncate (the RPC truncates again server-side).
+function sanitizeUtm(v: unknown): string | null {
+  return typeof v === 'string' && v.trim() ? v.trim().slice(0, 200) : null;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -27,6 +33,9 @@ export async function POST(request: NextRequest) {
       p_email: normalized,
       p_share_code: typeof share_code === 'string' ? share_code : null,
       p_activity_id: typeof activity_id === 'string' ? activity_id : null,
+      p_utm_source: sanitizeUtm(body.utm_source),
+      p_utm_medium: sanitizeUtm(body.utm_medium),
+      p_utm_campaign: sanitizeUtm(body.utm_campaign),
     });
 
     if (error) {

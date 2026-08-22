@@ -11,6 +11,8 @@ import {
   Noto_Sans_Thai,
 } from "next/font/google";
 import "./globals.css";
+import { ATTRIBUTION_SNIPPET } from "@/lib/attribution";
+import AdsConsent from "@/components/AdsConsent";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -88,6 +90,12 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        {/* Paid-traffic attribution capture (sessionStorage, first-party, no cookies) */}
+        <Script
+          id="attribution-capture"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: ATTRIBUTION_SNIPPET }}
+        />
         {/* Contentsquare (Hotjar) Analytics */}
         <Script
           src="https://t.contentsquare.net/uxa/10ec7463f1940.js"
@@ -106,6 +114,8 @@ export default function RootLayout({
         className={`${inter.variable} ${notoSansTC.variable} ${notoSansJP.variable} ${notoSansKR.variable} ${notoSansThai.variable} font-sans antialiased`}
       >
         {children}
+        {/* Ad pixels + consent banner — renders nothing until pixel env IDs are set */}
+        <AdsConsent />
         <Script
           id="remove-vercel-badge"
           strategy="afterInteractive"

@@ -85,7 +85,8 @@ export async function createWebRsvp(
   guestName: string,
   ipHash: string | null,
   phoneHash: string | null = null,
-  email: string | null = null
+  email: string | null = null,
+  utm: { utm_source?: string | null; utm_medium?: string | null; utm_campaign?: string | null } = {}
 ): Promise<WebRsvpResponse> {
   const { data, error } = await supabase.rpc('create_web_rsvp', {
     p_activity_id: activityId,
@@ -93,6 +94,9 @@ export async function createWebRsvp(
     p_ip_hash: ipHash,
     p_phone_hash: phoneHash,
     p_email: email,
+    p_utm_source: utm.utm_source ?? null,
+    p_utm_medium: utm.utm_medium ?? null,
+    p_utm_campaign: utm.utm_campaign ?? null,
   });
 
   if (error) {

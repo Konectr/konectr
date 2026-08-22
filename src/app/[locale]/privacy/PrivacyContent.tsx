@@ -270,8 +270,9 @@ const sections = [
     id: "cookies",
     title: "12. Cookies and Tracking",
     content: [
-      "We do not use cookies or third-party tracking. We use minimal analytics for crash reporting, feature usage, and performance monitoring. You can opt out of analytics in Settings > Privacy > Analytics.",
-      "We do NOT use advertising cookies, track you across other apps or websites, sell data to advertisers, or build advertising profiles.",
+      "The Konectr mobile app does not use advertising cookies or cross-app tracking. In-app analytics are minimal (crash reporting, feature usage, performance) and you can opt out in Settings > Privacy > Analytics.",
+      "Our website (konectr.app) uses: PostHog product analytics in cookieless mode (no cookies or device storage); Contentsquare session analytics to understand how visitors use the site; and — only if you accept the cookie banner — Meta and Google advertising pixels that measure whether our ads brought you here. Declining or ignoring the banner keeps all advertising pixels off. Full details: konectr.app/cookies.",
+      "We do NOT sell your personal data to advertisers, build advertising profiles of you, or track you across other apps.",
     ],
   },
   {
@@ -313,7 +314,7 @@ export function PrivacyContent() {
       <section className="pt-12 pb-4">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-muted-foreground text-sm">
-            Last Updated: August 5, 2026 &middot; Effective Date: December 10,
+            Last Updated: August 21, 2026 &middot; Effective Date: December 10,
             2025
           </p>
         </div>

@@ -12,6 +12,7 @@
 //  - Live (env SET): the same button opens the TestFlight public link directly.
 
 import { useState, useEffect, useCallback } from 'react';
+import { getUtmFields } from '@/lib/attribution';
 
 const STORAGE_KEY = 'konectr_testflight_request_email';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -80,6 +81,7 @@ export default function TestFlightRequestCTA({ shareCode, activityId, variant = 
           email: trimmed,
           share_code: shareCode,
           activity_id: activityId,
+          ...getUtmFields(),
         }),
       });
 
