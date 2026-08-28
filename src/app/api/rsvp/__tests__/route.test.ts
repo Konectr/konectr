@@ -199,7 +199,8 @@ describe('POST /api/rsvp', () => {
         'Jordan',
         expect.any(String),
         null,
-        'jordan@example.com'
+        'jordan@example.com',
+        { utm_source: null, utm_medium: null, utm_campaign: null }
       );
     });
   });
@@ -222,7 +223,8 @@ describe('POST /api/rsvp', () => {
         'Jordan',
         expect.any(String),
         null, // phoneHash
-        'jordan@example.com'
+        'jordan@example.com',
+        { utm_source: null, utm_medium: null, utm_campaign: null }
       );
     });
 
@@ -239,7 +241,8 @@ describe('POST /api/rsvp', () => {
         'Jordan',
         expect.any(String),
         expect.stringMatching(/^[a-f0-9]{64}$/), // phoneHash
-        'jordan@example.com'
+        'jordan@example.com',
+        { utm_source: null, utm_medium: null, utm_campaign: null }
       );
     });
 
@@ -306,7 +309,8 @@ describe('POST /api/rsvp', () => {
         'Jordan',
         expect.any(String),
         null, // phoneHash — phone is optional and was not supplied
-        'jordan@example.com' // normalizedEmail (required)
+        'jordan@example.com', // normalizedEmail (required)
+        { utm_source: null, utm_medium: null, utm_campaign: null }
       );
     });
 
@@ -434,7 +438,8 @@ describe('POST /api/rsvp', () => {
         'Jordan',
         expect.stringMatching(/^[a-f0-9]{64}$/), // SHA-256 hex (IP)
         null, // phoneHash — no phone supplied
-        'jordan@example.com'
+        'jordan@example.com',
+        { utm_source: null, utm_medium: null, utm_campaign: null }
       );
     });
 
@@ -451,7 +456,8 @@ describe('POST /api/rsvp', () => {
         'Jordan',
         expect.stringMatching(/^[a-f0-9]{64}$/), // SHA-256 hex (IP)
         null, // phoneHash — no phone supplied
-        'jordan@example.com'
+        'jordan@example.com',
+        { utm_source: null, utm_medium: null, utm_campaign: null }
       );
     });
 

@@ -67,6 +67,9 @@ describe('createWebRsvp', () => {
       p_ip_hash: 'my-ip-hash',
       p_phone_hash: null,
       p_email: null,
+      p_utm_source: null,
+      p_utm_medium: null,
+      p_utm_campaign: null,
     });
   });
 
@@ -84,6 +87,9 @@ describe('createWebRsvp', () => {
       p_ip_hash: null,
       p_phone_hash: null,
       p_email: null,
+      p_utm_source: null,
+      p_utm_medium: null,
+      p_utm_campaign: null,
     });
   });
 
