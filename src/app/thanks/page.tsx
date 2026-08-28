@@ -12,6 +12,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ThanksPage() {
-  return <ThanksContent />;
+interface Props {
+  searchParams: Promise<{ rid?: string }>;
+}
+
+export default async function ThanksPage({ searchParams }: Props) {
+  // rid = Tally response id, piped into the redirect URL by the Tally form.
+  // ThanksContent fires conversion pixels only after /api/thanks-verify
+  // confirms it; without it the page renders identically but fires nothing.
+  const { rid } = await searchParams;
+  return <ThanksContent rid={rid} />;
 }
