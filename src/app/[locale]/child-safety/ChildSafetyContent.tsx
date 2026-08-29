@@ -116,8 +116,11 @@ export function ChildSafetyContent() {
             <div className="rounded-xl border border-border bg-card p-5">
               <p className="mb-2 font-semibold">In the app</p>
               <p className="text-muted-foreground">
-                Use <span className="font-medium">Report</span> on any profile,
-                activity or message. Reports come straight to us. You can also
+                Open any profile and use{" "}
+                <span className="font-medium">Report</span>, or press and hold a
+                message and choose{" "}
+                <span className="font-medium">Flag Message</span> — in one-to-one
+                and group chats alike. Reports come straight to us. You can also
                 block the person, which takes effect immediately.
               </p>
             </div>
@@ -161,7 +164,7 @@ export function ChildSafetyContent() {
             report-driven. We do not scan or read private messages, and we do not
             run automated content detection. That means reports from people using
             Konectr are how we find out, which is why we act on them quickly and
-            why reporting is available on every profile, activity and message.
+            why reporting is available on every profile and every message.
           </p>
         </section>
 
