@@ -66,7 +66,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Do I need to verify my identity?",
-        answer: "Email verification is required — you sign in with a one-time code, no passwords. Optional photo verification (coming soon) will earn you a trust badge, and other members feel more comfortable joining plans with verified people."
+        answer: "Email verification is required — you sign in with a one-time code — nothing to remember. Optional photo verification (coming soon) will earn you a trust badge, and other members feel more comfortable joining plans with verified people."
       },
       {
         question: "What makes Konectr different from other social apps?",
