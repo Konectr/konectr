@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     path: "/privacy",
     title: "Privacy Policy | Konectr",
     description:
-      "Konectr Privacy Policy. How we collect, use, and protect your data. PDPA 2010 compliant. Your location, messages, and personal information are always protected.",
+      "Konectr Privacy Policy. How we collect, use, and protect your data — what we store, where it lives, and how to download or delete it. Your location, messages, and personal information are always protected.",
   });
 }
 

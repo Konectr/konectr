@@ -32,7 +32,7 @@ const steps = [
     details: [
       "Real-time availability – see who's free NOW",
       "Vibe-based matching for better connections",
-      "Small groups (2-5 people) for quality conversations",
+      "Small groups — whoever starts the plan picks the size",
     ],
     icon: "⚡",
     gradient: "from-secondary to-amber-400",
@@ -42,11 +42,11 @@ const steps = [
     number: "03",
     title: "Meet at the Spot",
     description:
-      "Show up at a vetted venue, connect with like-minded people, and make it happen. No pressure, no awkwardness – just real moments.",
+      "Show up at a public venue, connect with like-minded people, and make it happen. No pressure, no awkwardness – just real moments.",
     details: [
       "All meetups at safe, public venues",
       "Arrive, connect, and enjoy",
-      "Rate your experience to help the community",
+      "Confirm you met — that's what earns badges",
     ],
     icon: "🎯",
     gradient: "from-green-400 to-emerald-500",
@@ -63,12 +63,12 @@ const faqs = [
   {
     question: "How do I know the people I meet are safe?",
     answer:
-      "All users go through identity verification. All meetups happen at vetted public venues. We have a dedicated safety team and zero-tolerance policy for inappropriate behavior.",
+      "Every account is verified with a one-time code before it can join anything, and all meetups happen at public venues. Reports get a first response within hours, and repeat violations trigger our three-strike system.",
   },
   {
     question: "What if I'm shy or introverted?",
     answer:
-      "Konectr is perfect for introverts! Since you're connecting over shared activities, there's always something to focus on besides small talk. Plus, small group sizes (2-4 people) keep things comfortable.",
+      "Konectr is perfect for introverts! Since you're connecting over shared activities, there's always something to focus on besides small talk. Plus, small groups keep things comfortable.",
   },
   {
     question: "Can I create my own meetups?",
@@ -178,17 +178,17 @@ export function HowItWorksContent() {
               {
                 icon: "👥",
                 title: "Small Groups",
-                desc: "2-4 people for genuine conversations",
+                desc: "From a one-on-one up to 20 — the starter picks",
               },
               {
                 icon: "📍",
-                title: "Vetted Venues",
-                desc: "All meetups at safe, public locations",
+                title: "Public Venues",
+                desc: "All meetups in public places, never private homes",
               },
               {
                 icon: "✅",
-                title: "Verified Users",
-                desc: "Every member is identity verified",
+                title: "Verified Sign-In",
+                desc: "Every member verifies their email with a one-time code",
               },
               {
                 icon: "🚀",

@@ -6,7 +6,7 @@
   "header": {
     "badge": "Gamification",
     "title": "Level Up Your Social Life",
-    "subtitle": "Every real connection earns rewards. Climb tiers, collect badges, and unlock perks."
+    "subtitle": "Every real meetup counts. Climb tiers, collect badges, and earn the frame around your profile."
   },
   "tiers": {
     "title": "Your Journey, Six Tiers",
@@ -14,29 +14,23 @@
   },
   "badges": {
     "title": "Collect Badges",
-    "subtitle": "9 categories of achievements that celebrate how you connect",
+    "subtitle": "Seven families of badges that record what you actually did",
     "rarityLabel": "Badge Rarity"
   },
   "streaks": {
     "title": "Keep the Flame Alive",
-    "subtitle": "Stay active week after week and watch your streak grow",
+    "subtitle": "Stay active day after day and watch your streak grow",
     "shieldTitle": "Streak Shield",
-    "shieldDescription": "Life happens. Streak Shields protect your streak if you miss a week — earned through consistent activity."
+    "shieldDescription": "Life happens. A Streak Shield covers one missed day, and you earn one at a 7-day streak and again at 30. You can hold up to three."
   },
   "dailyRewards": {
     "title": "Daily Rewards",
     "subtitle": "Check in daily for 30 days to unlock escalating XP bonuses",
     "cycleNote": "The cycle resets after Day 30 — start again with boosted base rewards"
   },
-  "xp": {
-    "title": "Earn XP Everywhere",
-    "subtitle": "Six ways to earn experience points — from creating activities to maintaining streaks",
-    "multiplierTitle": "Streak Multiplier",
-    "multiplierDescription": "Your streak boosts all XP earned. Start at 1.0x and climb to 2.0x at 30+ days. The longer your streak, the faster you level up."
-  },
   "stats": {
     "tiers": "6 Tiers",
-    "badges": "45+ Badges",
+    "badges": "53 Badges",
     "milestones": "6 Streak Milestones",
     "rewards": "30-Day Rewards"
   },

@@ -40,7 +40,7 @@ export default async function GamificationPage({ params }: Props) {
       />
       <PageHeader
         title="Level Up Your Social Life"
-        subtitle="Every real connection earns rewards. Climb tiers, collect badges, and unlock perks."
+        subtitle="Every real meetup counts. Climb tiers, collect badges, and earn the frame around your profile."
         badge="Gamification"
         gradient="primary"
       />

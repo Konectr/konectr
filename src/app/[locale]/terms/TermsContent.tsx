@@ -59,7 +59,7 @@ const sections = [
         bullets: [
           "Provide accurate, current, and complete information during registration",
           "Maintain one account per person (multiple accounts are prohibited)",
-          "Complete phone number verification as required",
+          "Verify your email address with the one-time code we send you",
           "Keep your login credentials secure and confidential",
         ],
       },

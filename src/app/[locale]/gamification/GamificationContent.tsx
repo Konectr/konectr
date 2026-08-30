@@ -13,7 +13,6 @@ import {
   streakMilestones,
   flamePhases,
   dailyRewardsHighlights,
-  xpSources,
 } from "./gamification-data";
 
 export function GamificationContent() {
@@ -117,7 +116,7 @@ export function GamificationContent() {
               Collect Badges
             </h2>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-              9 categories of achievements that celebrate how you connect
+              Seven families of badges that record what you actually did
             </p>
           </motion.div>
 
@@ -170,9 +169,6 @@ export function GamificationContent() {
                   <span className="text-sm font-medium text-foreground">
                     {rarity.name}
                   </span>
-                  <span className="text-xs text-muted-foreground">
-                    {rarity.distribution}
-                  </span>
                 </div>
               ))}
             </div>
@@ -196,7 +192,7 @@ export function GamificationContent() {
               Keep the Flame Alive
             </h2>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-              Stay active week after week and watch your streak grow
+              Stay active day after day and watch your streak grow
             </p>
           </motion.div>
 
@@ -284,8 +280,8 @@ export function GamificationContent() {
               Streak Shield
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Life happens. Streak Shields protect your streak if you miss a
-              week — earned through consistent activity.
+              Life happens. A Streak Shield covers one missed day, and you earn
+              one at a 7-day streak and again at 30. You can hold up to three.
             </p>
           </motion.div>
         </div>
@@ -354,76 +350,6 @@ export function GamificationContent() {
         </div>
       </section>
 
-      {/* Section 5: XP System */}
-      <section className="py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2
-              className="text-3xl md:text-4xl font-black text-foreground mb-4"
-              style={{ fontFamily: "'Satoshi', sans-serif" }}
-            >
-              Earn XP Everywhere
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-              Six ways to earn experience points — from creating activities to
-              maintaining streaks
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-            {xpSources.map((source, index) => (
-              <motion.div
-                key={source.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card rounded-2xl p-6 border border-border/50 text-center"
-              >
-                <span className="text-3xl block mb-3">{source.icon}</span>
-                <h3
-                  className="font-bold text-foreground mb-1"
-                  style={{ fontFamily: "'Satoshi', sans-serif" }}
-                >
-                  {source.label}
-                </h3>
-                <p className="text-sm text-primary font-semibold">
-                  {source.range}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Multiplier Callout */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-lg mx-auto rounded-2xl p-6 border-2 text-center"
-            style={{
-              borderImage: "linear-gradient(135deg, #FF774D, #FFC845) 1",
-            }}
-          >
-            <span className="text-3xl block mb-2">⚡</span>
-            <h4
-              className="font-bold text-foreground mb-2"
-              style={{ fontFamily: "'Satoshi', sans-serif" }}
-            >
-              Streak Multiplier
-            </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Your streak boosts all XP earned. Start at 1.0x and climb to 2.0x
-              at 30+ days. The longer your streak, the faster you level up.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Section 6: Summary Stats */}
       <section className="py-16 bg-foreground dark:bg-gray-900 text-white">
         <div className="max-w-6xl mx-auto px-6">
@@ -435,7 +361,7 @@ export function GamificationContent() {
           >
             {[
               { emoji: "🏔️", value: "6 Tiers" },
-              { emoji: "🏅", value: "45+ Badges" },
+              { emoji: "🏅", value: "53 Badges" },
               { emoji: "🔥", value: "6 Streak Milestones" },
               { emoji: "🎁", value: "30-Day Rewards" },
             ].map((stat) => (

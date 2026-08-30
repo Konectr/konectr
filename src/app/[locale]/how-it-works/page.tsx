@@ -42,11 +42,11 @@ export default async function HowItWorksPage({ params }: Props) {
       },
       {
         name: "See Who's Free",
-        text: "Browse people nearby who want to do the same thing right now. Konectr matches you based on activity, timing, and location within 50km.",
+        text: "Browse people nearby who want to do the same thing right now. Konectr matches you based on activity, timing, and location — 10km by default, widen it to 50km if you want more.",
       },
       {
         name: "Meet at the Spot",
-        text: "Show up at a vetted public venue and meet your group of 2-5 people. All venues are personally visited and approved for safety and atmosphere.",
+        text: "Show up at a public venue and meet your group. Whoever starts the plan picks the size, and the featured venues in our hubs are hand-picked for safety and atmosphere.",
       },
     ]
   );

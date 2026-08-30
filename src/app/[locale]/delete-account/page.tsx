@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     path: "/delete-account",
     title: "Delete Your Account | Konectr",
     description:
-      "How to delete your Konectr account and what happens to your data. Delete in the app or request deletion by email. 30-day grace period, PDPA 2010 compliant.",
+      "How to delete your Konectr account and what happens to your data. Delete in the app or request deletion by email, with a 30-day grace period before anything is erased.",
   });
 }
 

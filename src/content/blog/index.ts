@@ -50,7 +50,7 @@ See who's free now, not who was free last Tuesday.
 You're not swiping on faces. You're connecting over shared interests.
 
 ### Small Groups
-2-4 people. Intimate enough to actually talk, big enough to not be awkward.
+Whoever starts the plan picks the size. Small enough to actually talk, big enough to not be awkward.
 
 ## Join Us
 
@@ -301,7 +301,7 @@ These are the stories that remind us why we built Konectr. Real people, making r
 
 **The Konectr moment**: He found a Konectr game night at a local cafe. Four strangers, one copy of Catan.
 
-**What happened**: They now host monthly game nights, rotating apartments. They've expanded to eight regulars and have a group chat that's active daily.
+**What happened**: They now run monthly game nights at their favourite cafe. They've expanded to eight regulars and have a group chat that's active daily.
 
 **Marcus says**: "I went from playing games alone online to having an in-person crew. It's completely different."
 
@@ -330,7 +330,7 @@ If you meet up with the same person three times, there's a 70% chance you'll bec
 The best friendships form over shared activities, not just "getting to know you" conversations.
 
 ### Small Groups Work
-2-4 people is the sweet spot. Enough energy, but everyone gets to talk.
+A handful of people is the sweet spot. Enough energy, but everyone gets to talk.
 
 ---
 
@@ -391,7 +391,7 @@ We look at signals like:
 We calculate how likely you are to have a great time together, based on vibe alignment.
 
 ### Step 4: Group Composition
-When building small groups (2-4 people), we aim for complementary vibes – similar enough to connect, diverse enough to be interesting.
+When building small groups, we aim for complementary vibes – similar enough to connect, diverse enough to be interesting.
 
 ## What We Don't Use
 
@@ -438,11 +438,11 @@ Here's how we work to earn and maintain that trust.
 
 ## Verification
 
-### Identity Verification
-All users go through a verification process. We confirm you're a real person with a real identity.
+### Verified Sign-In
+Every account is verified with a one-time code sent to your email before it can join anything. No throwaway or duplicate accounts.
 
-### Photo Verification
-Your profile photo is verified to be actually you, not a stock photo or someone else.
+### Photo Verification (coming soon)
+Optional selfie matching, so members can see at a glance that a profile photo is really you.
 
 ### Profile Completeness
 We encourage complete profiles so you know who you're meeting before you meet.
@@ -450,7 +450,7 @@ We encourage complete profiles so you know who you're meeting before you meet.
 ## Meetup Safety
 
 ### Public Venues Only
-All Konectr meetups happen at vetted public venues – cafes, parks, gyms, restaurants. Never private locations.
+All Konectr meetups happen at public venues – cafes, parks, gyms, restaurants. Never private locations.
 
 ### Check-In System
 Let a friend know where you are with our optional check-in feature.
@@ -490,9 +490,9 @@ If someone is removed, we let affected users know (while protecting privacy).
 - Report anything concerning
 - Share positive experiences too!
 
-## Tips for Hosts
+## Tips for Starters
 
-If you're hosting a Konectr meetup:
+If you started a Konectr meetup:
 - Choose well-lit, populated venues
 - Arrive early to welcome people
 - Make sure everyone feels included

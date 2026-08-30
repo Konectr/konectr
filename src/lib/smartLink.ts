@@ -34,6 +34,11 @@ export function detectPlatform(): Platform {
   return 'desktop';
 }
 
+// Env state (verified in Vercel prod 2026-08-30): NEXT_PUBLIC_IOS_STORE_URL and
+// NEXT_PUBLIC_TESTFLIGHT_URL both point at the TestFlight public link.
+// NEXT_PUBLIC_ANDROID_STORE_URL is deliberately UNSET — Play is still a closed
+// track, so the Play listing URL would 404. Android falling back to the waitlist
+// is the correct behaviour until the Play listing is public.
 function getStoreUrl(platform: Platform): string {
   const ios = process.env.NEXT_PUBLIC_IOS_STORE_URL || WAITLIST_FALLBACK;
   const android = process.env.NEXT_PUBLIC_ANDROID_STORE_URL || WAITLIST_FALLBACK;

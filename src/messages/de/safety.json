@@ -10,8 +10,8 @@
     "comingSoonLabel": "Coming Soon",
     "items": {
       "phoneVerified": {
-        "title": "Phone Verified",
-        "description": "Every member verifies their phone number before joining. Real people only."
+        "title": "Verified Sign-In",
+        "description": "Every member verifies their email with a one-time code before joining. Real people only."
       },
       "publicVenuesOnly": {
         "title": "Public Venues Only",
@@ -19,7 +19,7 @@
       },
       "quickReporting": {
         "title": "Quick Reporting",
-        "description": "Flag concerning behavior in two taps. Reports trigger automatic review."
+        "description": "Flag concerning behavior in two taps. Reports reach us straight away."
       },
       "threeStrikeSystem": {
         "title": "Three-Strike System",

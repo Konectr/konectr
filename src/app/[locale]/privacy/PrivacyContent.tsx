@@ -60,7 +60,7 @@ const sections = [
         category: "Location Data",
         icon: "📍",
         items: [
-          "Approximate location (within 50km radius, fuzzy only)",
+          "Approximate location (fuzzed — never your exact position)",
           "City and neighborhood (never exact address)",
           "Venue check-ins (when you create or join activities)",
         ],
@@ -70,7 +70,7 @@ const sections = [
         icon: "🎯",
         items: [
           "Venues visited (to suggest similar activities)",
-          "Activities created (hosting history)",
+          "Activities you started",
           "Matches made (to improve matching algorithm)",
           // Was: "stored encrypted, auto-deleted after 90 days". Neither held —
           // nothing deleted messages, and "encrypted" invited an end-to-end
@@ -262,7 +262,7 @@ const sections = [
     id: "international",
     title: "11. International Data Transfers",
     content: [
-      "Your data is stored in Singapore (via Supabase Asia region). We comply with PDPA (Personal Data Protection Act 2010, Malaysia) and GDPR (General Data Protection Regulation, European Union).",
+      "Your data is stored in Singapore (via Supabase Asia region). We are building Konectr to the standards set by Malaysia's PDPA 2010 and the EU GDPR — the rights described in this policy, including access, correction, download, and deletion, are honoured today. Our formal compliance review is still in progress, and we will say so here when it is complete.",
       "When transferring data internationally, we ensure adequate safeguards including standard contractual clauses, data processing agreements, and compliance with local data protection laws.",
     ],
   },

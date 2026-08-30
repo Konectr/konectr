@@ -25,7 +25,7 @@ const values = [
     icon: "🛡️",
     title: "Safety First",
     description:
-      "Every user is verified. Every venue is vetted. Your safety is our priority.",
+      "Every account is verified. Every meetup is in public. Your safety is our priority.",
   },
   {
     icon: "🌍",

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     path: "/safety",
     title: "Safety & Community Guidelines | Konectr",
     description:
-      "How Konectr keeps real-world meetups in KL safe: verified profiles, public venues, reporting with a 24-hour response commitment, and clear community rules.",
+      "How Konectr keeps real-world meetups in KL safe: verified sign-in, public venues, in-app reporting with a same-day first response, and clear community rules.",
   });
 }
 

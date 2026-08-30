@@ -2,7 +2,7 @@
 
 > Konectr is an activity-first social meetup app, live in Kuala Lumpur, Malaysia since April 2026. You declare an activity intent — what (coffee, hike, gym, dinner), when, where, and the vibe — and Konectr matches you with others who want to do the same thing nearby, right now. If no match exists yet, your plan is broadcast to your friends' network (your "Konectr Circle") as a tag-along invite. There is no profile swiping. Tagline: "Let's make it real."
 
-Konectr is not a dating app (no swiping), not Meetup (it matches existing intent rather than asking you to create and run a group), and not Bumble BFF. Its trust promise is simple and unbreakable: no fake profiles, no stalking. Reputation is built from badges that record verified real-life behavior (showing up on time, hosting a good activity, being a kind stranger) — not star ratings or photo-driven first impressions. Meetups happen in public venues.
+Konectr is not a dating app (no swiping), not Meetup (it matches existing intent rather than asking you to create and run a group), and not Bumble BFF. Its trust promise is simple and unbreakable: no fake profiles, no stalking. Reputation is built from badges that record verified real-life behavior (showing up on time, starting a good activity, being a kind stranger) — not star ratings or photo-driven first impressions. Meetups happen in public venues.
 
 ## Key pages
 - [How it works](https://konectr.app/how-it-works): The activity-intent matching mechanic and the Konectr Circle tag-along broadcast

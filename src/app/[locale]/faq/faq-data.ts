@@ -28,7 +28,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "What is Konectr?",
-        answer: "Konectr is a free social app that helps adults make real friends through shared activities in Kuala Lumpur. Instead of endless swiping, you pick an activity, get matched with 2-5 nearby people who want to do the same thing, and meet at a vetted public venue. It's activity-first, not profile-first."
+        answer: "Konectr is a free social app that helps adults make real friends through shared activities in Kuala Lumpur. Instead of endless swiping, you pick an activity, get matched with nearby people who want to do the same thing, and meet at a public venue. It's activity-first, not profile-first."
       },
       {
         question: "How much does Konectr cost?",
@@ -40,11 +40,11 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "How is Konectr different from Meetup or Bumble BFF?",
-        answer: "Meetup hosts large anonymous groups (20-100+) where you can easily get lost. Bumble BFF is one-on-one swiping that often leads to chats that go nowhere. Konectr sits in the sweet spot: small groups (2-8), activity-based matching at vetted venues. More intimate than Meetup, more social than Bumble BFF, and every match leads to a real meetup — not just another chat."
+        answer: "Meetup is built around large anonymous groups (20-100+) where you can easily get lost. Bumble BFF is one-on-one swiping that often leads to chats that go nowhere. Konectr sits in the sweet spot: small groups, activity-based matching at public venues. More intimate than Meetup, more social than Bumble BFF, and every match leads to a real meetup — not just another chat."
       },
       {
         question: "How do I meet people in KL if I'm an expat?",
-        answer: "Konectr was built for exactly this. Pick any activity — coffee at a cafe, a fitness class, outdoor hiking — and Konectr matches you with locals and other expats who want to do the same thing. Small groups (2-5) at public venues make it easy and safe to meet new people."
+        answer: "Konectr was built for exactly this. Pick any activity — coffee at a cafe, a fitness class, outdoor hiking — and Konectr matches you with locals and other expats who want to do the same thing. Small groups at public venues make it easy and safe to meet new people."
       },
       {
         question: "What kind of activities can I do on Konectr?",
@@ -70,7 +70,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What makes Konectr different from other social apps?",
-        answer: "No chat that goes nowhere. On Konectr, every connection leads to a real meetup. You pick an activity, get matched with people planning the same thing, and meet IRL at a vetted venue. No endless swiping, no ghosting — just real people doing real things."
+        answer: "No chat that goes nowhere. On Konectr, every connection leads to a real meetup. You pick an activity, get matched with people planning the same thing, and meet IRL at a public venue. No endless swiping, no ghosting — just real people doing real things."
       },
       {
         question: "I'm new in KL. Can Konectr help me make friends?",
@@ -88,7 +88,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "What if I'm shy or introverted?",
-        answer: "Small groups (3-6 typical), activity-focused conversation topics, and everyone's there for the same reason. Many of our most active users are introverts who prefer this structured approach over traditional social settings."
+        answer: "Small groups, activity-focused conversation topics, and everyone's there for the same reason. Many of our most active users are introverts who prefer this structured approach over traditional social settings."
       },
       {
         question: "Can I start my own activities?",
@@ -96,7 +96,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "How does the matching work?",
-        answer: "Pick your vibe, time slot, and venue. Konectr finds people planning the same activity, same time, within 50km. You can also use Pulse — our AI matching feature — which automatically finds your best match based on interests, availability, and profile compatibility. Either way, every match leads to a real meetup."
+        answer: "Pick your vibe, time slot, and venue. Konectr finds people planning the same activity at the same time nearby — 10km by default, and you can widen the search up to 50km. You can also use Pulse — our AI matching feature — which automatically finds your best match on venue type, time, distance, and vibe. Either way, every match leads to a real meetup."
       },
       {
         question: "What is Pulse and how does AI matching work?",
@@ -120,7 +120,11 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What happens after an activity ends?",
-        answer: "Activity auto-completes 2 hours after end time. You'll earn XP and progress toward badges, leave kudos, and choose who to add to your Circle. Group chat archives become read-only."
+        answer: "Confirm you met and everyone who turned up earns XP and progress toward badges. You can leave kudos and add people to your Circle. The group chat stays open for 48 hours after the end time, so you can sort out photos and next plans, then it closes."
+      },
+      {
+        question: "What can I do in the activity chat?",
+        answer: "Every plan gets a group chat the moment you join. Send photos straight from the camera or your library, react to messages, quote a message to reply to it, and translate anything into your own language in place. Chat stays in-app — no phone numbers are shared."
       },
       {
         question: "Can I keep an activity private?",
@@ -134,11 +138,11 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How do I know the people I meet are safe?",
-        answer: "Email verification required, optional photo verification (coming soon) with trust badges. All meetups at public vetted venues only. Badge system tracks positive participation. Three-strike system for violations: 3 reports = warning, 6 = suspension, 9 = six-month ban. Zero tolerance for harassment with 24-hour report review."
+        answer: "Email verification required, optional photo verification (coming soon) with trust badges. All meetups at public venues only. Badge system tracks positive participation. Three-strike system for violations: 3 reports = warning, 6 = suspension, 9 = six-month ban. Zero tolerance for harassment with 24-hour report review."
       },
       {
-        question: "What are vetted venues?",
-        answer: "Every venue is personally visited and approved. We check for safety (well-lit, accessible, easy exits), conversation-friendly atmosphere, and consistent quality. Categories include Cafe, Restaurant, Bar, Fitness, Outdoors, and Entertainment."
+        question: "What kind of venues does Konectr use?",
+        answer: "Public places only — cafes, restaurants, bars, gyms, parks, and entertainment spots. You can start an activity at any public venue you like. The featured venues in our hubs are hand-picked by us for the things that matter: well-lit, easy to find, easy to leave, and good for a conversation."
       },
       {
         question: "What if someone makes me uncomfortable?",
@@ -150,7 +154,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Is my data safe?",
-        answer: "All data is encrypted in transit and at rest. We never sell your data. Download or delete your data anytime. PDPA (Malaysia/Singapore) and GDPR compliant."
+        answer: "All data is encrypted in transit and at rest, and stored in Singapore. We never sell your data, and you can download or delete everything we hold at any time from Settings."
       },
       {
         question: "What happens if I report someone?",
@@ -172,7 +176,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How many people are typically at an activity?",
-        answer: "3-8 people. Whoever starts the plan sets the group size. Activities need minimum signups (usually 2-3) to run—no awkward empty venues."
+        answer: "Whoever starts the plan sets the group size, anywhere from a one-on-one to 20 people. Most plans are small. There's no minimum — a plan stays live as long as at least one person is still in."
       },
       {
         question: "What if I need to cancel?",
@@ -184,7 +188,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What if no one talks to me?",
-        answer: "There's no host — everyone's a peer, so nobody's a guest. Small groups (3-6) mean you can't get lost. Many activities have icebreakers built in. If it still happens, let us know—we'll follow up."
+        answer: "There's no host — everyone's a peer, so nobody's a guest. Small groups mean you can't get lost. Many activities have icebreakers built in. If it still happens, let us know—we'll follow up."
       },
       {
         question: "How do I know what to expect at an activity?",
@@ -200,7 +204,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What if the activity is cancelled?",
-        answer: "If everyone else withdraws, the plan ends and you're notified immediately — no impact on your reliability. Not enough signups: you're notified before the scheduled time. Consider starting your own version."
+        answer: "If everyone else withdraws, the plan ends and you're notified immediately — no impact on your reliability. If nobody has joined by the time it starts, nothing cancels it: the plan simply expires. Consider starting your own version."
       },
       {
         question: "Can I join an activity that's already in progress?",
@@ -218,7 +222,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What badges can I earn?",
-        answer: "Participation (activities attended), Starting (activities started), Community (connections made), Consistency (streaks), Vibe Explorer (trying different activity types). Try all vibes to earn Renaissance Soul!"
+        answer: "Badges come in families: Social (people you meet), Explorer (venues you visit), Activity (plans you turn up to), Streak (consistency), Starter (activities you start), plus Geography and Special one-offs. Try all six vibes to grow your collection."
       },
       {
         question: "How do badges help me?",
@@ -226,11 +230,11 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What are XP points and how do I earn them?",
-        answer: "XP (experience points) measure your overall engagement on Konectr. You earn XP by attending activities, starting them, adding people to your Circle, maintaining streaks, completing your profile, and referring friends. XP determines your tier level and unlocks perks as you progress."
+        answer: "XP (experience points) measure your overall engagement on Konectr. You earn XP by attending activities, starting them, adding people to your Circle, keeping a streak going, and checking in daily. XP is separate from your tier — tiers are counted in activities, not points."
       },
       {
         question: "What are the tier levels?",
-        answer: "Konectr has 6 tiers: Basic (starting), Explorer, Connector, Captain, Ambassador, and Legendary. Each tier requires more XP and unlocks new perks like priority matching, exclusive badges, and recognition in the community. Check your progress on your profile page."
+        answer: "Konectr has 6 tiers, based on activities you've been part of: Basic (0), Bronze (10), Silver (50), Gold (100), Platinum (200), and Legendary (300). Each tier changes the frame around your profile photo — thicker borders, gradients, and at the top a glow. Check your progress on your profile page."
       }
     ]
   },
