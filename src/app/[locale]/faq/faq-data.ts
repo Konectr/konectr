@@ -218,7 +218,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What badges can I earn?",
-        answer: "Participation (activities attended), Hosting (activities hosted), Community (connections made), Consistency (streaks), Vibe Explorer (trying different activity types). Try all vibes to earn Renaissance Soul!"
+        answer: "Participation (activities attended), Starting (activities started), Community (connections made), Consistency (streaks), Vibe Explorer (trying different activity types). Try all vibes to earn Renaissance Soul!"
       },
       {
         question: "How do badges help me?",
