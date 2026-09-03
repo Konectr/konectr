@@ -38,6 +38,38 @@ export default function FlappyKonectr() {
   const [highScore, setHighScore] = useState(0);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [homeHref, setHomeHref] = useState("/en");
+  const [isDark, setIsDark] = useState(false);
+
+  // ── Theme detection (mirrors useFlappyGame's darkRef rules) ──
+  // This page renders outside [locale], so next-themes never puts `.dark` on <html>
+  // for a direct visit — the Tailwind `dark:` variants below need a `.dark` ancestor,
+  // which the root div provides via this state. Without it the canvas follows
+  // prefers-color-scheme while the overlays stay light-styled (dark text on dark sky).
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    setIsDark(mq.matches || document.documentElement.classList.contains("dark"));
+    const onMqChange = (e: MediaQueryListEvent) => setIsDark(e.matches);
+    mq.addEventListener("change", onMqChange);
+
+    const observer = new MutationObserver(() => {
+      const html = document.documentElement;
+      if (html.classList.contains("dark")) {
+        setIsDark(true);
+      } else if (html.classList.contains("light")) {
+        setIsDark(false);
+      }
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => {
+      mq.removeEventListener("change", onMqChange);
+      observer.disconnect();
+    };
+  }, []);
 
   // ── State change handler ──
 
@@ -121,7 +153,7 @@ export default function FlappyKonectr() {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 overflow-hidden bg-[#FFF0E6] dark:bg-[#0D1117]"
+      className={`fixed inset-0 overflow-hidden ${isDark ? "dark bg-[#0D1117]" : "bg-[#FFF0E6]"}`}
       style={{ touchAction: "none" }}
     >
       {/* Canvas */}
