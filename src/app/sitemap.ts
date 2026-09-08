@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   // Static pages
-  const staticPages = ["", "/about", "/how-it-works", "/safety", "/gamification", "/contact", "/blog", "/faq", "/feedback", "/terms", "/privacy", "/delete-account"];
+  const staticPages = ["", "/about", "/how-it-works", "/safety", "/gamification", "/contact", "/blog", "/faq", "/feedback", "/terms", "/privacy", "/delete-account", "/child-safety"];
 
   // Generate entries for all locales and static pages
   const staticEntries = staticPages.flatMap((page) =>
@@ -66,6 +66,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "daily" as const,
       priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/cookies`,
+      lastModified: now,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
     },
   ];
 

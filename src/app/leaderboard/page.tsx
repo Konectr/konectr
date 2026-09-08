@@ -4,6 +4,7 @@
 import { Metadata } from 'next';
 import { getPublicLeaderboard } from '@/lib/supabase';
 import { MYT_TZ, klWallClock } from '@/lib/datetime';
+import { SHARE_OG_IMAGE } from '@/lib/metadata';
 import LeaderboardBoard from './LeaderboardBoard';
 
 // ISR: the board is weekly-aggregate data — 5-minute revalidation absorbs
@@ -40,6 +41,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: 'https://konectr.app/leaderboard',
       type: 'website',
+      // Absolute URL on purpose: this route is outside the [locale] layout
+      // that sets metadataBase, and chat apps drop relative og:images.
+      images: [SHARE_OG_IMAGE],
     },
   };
 }

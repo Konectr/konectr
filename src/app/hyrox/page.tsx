@@ -10,6 +10,7 @@ import {
   getPublicActivitiesByTag,
 } from '@/lib/supabase';
 import { klWallClock } from '@/lib/datetime';
+import { SHARE_OG_IMAGE } from '@/lib/metadata';
 import HyroxContent from './HyroxContent';
 
 // ISR: gym directory + upcoming sessions are slow-moving. 5-minute revalidation
@@ -60,6 +61,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       type: 'website',
       url: 'https://konectr.app/hyrox',
+      // Absolute URL on purpose: this route is outside the [locale] layout
+      // that sets metadataBase, and chat apps drop relative og:images.
+      images: [SHARE_OG_IMAGE],
     },
     twitter: {
       card: 'summary_large_image',
