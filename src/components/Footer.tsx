@@ -5,6 +5,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { brand } from "@/config/brand";
 import { Heading } from "@/components/shared";
 
@@ -88,6 +89,18 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              {/* Campaign hub: no-locale route, so next/link — the i18n Link
+                  would emit /{locale}/hyrox, which next-intl does not route.
+                  Untranslated on purpose: "HYROX KL" is a proper noun, and
+                  this is the only internal link the hub has. */}
+              <li>
+                <NextLink
+                  href="/hyrox"
+                  className="text-white/60 hover:text-primary transition-colors text-sm"
+                >
+                  HYROX KL Training Partners
+                </NextLink>
+              </li>
             </ul>
           </div>
 
