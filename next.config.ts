@@ -21,12 +21,24 @@ const ALT_HOSTS = [
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return ALT_HOSTS.map((host) => ({
-      source: "/:path*",
-      has: [{ type: "host" as const, value: host }],
-      destination: "https://konectr.app/:path*",
-      permanent: true,
-    }));
+    return [
+      ...ALT_HOSTS.map((host) => ({
+        source: "/:path*",
+        has: [{ type: "host" as const, value: host }],
+        destination: "https://konectr.app/:path*",
+        permanent: true,
+      })),
+      // 🔴 The root MUST redirect permanently. next-intl's middleware sends
+      // "/" to the detected locale with a 307, and a 307 tells Google the
+      // move is temporary — so Google kept "https://konectr.app/" as the
+      // canonical and marked /en "Duplicate, Google chose different
+      // canonical than user" (URL Inspection, 2026-09-08). Nothing on the
+      // site could be indexed through the homepage. This rule runs before
+      // middleware, so the 308 wins. Cost, accepted by the founder: the
+      // root no longer content-negotiates — everyone lands on /en and
+      // switches locale from the picker. Do not make this temporary.
+      { source: "/", destination: "/en", permanent: true },
+    ];
   },
   images: {
     formats: ["image/avif", "image/webp"],
