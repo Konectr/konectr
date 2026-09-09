@@ -29,6 +29,9 @@ const KEYWORD_RULES: Array<[RegExp, string]> = [
   [/hike|hiking|trail|bukit|mountain|waterfall|kayak/, 'hike'],
   [/rooftop|sky ?bar/, 'rooftop'],
   [/\bbar\b|\bpub\b|cocktail|drinks|beer|wine|mixolog/, 'bar'],
+  // TRX / The Exchange TRX (Tun Razak Exchange) — landmark photo of the Exchange 106
+  // tower beats the generic restaurant shot for anything hosted at the mall.
+  [/\btrx\b|tun razak exchange/, 'trx'],
   [/restaurant|dinner|lunch|makan|dining|foodie|feast/, 'restaurant'],
   [/\brun\b|running|\bjog\b|marathon|5k|10k|park run/, 'run'],
   [/yoga|pilates|stretch|breathwork/, 'yoga'],
