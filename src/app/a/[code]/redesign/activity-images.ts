@@ -19,6 +19,11 @@ const KEYWORD_RULES: Array<[RegExp, string]> = [
   // court as the closest racquet-sport proxy — swap in a real ASCARO/venue padel
   // photo at public/images/activities/padel.jpg and change 'tennis' → 'padel' here.
   [/\bpadel\b/, 'tennis'],
+  // ⚠️ BASEBALL: indoor batting cages (e.g. "SWING FOR IT — BASEBALL CAGE!" @ Swing!
+  // Batting Centre, Melawati Mall). baseball.jpg is an on-brand illustrated interim
+  // (backlit batter, cage net, amber lamps) — no licensed batting-cage photo could be
+  // sourced yet. Replace the file with a real 1200×1500 photo; no code change needed.
+  [/baseball|softball|batting/, 'baseball'],
   [/badminton|shuttle/, 'badminton'],
   [/tennis|squash/, 'tennis'],
   [/\bcaf[eé]\b|coffee|kopi|matcha|brunch|latte/, 'cafe'],
