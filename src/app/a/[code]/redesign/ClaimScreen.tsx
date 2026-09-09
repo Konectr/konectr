@@ -42,7 +42,8 @@ export interface ClaimForm {
 export interface ClaimScreenProps {
   vibe: Vibe;
   photo: string;
-  venueName: string;      // heading (auto = venue name)
+  heading?: string;       // poster h1 (activity title); falls back to venueName
+  venueName: string;      // real venue name — WHERE tile + maps directions query
   purpose: string | null; // the "Here for…" description
   timeLabel: string;
   dayLabel: string;
@@ -77,7 +78,7 @@ export default function ClaimScreen(p: ClaimScreenProps) {
   };
 
   return (
-    <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.venueName}>
+    <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.heading || p.venueName}>
       <WhenWhereTiles
         timeLabel={p.timeLabel}
         dayLabel={p.dayLabel}

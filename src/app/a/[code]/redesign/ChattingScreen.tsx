@@ -10,7 +10,8 @@ import { WhenWhereTiles, HereFor, CrewStack, StartedByRow } from './KineticUI';
 export interface ChattingScreenProps {
   vibe: Vibe;
   photo: string;
-  venueName: string;
+  heading?: string;   // poster h1 (activity title); falls back to venueName
+  venueName: string;  // real venue name — WHERE tile + maps directions query
   purpose: string | null;
   timeLabel: string;
   dayLabel: string;
@@ -44,7 +45,7 @@ export interface ChattingScreenProps {
 // affordance sits at the bottom (no host to "cancel on" — you withdraw yourself).
 export default function ChattingScreen(p: ChattingScreenProps) {
   return (
-    <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.venueName} posterKicker="You're in">
+    <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.heading || p.venueName} posterKicker="You're in">
       {/* Confirmation line — one-time celebration, only right after claiming.
           Returning visitors land straight on the tiles (the poster already says "You're in"). */}
       {p.justClaimed && (
@@ -75,7 +76,7 @@ export default function ChattingScreen(p: ChattingScreenProps) {
           venueLat={p.venueLat}
           venueLng={p.venueLng}
         />
-        {/* venueName above is the poster heading (venue name / title fallback). */}
+        {/* venueName above is the real venue (maps query); the poster h1 uses heading. */}
       </div>
 
       {/* Calendar + share — icon-only (labels omitted by design; discoverable) */}

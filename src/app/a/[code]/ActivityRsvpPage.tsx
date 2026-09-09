@@ -292,8 +292,11 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     purpose: purposeText,
     category: activity.category,
   });
-  const heading = activity.venue_name || activity.title;
+  // Poster heading = activity title, matching the mobile app's activity screen
+  // (was venue name in the Kinetic redesign; the two views read as different
+  // activities). Venue stays on the WHERE tile + directions via venueShort.
   const venueShort = activity.venue_name || activity.title;
+  const heading = activity.title || venueShort;
   const purpose = purposeText && purposeText !== activity.title ? purposeText : null;
   const timeLabel = formatTime(activity.start_time);
   const whenDay = `${getRelativeDayPhrase(activity.start_time)} · ${formatShortDate(activity.start_time)}`;
@@ -346,7 +349,8 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
         <ChattingScreen
           vibe={vibe}
           photo={posterPhoto}
-          venueName={heading}
+          heading={heading}
+          venueName={venueShort}
           purpose={purpose}
           timeLabel={timeLabel}
           dayLabel={whenDay}
@@ -417,7 +421,8 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     <ClaimScreen
       vibe={vibe}
       photo={posterPhoto}
-      venueName={heading}
+      heading={heading}
+      venueName={venueShort}
       purpose={purpose}
       timeLabel={timeLabel}
       dayLabel={whenDay}
