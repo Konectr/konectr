@@ -29,7 +29,7 @@ function formatWeekRange(weekStart: string, weekEnd: string): string {
 
 export async function generateMetadata(): Promise<Metadata> {
   const description =
-    'Who actually showed up this week? The Konectr KL leaderboard ranks verified meetups — real people, real activities, confirmed in the app.';
+    'Who actually showed up this week? The Konectr KL leaderboard ranks completed activities — real people, real meetups, confirmed in the app.';
   return {
     title: 'KL Weekly Leaderboard - Konectr',
     description,

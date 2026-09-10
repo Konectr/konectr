@@ -145,7 +145,7 @@ export interface LeaderboardEntry {
   first_name: string;
   photo_url: string | null;
   score: number;
-  verified_meetups: number;
+  verified_meetups: number; // completed activities (distinct, credited to this user) — the ranking key
   is_champion: boolean;
   week_start: string; // KL-local Monday (date)
   week_end: string;   // KL-local Sunday (date)

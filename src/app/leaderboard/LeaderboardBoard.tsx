@@ -6,8 +6,9 @@
 // Sunset Orange #FF774D · Solar Amber #FFC845 · Graphite #1F1F1F · Cloud White #FAFAFA
 // tint #FFF4F1 · hover #E6693F — same palette as /a/[code]/redesign/KineticUI.tsx.
 //
+// Ranked by completed activities (`verified_meetups`), points break ties.
 // Privacy: rows render ONLY what the anon RPC returns (first name, photo, weekly
-// score, verified count, champion flag). The tap "glance" deliberately shows
+// score, completed count, champion flag). The tap "glance" deliberately shows
 // nothing new — full profiles live only inside the app (founder decision); the
 // glance is a download driver.
 
@@ -137,8 +138,8 @@ function GlanceSheet({
             {entry.is_champion && <span title="KL Champion">🏆</span>}
           </div>
           <div className="mt-1 text-[13.5px] text-[#616161] font-semibold">
-            {entry.score} pts · {entry.verified_meetups} verified{' '}
-            {entry.verified_meetups === 1 ? 'meetup' : 'meetups'} {period}
+            {entry.verified_meetups} completed{' '}
+            {entry.verified_meetups === 1 ? 'activity' : 'activities'} · {entry.score} pts {period}
           </div>
 
           <p className="mt-5 text-[14px] leading-[1.55] text-[#444]">
@@ -192,7 +193,7 @@ export default function LeaderboardBoard({
       .slice(0, 10)
       .map(
         (e) =>
-          `${e.rank}. ${e.first_name}${e.is_champion ? ' 🏆' : ''} — ${e.score} pts · ${e.verified_meetups} verified ${e.verified_meetups === 1 ? 'meetup' : 'meetups'}`
+          `${e.rank}. ${e.first_name}${e.is_champion ? ' 🏆' : ''} — ${e.verified_meetups} completed · ${e.score} pts`
       );
     const text = [
       `🏆 Konectr KL Leaderboard — ${weekLabel}`,
@@ -269,7 +270,7 @@ export default function LeaderboardBoard({
             <div className="px-6 py-12 text-center">
               <div className="text-[34px]">🌱</div>
               <p className="mt-3 font-[family-name:var(--font-heading)] font-extrabold text-[16px] text-[#1F1F1F]">
-                No verified show-ups {tab === 'this' ? 'yet this week' : 'last week'}
+                No completed activities {tab === 'this' ? 'yet this week' : 'last week'}
               </p>
               <p className="mt-1.5 text-[13.5px] leading-[1.5] text-[#616161]">
                 Show up, confirm your meetup in the app, and claim the top spot.
@@ -304,15 +305,15 @@ export default function LeaderboardBoard({
                         {e.is_champion && <span title="KL Champion" className="text-[14px]">🏆</span>}
                       </span>
                       <span className="block text-[12.5px] text-[#616161] font-medium">
-                        {e.verified_meetups} verified {e.verified_meetups === 1 ? 'meetup' : 'meetups'}
+                        {e.score} pts
                       </span>
                     </span>
                     <span className="shrink-0 text-right">
                       <span className="block font-[family-name:var(--font-heading)] font-black text-[18px] text-[#1F1F1F]">
-                        {e.score}
+                        {e.verified_meetups}
                       </span>
                       <span className="block text-[10.5px] font-extrabold tracking-[0.08em] text-[#9E9E9E]">
-                        PTS
+                        DONE
                       </span>
                     </span>
                   </button>
@@ -336,8 +337,11 @@ export default function LeaderboardBoard({
         {/* Scoring legend + opt-in note */}
         <section className="mt-6 bg-[#FFF4F1] rounded-[18px] p-4">
           <div className="font-[family-name:var(--font-heading)] font-extrabold text-[13px] text-[#E6693F]">
-            How scoring works
+            How ranking works
           </div>
+          <p className="mt-2 text-[13px] leading-[1.5] text-[#444]">
+            Ranked by <b>completed activities</b> — meetups confirmed in the app. Points break ties:
+          </p>
           <ul className="mt-2 space-y-1.5 text-[13px] leading-[1.5] text-[#444]">
             <li>✅ Both of you confirm the meetup in the app — <b>3 pts each</b></li>
             <li>🕐 You confirm, they stay silent — <b>2 pts for you</b></li>
@@ -345,7 +349,7 @@ export default function LeaderboardBoard({
           </ul>
           <p className="mt-3 text-[12px] leading-[1.5] text-[#6B6B6B]">
             Opt in from Konectr → Settings → Privacy. Only your first name, photo and
-            weekly score appear here — nothing else, ever.
+            weekly count appear here — nothing else, ever.
           </p>
         </section>
 
