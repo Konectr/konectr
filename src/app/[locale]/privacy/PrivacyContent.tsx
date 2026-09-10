@@ -54,6 +54,8 @@ const sections = [
           "Gender (for profile display)",
           "Profile photo (optional)",
           "Bio, interests, and languages spoken",
+          "What you say you are looking for this week (optional, resets weekly)",
+          "Photos you send in a plan's chat, and any of those you or another attendee choose to publish to This Week",
         ],
       },
       {
@@ -114,6 +116,11 @@ const sections = [
         subtitle: "With Other Users",
         content:
           "We share your profile information (name, photo, bio, interests), approximate location, and activity preferences with matched users.",
+      },
+      {
+        subtitle: "This Week wall (photos you choose to publish)",
+        content:
+          "A photo sent in a plan's group chat can be shared to This Week by anyone who was on that plan. A published photo is visible to every signed-in Konectr member in your city for 7 days, shown only as the venue, the kind of plan and the group size — never a name, a date, or a link to the plan. Any attendee of that plan can take it down at any time, we review every photo before it goes live, location data is stripped from the image, and the file is deleted from our storage when the 7 days end. Only share photos that everyone in them is comfortable with.",
       },
       {
         subtitle: "We NEVER Share",

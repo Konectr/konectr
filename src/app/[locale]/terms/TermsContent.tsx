@@ -157,6 +157,10 @@ const sections = [
         content: "By posting content, you grant us a non-exclusive, royalty-free, worldwide license to display, store, and moderate your content. This license terminates when you delete your account.",
       },
       {
+        subtitle: "Photos published to This Week",
+        content: "When you or another attendee of a plan publish a chat photo to This Week, you confirm that everyone shown in it is comfortable with it being seen by other Konectr members in your city for up to 7 days. We may remove any published photo at our discretion, and any attendee of that plan may remove it at any time.",
+      },
+      {
         subtitle: "Our Intellectual Property",
         content: "Konectr owns the app, code, design, branding, trademarks, logos, and all proprietary technology including matching algorithms.",
       },
