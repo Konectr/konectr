@@ -158,7 +158,7 @@ const sections = [
       },
       {
         subtitle: "Photos published to This Week",
-        content: "When you or another attendee of a plan publish a chat photo to This Week, you confirm that everyone shown in it is comfortable with it being seen by other Konectr members in your city for up to 7 days. We may remove any published photo at our discretion, and any attendee of that plan may remove it at any time.",
+        content: "When you or another attendee of a plan publish a chat photo to This Week, you confirm that everyone shown in it is comfortable with it being seen by other Konectr members in your city for up to 14 days. We may remove any published photo at our discretion, and any attendee of that plan may remove it at any time.",
       },
       {
         subtitle: "Our Intellectual Property",
