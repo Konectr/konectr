@@ -66,8 +66,8 @@ export const APP_STRUCTURED_DATA = {
   name: "Konectr",
   operatingSystem: "iOS",
   applicationCategory: "SocialNetworkingApplication",
-  downloadUrl: "https://testflight.apple.com/join/7qCJt3wE",
-  installUrl: "https://testflight.apple.com/join/7qCJt3wE",
+  downloadUrl: process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist",
+  installUrl: process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist",
   description:
     "Konectr is an activity-first social meetup app, live in Kuala Lumpur. Declare an intent — what activity (coffee, hike, gym, dinner), what time, what area, what vibe — and match with others doing the same thing nearby. No swiping; badges, not star ratings.",
   offers: {

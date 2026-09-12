@@ -7,7 +7,7 @@
 //   byte-identical until the ad accounts exist.
 // - Pixels load ONLY after explicit opt-in (localStorage 'konectr_consent'),
 //   per docs/PRE_LAUNCH_MARKETING_COMPLIANCE.md (web-only pixels, post-opt-in).
-//   PostHog (cookieless) and Contentsquare are NOT gated here — see /cookies.
+//   PostHog (cookieless) is NOT gated here (Contentsquare removed 2026-09-12) — see /cookies.
 // - Page views fire from the pathname effect (init snippets have auto
 //   page-view disabled) so SPA navigations are counted exactly once.
 

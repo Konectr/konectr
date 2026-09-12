@@ -250,7 +250,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
         title="This activity has ended"
         subtitle={
           platform === 'android'
-            ? 'Konectr is iOS-only for now — get notified when Android launches.'
+            ? 'Konectr for Android is in closed testing — leave your email to get access.'
             : 'Real plans, real people. Join the Konectr beta to see what’s next.'
         }
         platform={platform}

@@ -286,7 +286,7 @@ export default function FeedbackTicketDetailContent({ ticketId }: Props) {
                     </p>
                     <Button asChild variant="outline">
                       <a
-                        href="https://apps.apple.com/app/konectr"
+                        href={process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist"}
                         target="_blank"
                         rel="noopener noreferrer"
                       >

@@ -93,11 +93,11 @@ export default function AndroidWaitlistCTA({ shareCode, activityId }: Props) {
     <div className="bg-[#FFF8F0] border border-[#FFE5C2] rounded-xl p-4">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-lg">🤖</span>
-        <span className="font-bold text-[#1F1F1F] text-sm">Coming soon to Android</span>
+        <span className="font-bold text-[#1F1F1F] text-sm">Android: closed testing</span>
       </div>
       <p className="text-xs text-[#666] mb-3 leading-relaxed">
-        Konectr is iOS-only for now. Drop your email and we&apos;ll let you know
-        the moment the Android app is live.
+        Konectr for Android is in closed testing on Google Play. Drop your email
+        and we&apos;ll add you, and tell you when the public listing is live.
       </p>
       <input
         type="email"

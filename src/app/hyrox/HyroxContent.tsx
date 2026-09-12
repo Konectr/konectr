@@ -203,7 +203,7 @@ export default function HyroxContent({
           </h2>
           <p className="mt-2 text-[14px] leading-[1.55] text-white/75">
             Konectr matches you with people near you who are training for the same
-            race. Real people, real sessions, phone-verified.
+            race. Real people, real sessions, real accounts.
           </p>
 
           <div className="mt-5 max-w-[340px] mx-auto">

@@ -96,11 +96,6 @@ export default function RootLayout({
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: ATTRIBUTION_SNIPPET }}
         />
-        {/* Contentsquare (Hotjar) Analytics */}
-        <Script
-          src="https://t.contentsquare.net/uxa/10ec7463f1940.js"
-          strategy="lazyOnload"
-        />
         {/* PostHog product analytics (cookieless, prod-only) */}
         {POSTHOG_ENABLED && (
           <Script

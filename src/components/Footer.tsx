@@ -110,7 +110,9 @@ export function Footer() {
               {[
                 { key: "privacyPolicy", href: "/privacy" },
                 { key: "termsOfService", href: "/terms" },
-                { key: "cookiePolicy", href: "/privacy#cookies" },
+                { key: "cookiePolicy", href: "/cookies" },
+                { key: "deleteAccount", href: "/delete-account" },
+                { key: "childSafety", href: "/child-safety" },
               ].map((item) => (
                 <li key={item.key}>
                   <Link

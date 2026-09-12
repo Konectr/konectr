@@ -62,11 +62,11 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How do I create an account?",
-        answer: "Konectr is in public beta on iOS — join via the TestFlight link at konectr.app. Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
+        answer: "Get Konectr from the download link at konectr.app (iPhone today; Android is in closed testing on Google Play — email hello@konectr.app for access). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
       },
       {
         question: "Do I need to verify my identity?",
-        answer: "Email verification is required — you sign in with a one-time code — nothing to remember. Optional photo verification (coming soon) will earn you a trust badge, and other members feel more comfortable joining plans with verified people."
+        answer: "You sign in with a one-time code sent to your email — nothing to remember. Every account is tied to a real email address, and reputation is built through badges earned at real meetups, never ratings."
       },
       {
         question: "What makes Konectr different from other social apps?",
@@ -108,7 +108,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What if no one matches my activity?",
-        answer: "Share it with your Konectr Circle, or keep it open for up to 7 days. Others might plan the same thing later. Some of our best Captains started as the only person—then others joined."
+        answer: "Share it with your Konectr Circle, or keep it open for up to 7 days. Others might plan the same thing later. Plenty of good plans started with one person—then others joined."
       },
       {
         question: "What are time slots and how do they work?",
@@ -138,7 +138,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How do I know the people I meet are safe?",
-        answer: "Email verification required, optional photo verification (coming soon) with trust badges. All meetups at public venues only. Badge system tracks positive participation. Three-strike system for violations: 3 reports = warning, 6 = suspension, 9 = six-month ban. Zero tolerance for harassment with 24-hour report review."
+        answer: "Every account is tied to a real email. All meetups at public venues only. Badge system tracks positive participation. Three-strike system for violations: 3 reports = warning, 6 = suspension, 9 = six-month ban. Zero tolerance for harassment with 24-hour report review."
       },
       {
         question: "What kind of venues does Konectr use?",
@@ -252,7 +252,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "How do I delete my account?",
-        answer: "Settings, Account, Delete Account. Permanently removes all data, photos, history, connections, and badges. Cannot be undone. Having issues? Reach out to hello@konectr.app first."
+        answer: "Profile, Settings, Delete Account (or konectr.app/delete-account). Your profile disappears immediately and you have 30 days to change your mind; after that your personal data, photos, connections and badges are erased. Messages and attendance records stay but are no longer linked to you, and safety reports are kept — the full list is on the delete-account page. Having issues? Reach out to hello@konectr.app first."
       },
       {
         question: "Why am I not seeing many activities?",
@@ -278,7 +278,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "When is Android coming?",
-        answer: "We're iOS-first for now to nail the experience. Android is in development — join the waitlist at konectr.app and we'll email you the moment it's ready."
+        answer: "Android is in closed testing on Google Play right now — email hello@konectr.app and we'll add you. The public Play listing goes live as soon as Google approves it."
       },
       {
         question: "What new features are coming?",
@@ -292,7 +292,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "The app is crashing/slow. What do I do?",
-        answer: "Force close and restart. Check TestFlight for updates. Restart your phone. Check your internet. Still broken? Email hello@konectr.app with device model, iOS version, and screenshots."
+        answer: "Force close and restart. Make sure you have the latest version. Restart your phone. Check your internet. Still broken? Email hello@konectr.app with device model, iOS version, and screenshots."
       },
       {
         question: "I'm not receiving notifications. Help!",

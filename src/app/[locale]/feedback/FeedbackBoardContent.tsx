@@ -178,7 +178,7 @@ export default function FeedbackBoardContent() {
               className="bg-primary hover:bg-primary/90"
             >
               <a
-                href="https://apps.apple.com/app/konectr"
+                href={process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist"}
                 target="_blank"
                 rel="noopener noreferrer"
               >

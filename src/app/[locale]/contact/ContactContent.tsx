@@ -22,12 +22,6 @@ const contactMethods = [
     value: "@konectrapp",
     href: brand.social.instagram,
   },
-  {
-    icon: "💬",
-    title: "Community",
-    value: "Join our Discord",
-    href: "#",
-  },
 ];
 
 export function ContactContent() {

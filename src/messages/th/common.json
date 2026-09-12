@@ -25,6 +25,8 @@
       "privacyPolicy": "Privacy Policy",
       "termsOfService": "Terms of Service",
       "cookiePolicy": "Cookie Policy",
+      "deleteAccount": "ลบบัญชี",
+      "childSafety": "ความปลอดภัยของเด็ก",
       "feedback": "กระดานความคิดเห็น",
       "gamification": "Rewards & Progression"
     },

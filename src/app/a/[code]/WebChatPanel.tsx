@@ -210,7 +210,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
           <div className="text-center py-2">
             <p className="text-xs text-[#666] mb-1">You&apos;ve used all 10 messages</p>
             <p className="text-[10px] text-[#999]">
-              Get unlimited chat in the Konectr Android app (coming soon)
+              Get unlimited chat in the Konectr app
             </p>
           </div>
         ) : (

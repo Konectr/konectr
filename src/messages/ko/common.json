@@ -25,6 +25,8 @@
       "privacyPolicy": "Privacy Policy",
       "termsOfService": "Terms of Service",
       "cookiePolicy": "Cookie Policy",
+      "deleteAccount": "계정 삭제",
+      "childSafety": "아동 안전",
       "feedback": "피드백 보드",
       "gamification": "Rewards & Progression"
     },

@@ -50,7 +50,7 @@ const sections = [
           "Email address (for sign-in and account recovery)",
           "Phone number (optional, if you choose to add it)",
           "Name (display name for your profile)",
-          "Age (to verify you are 18+)",
+          "Date of birth (you must be 18 or over to create an account)",
           "Gender (for profile display)",
           "Profile photo (optional)",
           "Bio, interests, and languages spoken",
@@ -62,9 +62,10 @@ const sections = [
         category: "Location Data",
         icon: "📍",
         items: [
-          "Approximate location (fuzzed — never your exact position)",
-          "City and neighborhood (never exact address)",
-          "Venue check-ins (when you create or join activities)",
+          "Your precise location while the app is open, used on your device to find plans within 5 km of you — plans show a venue, never your position",
+          "Your city, so we show you the right area",
+          "A location you choose to share in a chat (visible to that chat for 15 minutes)",
+          "Your location at the moment you confirm a meetup, used only to verify attendance",
         ],
       },
       {
@@ -134,7 +135,7 @@ const sections = [
       {
         subtitle: "Service Providers",
         content:
-          "We work with trusted third-party providers: Supabase (data hosting in Singapore), Firebase Cloud Messaging (push notifications), and Sentry (crash reporting). All providers are bound by strict data protection agreements.",
+          "We work with these service providers, each of which processes data only to perform its function for us: Supabase (database, authentication and file storage, hosted in Singapore); Firebase Cloud Messaging and Firebase Crashlytics (push delivery and crash reports); PostHog (first-party product analytics, hosted in the United States); Brevo (transactional and lifecycle email); Mapbox (map display and reverse geocoding — the map SDK on your device may send anonymised usage telemetry to Mapbox); Google Places (venue search and venue photos); and Google ML Kit (on-device translation model downloads). None of them may use your data for their own purposes.",
       },
     ],
   },
@@ -152,7 +153,7 @@ const sections = [
       },
       {
         right: "Right to Deletion",
-        detail: "Delete your account and all associated data within 30 days.",
+        detail: "Delete your account. Personal data is erased within 30 days; see Section 10 for what is anonymised or retained and why.",
       },
       {
         right: "Right to Data Portability",
@@ -179,11 +180,11 @@ const sections = [
       },
       {
         icon: "🔵",
-        text: "Stored as approximate area (fuzzy location, not exact coordinates)",
+        text: "Plans and profiles never store your position — only the venue you picked",
       },
       {
         icon: "🗑️",
-        text: "Auto-deleted after 30 days of inactivity",
+        text: "A location you share in a chat expires after 15 minutes; any coordinates we hold are erased when your account is deleted",
       },
       {
         icon: "⚙️",
@@ -195,7 +196,7 @@ const sections = [
     id: "children",
     title: "8. Children\u2019s Privacy",
     content: [
-      "Konectr is strictly 18+ only. Age verification is required during signup. We do not knowingly collect data from minors under 18. Underage users are immediately blocked and reported if discovered.",
+      "Konectr is strictly 18+ only. You must enter a date of birth showing you are 18 or over to create an account; we do not verify identity documents. We do not knowingly collect data from anyone under 18. Accounts found to belong to minors are removed.",
       "If we learn we have collected personal data from anyone under 18, we will delete that information immediately. Parents should contact privacy@konectr.app if they discover their child is using Konectr.",
     ],
   },
@@ -206,19 +207,18 @@ const sections = [
       {
         category: "Technical Safeguards",
         items: [
-          "End-to-end encryption for private messages",
+          "Messages are encrypted in transit and at rest; they are not end-to-end encrypted, so we can act on safety reports",
           "Encrypted data storage via Singapore data center",
           "Secure HTTPS transmission for all data transfers",
-          "Two-factor authentication for admin access",
+          "Row-level security: each account can read only the data it is allowed to see",
         ],
       },
       {
         category: "Organizational Safeguards",
         items: [
-          "Regular security audits",
-          "Limited employee access on need-to-know basis",
-          "Security training for all team members",
-          "Incident response plan for data breaches",
+          "Access to production data is limited to the founder",
+          "Security review of every change that touches personal data",
+          "Data breaches are reported to affected users and the Commissioner as PDPA requires",
         ],
       },
     ],
@@ -252,11 +252,11 @@ const sections = [
       },
       {
         data: "Location data",
-        period: "Approximate only; retained while your account is open",
+        period: "Chat location shares expire after 15 minutes. Meetup-confirmation coordinates are kept while your account is open and erased on deletion",
       },
       {
         data: "Crash logs",
-        period: "Retained for 90 days by our crash reporting provider",
+        period: "Retained for 90 days by Firebase Crashlytics",
       },
       {
         data: "Safety reports",
@@ -277,8 +277,8 @@ const sections = [
     id: "cookies",
     title: "12. Cookies and Tracking",
     content: [
-      "The Konectr mobile app does not use advertising cookies or cross-app tracking. In-app analytics are minimal (crash reporting, feature usage, performance) and you can opt out in Settings > Privacy > Analytics.",
-      "Our website (konectr.app) uses: PostHog product analytics in cookieless mode (no cookies or device storage); Contentsquare session analytics to understand how visitors use the site; and — only if you accept the cookie banner — Meta and Google advertising pixels that measure whether our ads brought you here. Declining or ignoring the banner keeps all advertising pixels off. Full details: konectr.app/cookies.",
+      "The Konectr mobile app does not use advertising cookies, advertising SDKs, or cross-app tracking. In-app analytics are first-party (crash reporting and feature usage, tied to your account ID, never sold or shared for advertising).",
+      "Our website (konectr.app) uses: PostHog product analytics in cookieless mode (no cookies or device storage); and — only if you accept the cookie banner — Meta and Google advertising pixels that measure whether our ads brought you here. Declining or ignoring the banner keeps all advertising pixels off. Full details: konectr.app/cookies.",
       "We do NOT sell your personal data to advertisers, build advertising profiles of you, or track you across other apps.",
     ],
   },
@@ -321,7 +321,7 @@ export function PrivacyContent() {
       <section className="pt-12 pb-4">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-muted-foreground text-sm">
-            Last Updated: August 21, 2026 &middot; Effective Date: December 10,
+            Last Updated: September 12, 2026 &middot; Effective Date: December 10,
             2025
           </p>
         </div>

@@ -148,8 +148,7 @@ const sections = [
         bullets: [
           "Profile information (photos, bio, interests)",
           "Activity descriptions and posts",
-          "Messages and communications",
-          "Reviews and ratings",
+          "Messages, photos and communications",
         ],
       },
       {
@@ -176,16 +175,16 @@ const sections = [
     strikes: [
       {
         strike: "Strike 1: Warning",
-        detail: "Email notification explaining the violation. No account restrictions.",
+        detail: "Issued when 3 different people report you. A notification explains the violation. No account restrictions.",
       },
       {
         strike: "Strike 2: Temporary Suspension",
-        detail: "7-day account suspension. No access to the Service during suspension.",
+        detail: "Issued at 6 reporters. 7-day account suspension. No access to the Service during suspension.",
       },
       {
-        strike: "Strike 3: Permanent Ban",
+        strike: "Strike 3: Ban",
         detail:
-          "Account permanently deleted. Prohibited from creating new accounts.",
+          "Issued at 9 reporters. Six-month ban from the Service. Creating a new account to evade a ban is prohibited. Strikes decay after 3 months without new reports.",
       },
     ],
     content: [
@@ -200,14 +199,14 @@ const sections = [
       {
         subtitle: "You May Terminate Anytime",
         content:
-          "Delete your account in Settings > Account > Delete Account. All data is permanently removed within 30 days, with a 30-day grace period to cancel deletion.",
+          "Delete your account from Profile > Settings > Delete Account, or at konectr.app/delete-account. Your profile is hidden immediately and you have 30 days to change your mind; after that your personal data is erased. Messages, attendance records and photos you published to This Week are kept but detached from you, and safety reports are retained. The full list is at konectr.app/delete-account.",
       },
       {
         subtitle: "Effects of Termination",
         bullets: [
           "Immediate: Profile hidden from all users",
-          "Within 30 days: All personal data permanently deleted",
-          "Within 90 days: Removed from backups",
+          "Within 30 days: Personal data permanently erased; messages and attendance anonymised; safety reports retained",
+          "Photos you sent in chats are removed from storage",
         ],
       },
     ],
@@ -218,7 +217,7 @@ const sections = [
     content: [
       'Konectr is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, either express or implied.',
       "We do not guarantee uninterrupted service, accuracy of user-provided information, successful matches or meetups, safety of in-person interactions, or error-free operation.",
-      "Our total liability is limited to the amount you paid us in the last 12 months, or $0 USD if you are on the free tier.",
+      "Our total liability is limited to the amount you paid us in the last 12 months, or RM0 if you have never paid us. Konectr is free at the time of writing.",
     ],
   },
   {
@@ -259,7 +258,7 @@ export function TermsContent() {
       <section className="pt-12 pb-4">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-muted-foreground text-sm">
-            Last Updated: November 30, 2025 &middot; Effective Date: December
+            Last Updated: September 12, 2026 &middot; Effective Date: December
             10, 2025
           </p>
         </div>

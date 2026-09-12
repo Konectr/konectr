@@ -14,7 +14,7 @@ const SECTIONS = [
   },
   {
     title: 'Analytics',
-    body: 'PostHog (product analytics) runs in cookieless mode — it sets no cookies and stores nothing on your device. Contentsquare (session analytics) helps us see how visitors use the site — where pages confuse people, what gets tapped — and may use cookies or browser storage for that.',
+    body: 'PostHog (product analytics) runs in cookieless mode — it sets no cookies and stores nothing on your device. That is the only analytics on the site unless you accept the banner below.',
   },
   {
     title: 'Advertising — only with your OK',

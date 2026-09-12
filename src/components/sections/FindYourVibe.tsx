@@ -127,7 +127,7 @@ export function FindYourVibe() {
             size="lg"
             className="rounded-full text-lg font-bold px-8 py-4 h-auto shadow-[var(--shadow-brand)] hover:shadow-[var(--shadow-brand-lg)] hover:-translate-y-1"
           >
-            <a href="#download">{t("downloadApp")}</a>
+            <a href="#waitlist">{t("downloadApp")}</a>
           </Button>
         </motion.div>
       </div>
