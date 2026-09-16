@@ -38,6 +38,20 @@ const nextConfig: NextConfig = {
       // root no longer content-negotiates — everyone lands on /en and
       // switches locale from the picker. Do not make this temporary.
       { source: "/", destination: "/en", permanent: true },
+      // 2026-09-16: the seven untranslated locales were removed (they served
+      // byte-identical English). Google has ~160 URLs indexed under each prefix;
+      // without these rules the middleware sends /ms/x to /en/ms/x (a 404).
+      // Permanent so the duplicates consolidate onto /en.
+      {
+        source: "/:locale(ms|zh-HK|de|th|ko|ja|vi)",
+        destination: "/en",
+        permanent: true,
+      },
+      {
+        source: "/:locale(ms|zh-HK|de|th|ko|ja|vi)/:path*",
+        destination: "/en/:path*",
+        permanent: true,
+      },
     ];
   },
   images: {
