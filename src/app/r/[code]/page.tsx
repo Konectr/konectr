@@ -220,7 +220,7 @@ export default async function ReferralPage({ params }: Props) {
                   Spontaneous & Fun
                 </h3>
                 <p className="text-[#666] text-xs">
-                  Pick your vibe, find who&apos;s free, meet at the spot
+                  Pick the activity, see who&apos;s joining, meet at the spot
                 </p>
               </div>
             </div>

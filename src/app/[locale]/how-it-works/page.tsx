@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     path: "/how-it-works",
     title: "How Konectr Works — Activity-First Matching in KL",
     description:
-      "Pick your vibe, see who's free now, meet at the spot. How Konectr turns intent into real-life meetups in Kuala Lumpur in three steps.",
+      "Pick the activity, see who's joining, meet at the spot. How Konectr turns intent into real-life meetups in Kuala Lumpur in three steps.",
   });
 }
 
@@ -41,7 +41,7 @@ export default async function HowItWorksPage({ params }: Props) {
         text: "Choose from activities like cafes, fitness, outdoors, creative workshops, and more. Set your preferred time slot and group size.",
       },
       {
-        name: "See Who's Free",
+        name: "Find Your Activity Match",
         text: "Browse people nearby who want to do the same thing right now. Konectr matches you based on activity, timing, and location — 10km by default, widen it to 50km if you want more.",
       },
       {

@@ -44,7 +44,7 @@ That's when Konectr was born.
 We're not building another social network. We're building an **anti-social network** – one that gets you off your phone and into real life.
 
 ### Real-Time Connection
-See who's free now, not who was free last Tuesday.
+See who's up for a run now, not who was last Tuesday.
 
 ### Activity-First
 You're not swiping on faces. You're connecting over shared interests.

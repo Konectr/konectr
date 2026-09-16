@@ -26,11 +26,11 @@ const steps = [
   },
   {
     number: "02",
-    title: "See Who's Free",
+    title: "Find Your Activity Match",
     description:
       "No more back-and-forth scheduling. See real people who are available at the same time as you, matched by shared interests and vibe.",
     details: [
-      "Real-time availability – see who's free NOW",
+      "See who's up for the same run, climb or coffee right now",
       "Vibe-based matching for better connections",
       "Small groups — whoever starts the plan picks the size",
     ],
@@ -83,7 +83,7 @@ const faqs = [
   {
     question: "How is this different from Meetup or Bumble BFF?",
     answer:
-      "Konectr focuses on real-time, spontaneous connections. No scheduling weeks ahead or swiping through profiles. See who's free now and meet up today.",
+      "Konectr focuses on real-time, spontaneous connections. No scheduling weeks ahead or swiping through profiles. Post the activity you want and meet people who want the same thing today.",
   },
 ];
 
@@ -168,7 +168,7 @@ export function HowItWorksContent() {
               {
                 icon: "⏰",
                 title: "Real-Time",
-                desc: "See who's free right now, not next week",
+                desc: "Find a badminton partner for tonight, not next week",
               },
               {
                 icon: "🎯",

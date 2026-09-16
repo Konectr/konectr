@@ -29,6 +29,9 @@ export function LanguageSwitcher() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // One locale = nothing to switch. Hooks above run unconditionally.
+  if (locales.length < 2) return null;
+
   const handleLocaleChange = (newLocale: Locale) => {
     router.replace(pathname, { locale: newLocale });
     setIsOpen(false);
@@ -38,13 +41,6 @@ export function LanguageSwitcher() {
   const getFlag = (loc: Locale): string => {
     const flags: Record<Locale, string> = {
       en: "🇬🇧",
-      ms: "🇲🇾",
-      "zh-HK": "🇭🇰",
-      de: "🇩🇪",
-      th: "🇹🇭",
-      ko: "🇰🇷",
-      ja: "🇯🇵",
-      vi: "🇻🇳",
     };
     return flags[loc];
   };
