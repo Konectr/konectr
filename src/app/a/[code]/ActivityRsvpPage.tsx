@@ -235,7 +235,11 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     );
   }
 
-  const ended = isActivityEnded(activity.end_time);
+  // A plan that expired or was cancelled before its start time is over too:
+  // the DB rejects RSVPs on it ("Activity is not active"), so the page must
+  // not keep showing a live roster and an RSVP button (E1D8A507, 2026-09-18).
+  const notHappening = activity.status === 'expired' || activity.status === 'cancelled';
+  const ended = notHappening || isActivityEnded(activity.end_time);
   const deepLink = `konectr://activity/${shareCode}`;
   // Host row: tap tries the app profile, falls back to store/waitlist sign-up.
   const creatorLink = activity.user_id ? getSmartProfileLinkProps(activity.user_id) : null;
@@ -246,8 +250,8 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
   if (ended) {
     return (
       <SimpleStateLayout
-        emoji="⏰"
-        title="This activity has ended"
+        emoji={notHappening ? '🚫' : '⏰'}
+        title={notHappening ? 'This plan is no longer happening' : 'This activity has ended'}
         subtitle={
           platform === 'android'
             ? 'Konectr for Android is in closed testing — leave your email to get access.'
