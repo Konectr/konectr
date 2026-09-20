@@ -155,7 +155,13 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
           </div>
         ) : (
           <div className="space-y-2">
-            {messages.map((m) => (
+            {messages.map((m) => m.message_type === 'system' ? (
+              // Grey centred line, same as the app's system_message_line: the
+              // plan talking to the room (starter withdrew, headcount open/closed).
+              <div key={m.id} className="text-center text-[11px] leading-snug text-[#999] px-4 py-0.5">
+                {m.content}
+              </div>
+            ) : (
               <div
                 key={m.id}
                 className={`flex ${m.is_self ? 'justify-end' : 'justify-start'}`}

@@ -27,6 +27,7 @@ import { countryCodes } from './countryCodes';
 import AndroidWaitlistCTA from './AndroidWaitlistCTA';
 import TestFlightRequestCTA from './TestFlightRequestCTA';
 import WebChatPanel from './WebChatPanel';
+import WebHeadcountCard from './WebHeadcountCard';
 import { resolveVibe } from './redesign/vibes';
 import { activityImage } from './redesign/activity-images';
 import RsvpLayout from './redesign/RsvpLayout';
@@ -372,7 +373,16 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
           onAddToCalendar={handleAddToCalendar}
           onShare={handleShare}
           onWithdraw={() => setCancelPhase('confirming')}
-          chat={<WebChatPanel claimToken={storedRsvp.claimToken} guestName={storedRsvp.guestName} />}
+          chat={
+            <>
+              {/* PF-42: the "still in?" card, pinned above the chat while open. */}
+              <WebHeadcountCard
+                claimToken={storedRsvp.claimToken}
+                onOut={() => setCancelPhase('confirming')}
+              />
+              <WebChatPanel claimToken={storedRsvp.claimToken} guestName={storedRsvp.guestName} />
+            </>
+          }
           belowChat={
             <div className="mt-5 space-y-4">
               {platform === 'android' ? (
