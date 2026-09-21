@@ -172,7 +172,7 @@ export default function WebHeadcountCard({ claimToken, onOut }: Props) {
                 }`}
                 title={p.name}
               >
-                {p.name.charAt(0).toUpperCase()}
+                {((p.name ?? '').trim().charAt(0) || '?').toUpperCase()}
               </span>
             ))}
           </div>

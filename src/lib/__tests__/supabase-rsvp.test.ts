@@ -15,7 +15,7 @@ vi.mock('@supabase/supabase-js', () => ({
 }));
 
 // Import after mocks
-import { createWebRsvp, getActivityRsvpTeaser } from '../supabase';
+import { createWebRsvp, getActivityRsvpTeaser, cleanParticipantNames } from '../supabase';
 import type { WebRsvpResponse, RsvpTeaserResponse } from '../supabase';
 
 describe('createWebRsvp', () => {
@@ -186,5 +186,28 @@ describe('getActivityRsvpTeaser', () => {
     expect(result).toHaveProperty('creator_name');
     expect(result).toHaveProperty('spots_remaining');
     expect(result).toHaveProperty('max_participants');
+  });
+});
+
+describe('cleanParticipantNames', () => {
+  it('drops the null the teaser RPC emits for a member with no display_name', () => {
+    // Exact payload from get_activity_rsvp_teaser on share code E34220B0
+    // (2026-09-21), which took the whole /a/[code] page down with
+    // "TypeError: Cannot read properties of null (reading 'trim')".
+    expect(cleanParticipantNames([null, 'Mai', 'Tania'])).toEqual(['Mai', 'Tania']);
+  });
+
+  it('drops blank and whitespace-only names', () => {
+    expect(cleanParticipantNames(['', '   ', 'Sam'])).toEqual(['Sam']);
+  });
+
+  it('returns [] for null, undefined, and non-arrays', () => {
+    expect(cleanParticipantNames(null)).toEqual([]);
+    expect(cleanParticipantNames(undefined)).toEqual([]);
+    expect(cleanParticipantNames('Mai' as unknown as string[])).toEqual([]);
+  });
+
+  it('passes a clean list through untouched', () => {
+    expect(cleanParticipantNames(['Alex', 'Sam', 'Jordan'])).toEqual(['Alex', 'Sam', 'Jordan']);
   });
 });

@@ -267,21 +267,29 @@ const AVATAR_TINTS = [
   { bg: '#E6F6EC', fg: '#1F8A55' },
 ];
 
-function initial(name: string): string {
-  const c = name.trim().charAt(0).toUpperCase();
+// Defensive by design: this renders during the first paint of the whole page, so
+// a bad value here is not a blank avatar, it is a white screen. `name` is typed
+// `string`, but the teaser RPC has shipped nulls (members with no display_name).
+function initial(name: string | null | undefined): string {
+  const c = (name ?? '').trim().charAt(0).toUpperCase();
   return /[A-Z0-9]/.test(c) ? c : '🙂';
 }
 
 // `total` = participant count (may exceed the named list — web guests aren't all
 // named). Shows up to 2 names + "& N more", up to 4 initial avatars, and — when
 // there are more names than the preview — taps open to reveal the full list.
-export function CrewStack({ names, total, spotsLeft }: { names: string[]; total: number; spotsLeft: number }) {
+export function CrewStack({ names, total, spotsLeft }: { names: (string | null)[]; total: number; spotsLeft: number }) {
   const [open, setOpen] = useState(false);
-  const preview = names.slice(0, 2);
-  const avatars = names.slice(0, 4);
+  // Unnamed participants still count toward `total` ("& 2 more are in") — they
+  // just have no name or initial to show.
+  const named = Array.isArray(names)
+    ? names.filter((n): n is string => typeof n === 'string' && n.trim().length > 0)
+    : [];
+  const preview = named.slice(0, 2);
+  const avatars = named.slice(0, 4);
   const moreCount = Math.max(0, total - preview.length);
   const totalVerb = total === 1 ? 'is in' : 'are in';
-  const expandable = names.length > preview.length;
+  const expandable = named.length > preview.length;
 
   const summary = (
     <>
@@ -348,16 +356,16 @@ export function CrewStack({ names, total, spotsLeft }: { names: string[]; total:
 
       {open && (
         <ul className="mt-3 ml-1 space-y-2">
-          {names.map((name, i) => (
+          {named.map((name, i) => (
             <li key={`${name}-${i}`} className="flex items-center gap-2.5 text-[14px] text-[#1F1F1F]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#FF774D] shrink-0" />
               {name}
             </li>
           ))}
-          {total > names.length && (
+          {total > named.length && (
             <li className="flex items-center gap-2.5 text-[14px] text-[#616161]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#E0DCD8] shrink-0" />
-              + {total - names.length} more
+              + {total - named.length} more
             </li>
           )}
         </ul>
@@ -376,12 +384,13 @@ export function StartedByRow({
   href,
   onClick,
 }: {
-  name: string;
+  name: string | null | undefined;
   photoUrl?: string | null;
   href?: string;
   onClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
 }) {
-  const firstName = name.trim().split(/\s+/)[0] || name;
+  const safeName = (name ?? '').trim();
+  const firstName = safeName.split(/\s+/)[0] || safeName || 'Someone';
   const t = AVATAR_TINTS[0];
 
   const body = (

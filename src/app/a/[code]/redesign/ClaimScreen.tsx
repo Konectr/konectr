@@ -125,7 +125,7 @@ export default function ClaimScreen(p: ClaimScreenProps) {
                 aria-hidden="true"
                 className="w-10 h-10 shrink-0 grid place-items-center rounded-full bg-[#FFF4F1] border-[1.5px] border-[#F3E4DD] text-[#FF774D] font-black text-[15px]"
               >
-                {f.name.trim().charAt(0).toUpperCase()}
+                {((f.name ?? '').trim().charAt(0) || '?').toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[15px] font-bold text-[#1F1F1F] -tracking-[0.01em] truncate">{f.name}</div>

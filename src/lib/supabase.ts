@@ -66,14 +66,16 @@ export interface WebRsvpResponse {
   guest_name: string;
   activity_title: string;
   participant_count: number;
-  participant_names: string[];
+  /** May contain nulls — a participant whose profile has no display_name yet. */
+  participant_names: (string | null)[];
   spots_remaining: number;
   message_count: number;
 }
 
 export interface RsvpTeaserResponse {
   participant_count: number;
-  participant_names: string[];
+  /** May contain nulls — a participant whose profile has no display_name yet. */
+  participant_names: (string | null)[];
   creator_name: string;
   spots_remaining: number;
   max_participants: number;
@@ -311,6 +313,21 @@ export async function getPublicActivitiesByTag(tag: string): Promise<CampaignAct
     console.error('Error fetching public activities by tag:', err);
     return [];
   }
+}
+
+/**
+ * Drops nulls/blanks from a participant-name list.
+ *
+ * `get_activity_rsvp_teaser` builds names with `split_part(display_name, ' ', 1)`,
+ * and an app member who has not finished onboarding has a NULL `display_name` —
+ * `split_part(NULL, …)` is NULL, and `jsonb_agg` keeps it as a JSON null. One such
+ * member in an activity used to take the whole /a/[code] page down with a
+ * TypeError on `name.trim()`. The RPC is fixed too, but the page must never again
+ * depend on the server for this: unnamed people are counted, not named.
+ */
+export function cleanParticipantNames(names: (string | null)[] | null | undefined): string[] {
+  if (!Array.isArray(names)) return [];
+  return names.filter((n): n is string => typeof n === 'string' && n.trim().length > 0);
 }
 
 export async function getActivityRsvpTeaser(

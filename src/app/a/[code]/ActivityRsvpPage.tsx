@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { SharedActivity } from '@/lib/supabase';
-import { getActivityRsvpTeaser, type RsvpTeaserResponse } from '@/lib/supabase';
+import { getActivityRsvpTeaser, cleanParticipantNames, type RsvpTeaserResponse } from '@/lib/supabase';
 import { detectPlatform, getSmartProfileLinkProps, type Platform } from '@/lib/smartLink';
 import { isValidEmail } from '@/lib/utils';
 import { getUtmFields } from '@/lib/attribution';
@@ -164,7 +164,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
         guestName: data.guest_name,
         rsvpAt: new Date().toISOString(),
         participantCount: data.participant_count,
-        participantNames: data.participant_names || [],
+        participantNames: cleanParticipantNames(data.participant_names),
         messageCount: data.message_count || 0,
       };
       storeRsvp(shareCode, rsvpData);
@@ -265,9 +265,12 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     );
   }
 
-  // Prefer fresh teaser data; fall back to stored RSVP snapshot
-  const participantNames = teaserData?.participant_names
-    || storedRsvp?.participantNames || [];
+  // Prefer fresh teaser data; fall back to stored RSVP snapshot.
+  // Sanitised: the RPC can emit nulls for members with no display_name, and an
+  // older localStorage snapshot may already hold one.
+  const participantNames = cleanParticipantNames(
+    teaserData?.participant_names || storedRsvp?.participantNames || []
+  );
   const participantCount = teaserData?.participant_count
     ?? storedRsvp?.participantCount ?? activity.current_participants;
   const spotsRemaining = teaserData?.spots_remaining
