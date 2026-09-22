@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { SharedActivity } from '@/lib/supabase';
-import { getActivityRsvpTeaser, cleanParticipantNames, type RsvpTeaserResponse } from '@/lib/supabase';
+import { getActivityRsvpTeaser, cleanParticipantNames, verifyWebRsvpEmail, type RsvpTeaserResponse } from '@/lib/supabase';
 import { detectPlatform, getSmartProfileLinkProps, type Platform, HAS_ANDROID_STORE } from '@/lib/smartLink';
 import { isValidEmail } from '@/lib/utils';
 import { getUtmFields } from '@/lib/attribution';
@@ -77,6 +77,17 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
   // Detect platform on mount (SSR-safe)
   useEffect(() => {
     setPlatform(detectPlatform());
+  }, []);
+
+  // Email links carry ?v=<token>. Verify client-side (link scanners mostly GET
+  // without running JS), then drop it so a shared URL doesn't carry it along.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const token = url.searchParams.get('v');
+    if (!token) return;
+    verifyWebRsvpEmail(token).catch(() => {});
+    url.searchParams.delete('v');
+    window.history.replaceState(null, '', url.toString());
   }, []);
 
   // Check localStorage on mount + auto-fill + fetch teaser

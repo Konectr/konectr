@@ -136,6 +136,12 @@ export async function cancelWebRsvp(
   return data as CancelWebRsvpResult;
 }
 
+// ?v= on an RSVP email link proves the mailbox owner opened it — the gate that
+// lets the app auto-claim this RSVP when they sign up with that email.
+export async function verifyWebRsvpEmail(token: string): Promise<void> {
+  await supabase.rpc('verify_web_rsvp_email', { p_token: token });
+}
+
 // ============================================================================
 // Public Weekly Leaderboard (KL)
 // ============================================================================
