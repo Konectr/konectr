@@ -7,6 +7,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import SmartDownloadLink from "@/components/SmartDownloadLink";
 import { SHARE_OG_IMAGE } from "@/lib/metadata";
+import { ANDROID_STORE_URL, HAS_ANDROID_STORE } from "@/lib/smartLink";
 import CopyCodeButton from "./CopyCodeButton";
 
 const LOGO_ICON_ORANGE = "/logos/konectr-icon-orange.svg";
@@ -158,8 +159,23 @@ export default async function ReferralPage({ params }: Props) {
                   ) : (
                     "TestFlight beta"
                   )}{" "}
-                  right now. Android: join the waitlist and we&apos;ll email you
-                  the moment it launches.
+                  right now. Android:{" "}
+                  {HAS_ANDROID_STORE ? (
+                    <>
+                      get it on{" "}
+                      <a
+                        href={ANDROID_STORE_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#FF774D] font-medium hover:underline"
+                      >
+                        Google Play
+                      </a>
+                      .
+                    </>
+                  ) : (
+                    "join the waitlist and we’ll email you the moment it launches."
+                  )}
                 </p>
                 {/* Download CTA */}
                 <SmartDownloadLink

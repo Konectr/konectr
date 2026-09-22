@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { SharedActivity } from '@/lib/supabase';
 import { getActivityRsvpTeaser, cleanParticipantNames, type RsvpTeaserResponse } from '@/lib/supabase';
-import { detectPlatform, getSmartProfileLinkProps, type Platform } from '@/lib/smartLink';
+import { detectPlatform, getSmartProfileLinkProps, type Platform, HAS_ANDROID_STORE } from '@/lib/smartLink';
 import { isValidEmail } from '@/lib/utils';
 import { getUtmFields } from '@/lib/attribution';
 import {
@@ -254,7 +254,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
         emoji={notHappening ? '🚫' : '⏰'}
         title={notHappening ? 'This plan is no longer happening' : 'This activity has ended'}
         subtitle={
-          platform === 'android'
+          platform === 'android' && !HAS_ANDROID_STORE
             ? 'Konectr for Android is in closed testing — leave your email to get access.'
             : 'Real plans, real people. Join the Konectr beta to see what’s next.'
         }

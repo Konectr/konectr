@@ -4,6 +4,8 @@
 // FAQ data shared between FAQContent (client) and page.tsx (server JSON-LD)
 // v3 — 58 questions across 9 categories (updated 2026-03-01)
 
+import { HAS_ANDROID_STORE } from "@/lib/smartLink";
+
 export type FAQ = {
   question: string;
   answer: string;
@@ -62,7 +64,9 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How do I create an account?",
-        answer: "Get Konectr from the download link at konectr.app (iPhone today; Android is in closed testing on Google Play — email hello@konectr.app for access). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
+        answer: HAS_ANDROID_STORE
+          ? "Get Konectr from the download link at konectr.app — iPhone via the TestFlight beta, Android on Google Play. Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
+          : "Get Konectr from the download link at konectr.app (iPhone today; Android is in closed testing on Google Play — email hello@konectr.app for access). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
       },
       {
         question: "Do I need to verify my identity?",
@@ -278,11 +282,15 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "When is Android coming?",
-        answer: "Android is in closed testing on Google Play right now — email hello@konectr.app and we'll add you. The public Play listing goes live as soon as Google approves it."
+        answer: HAS_ANDROID_STORE
+          ? "It's here. Konectr is live on Google Play — search for Konectr or use the download link at konectr.app. If the listing hasn't reached your region yet, email hello@konectr.app."
+          : "Android is in closed testing on Google Play right now — email hello@konectr.app and we'll add you. The public Play listing goes live as soon as Google approves it."
       },
       {
         question: "What new features are coming?",
-        answer: "Near-term: Android, more Malaysian cities, venue partnerships. Future: AI recommendations, weather-aware suggestions, group planning tools. What stays: activity-first matching, small groups, badges (not ratings)."
+        answer: HAS_ANDROID_STORE
+          ? "Near-term: more Malaysian cities, venue partnerships. Future: AI recommendations, weather-aware suggestions, group planning tools. What stays: activity-first matching, small groups, badges (not ratings)."
+          : "Near-term: Android, more Malaysian cities, venue partnerships. Future: AI recommendations, weather-aware suggestions, group planning tools. What stays: activity-first matching, small groups, badges (not ratings)."
       }
     ]
   },

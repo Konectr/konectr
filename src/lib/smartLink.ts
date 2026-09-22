@@ -34,14 +34,17 @@ export function detectPlatform(): Platform {
   return 'desktop';
 }
 
-// Env state (verified in Vercel prod 2026-08-30): NEXT_PUBLIC_IOS_STORE_URL and
-// NEXT_PUBLIC_TESTFLIGHT_URL both point at the TestFlight public link.
-// NEXT_PUBLIC_ANDROID_STORE_URL is deliberately UNSET — Play is still a closed
-// track, so the Play listing URL would 404. Android falling back to the waitlist
-// is the correct behaviour until the Play listing is public.
+// Env state: NEXT_PUBLIC_IOS_STORE_URL and NEXT_PUBLIC_TESTFLIGHT_URL both point
+// at the TestFlight public link. NEXT_PUBLIC_ANDROID_STORE_URL is set the day the
+// Play production listing resolves (build 68 approved 2026-09-19; set once the
+// store URL returns 200). Until then every Android surface — this fallback, the
+// Hero CTA, AndroidWaitlistCTA, /r copy — keeps the waitlist behaviour.
+export const ANDROID_STORE_URL = process.env.NEXT_PUBLIC_ANDROID_STORE_URL || '';
+export const HAS_ANDROID_STORE = ANDROID_STORE_URL.length > 0;
+
 function getStoreUrl(platform: Platform): string {
   const ios = process.env.NEXT_PUBLIC_IOS_STORE_URL || WAITLIST_FALLBACK;
-  const android = process.env.NEXT_PUBLIC_ANDROID_STORE_URL || WAITLIST_FALLBACK;
+  const android = ANDROID_STORE_URL || WAITLIST_FALLBACK;
   switch (platform) {
     case 'ios': return ios;
     case 'android': return android;

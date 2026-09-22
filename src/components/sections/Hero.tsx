@@ -10,7 +10,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
-import { detectPlatform, type Platform } from "@/lib/smartLink";
+import { ANDROID_STORE_URL, HAS_ANDROID_STORE, detectPlatform, type Platform } from "@/lib/smartLink";
 
 // TestFlight Public Link — set via Vercel env when the beta link is generated
 // in App Store Connect. Falls back to #waitlist if not configured.
@@ -22,6 +22,11 @@ function trackTestFlightClick(platform: Platform | null) {
   if (typeof window === "undefined") return;
   const ph = (window as unknown as { posthog?: PosthogLike }).posthog;
   ph?.capture("clicked_testflight_cta", { platform: platform ?? "unknown", source: "home_hero" });
+}
+function trackPlayClick() {
+  if (typeof window === "undefined") return;
+  const ph = (window as unknown as { posthog?: PosthogLike }).posthog;
+  ph?.capture("clicked_beta_cta", { mode: "open", platform: "android", source: "home_hero" });
 }
 
 export function Hero() {
@@ -37,13 +42,14 @@ export function Hero() {
   }, []);
 
   // iOS + desktop visitors get the TestFlight CTA once the env var is wired
-  // (desktop users can scan/AirDrop the link to their iPhone). Android routes to
-  // the waitlist since they can't install an iOS beta. null (pre-hydration)
-  // defaults to waitlist too, keeping SSR markup stable / flash-free on Android.
+  // (desktop users can scan/AirDrop the link to their iPhone). Android gets the
+  // Play listing once NEXT_PUBLIC_ANDROID_STORE_URL is set, the waitlist before.
+  // null (pre-hydration) defaults to waitlist, keeping SSR markup stable / flash-free.
   const showTestFlightCta =
     HAS_TESTFLIGHT && (platform === "ios" || platform === "desktop");
+  const showPlayCta = HAS_ANDROID_STORE && platform === "android";
 
-  // Primary CTA differs only by destination/label/tracking between the TestFlight
+  // Primary CTA differs only by destination/label/tracking between the store
   // and waitlist variants — collapse to one button so the styling stays in sync.
   const primaryCta = showTestFlightCta
     ? {
@@ -51,6 +57,13 @@ export function Hero() {
         label: "Open the beta on iPhone",
         id: "cta-testflight" as string | undefined,
         onClick: () => trackTestFlightClick(platform),
+      }
+    : showPlayCta
+    ? {
+        href: ANDROID_STORE_URL,
+        label: "Get it on Google Play",
+        id: "cta-play" as string | undefined,
+        onClick: trackPlayClick as (() => void) | undefined,
       }
     : {
         href: "#waitlist",
