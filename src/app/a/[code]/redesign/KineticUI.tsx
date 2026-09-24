@@ -125,6 +125,10 @@ export function MapsSheet({ venueName, lat, lng, onClose }: {
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    // The WHERE tile (or whatever opened us) gets focus back on close —
+    // without this, unmounting the focused sheet node drops focus to <body>
+    // and the next Tab restarts from the top of the page.
+    const prevFocus = document.activeElement as HTMLElement | null;
 
     const sheet = sheetRef.current;
     const focusables = () =>
@@ -158,6 +162,7 @@ export function MapsSheet({ venueName, lat, lng, onClose }: {
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
+      prevFocus?.focus?.();
     };
   }, []);
 
