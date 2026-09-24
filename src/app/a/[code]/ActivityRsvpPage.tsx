@@ -9,6 +9,7 @@ import { getActivityRsvpTeaser, cleanParticipantNames, verifyWebRsvpEmail, type 
 import { detectPlatform, getSmartProfileLinkProps, type Platform, HAS_ANDROID_STORE } from '@/lib/smartLink';
 import { isValidEmail } from '@/lib/utils';
 import { getUtmFields } from '@/lib/attribution';
+import { copyText } from '@/lib/copyText';
 import {
   formatTime,
   getRelativeDayPhrase,
@@ -198,12 +199,16 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     }
   }, [guestName, email, phoneNumber, countryCode, activity, shareCode]);
 
-  const copyClaimCode = useCallback(() => {
+  const copyClaimCode = useCallback(async () => {
     if (!storedRsvp) return;
-    navigator.clipboard.writeText(storedRsvp.claimToken).then(() => {
+    // copyText carries the execCommand fallback for the in-app browsers
+    // (WhatsApp, Instagram) where these links mostly open — the bare
+    // Clipboard API silently no-ops or rejects there.
+    const ok = await copyText(storedRsvp.claimToken);
+    if (ok) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    }
   }, [storedRsvp]);
 
   const handleCancelRsvp = useCallback(async () => {
@@ -330,7 +335,10 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     if (navigator.share) {
       try { await navigator.share({ title: heading, url }); } catch { /* dismissed */ }
     } else {
-      try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* no clipboard */ }
+      // Copy-the-URL fallback (desktop browsers without navigator.share).
+      // Deliberately does NOT set `copied`: that state labels the claim-code
+      // button, which would flash "Copied!" for a copy of something else.
+      await copyText(url);
     }
   };
 

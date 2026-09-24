@@ -54,6 +54,9 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // A failed history load must not masquerade as an empty chat ("No messages
+  // yet" while messages exist). Polling keeps retrying; this only changes copy.
+  const [loadFailed, setLoadFailed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const loadHistory = useCallback(async () => {
@@ -64,6 +67,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
         body: JSON.stringify({ claim_token: claimToken }),
       });
       if (!res.ok) {
+        setLoadFailed(true);
         setLoading(false);
         return;
       }
@@ -72,8 +76,10 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
       // newest appears at the bottom and auto-scroll lands on latest.
       setMessages(data.messages);
       setMessagesRemaining(data.messages_remaining);
+      setLoadFailed(false);
       setLoading(false);
     } catch {
+      setLoadFailed(true);
       setLoading(false);
     }
   }, [claimToken]);
@@ -149,9 +155,15 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-center">
-            <p className="text-xs text-[#999]">
-              No messages yet. Say hi to {guestName ? 'the group' : 'everyone'}!
-            </p>
+            {loadFailed ? (
+              <p className="text-xs text-[#999]">
+                Couldn&apos;t load messages — retrying&hellip;
+              </p>
+            ) : (
+              <p className="text-xs text-[#999]">
+                No messages yet. Say hi to {guestName ? 'the group' : 'everyone'}!
+              </p>
+            )}
           </div>
         ) : (
           <div className="space-y-2">
