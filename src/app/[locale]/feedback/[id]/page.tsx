@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
     path: `/feedback/${id}`,
     title: "Feedback Details | Konectr",
-    description: "View feedback details, vote, and see community responses.",
+    description: "View feedback details, vote counts, and community responses.",
   });
 }
 

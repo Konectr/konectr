@@ -279,10 +279,12 @@ export default function FeedbackTicketDetailContent({ ticketId }: Props) {
                     </div>
                   )}
 
-                  {/* Vote CTA */}
+                  {/* Feedback CTA. The app has no voting (audit 2026-09-25), so
+                      this no longer promises it; it points to where feedback
+                      is actually sent. */}
                   <div className="mt-6 pt-6 border-t text-center">
                     <p className="text-sm text-muted-foreground mb-3">
-                      Want to vote on this feature?
+                      Got an idea of your own? Send it from the app.
                     </p>
                     <Button asChild variant="outline">
                       <a

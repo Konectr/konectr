@@ -75,7 +75,7 @@ export default function FeedbackBoardContent() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-sm text-muted-foreground/70"
           >
-            Download the Konectr app to submit feedback and vote
+            Download the Konectr app to send us feedback
           </motion.p>
         </div>
       </section>

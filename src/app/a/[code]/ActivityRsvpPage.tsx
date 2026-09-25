@@ -412,7 +412,12 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
               )}
               {/* Claim code — quiet fallback */}
               <div className="text-center">
-                <p className="text-[10px] text-[#BBB] mb-1">Having trouble? Use your claim code</p>
+                {/* The app accepts this code from the first build after 70: at sign-up in
+                    "Have an invite or RSVP code?", or in Settings. Saying where
+                    is the point; a bare code gave guests nowhere to put it. */}
+                <p className="text-[10px] text-[#BBB] mb-1">
+                  Joining in the app? Enter this code at sign-up or in Settings
+                </p>
                 <button
                   onClick={copyClaimCode}
                   className="text-[12px] font-mono text-[#999] hover:text-[#FF774D] transition-colors"
