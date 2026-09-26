@@ -177,7 +177,7 @@ export default function ClaimScreen(p: ClaimScreenProps) {
                 <button
                   type="button"
                   onClick={f.onShowPhone}
-                  className="mt-[10px] inline-flex items-center gap-1.5 text-[12.5px] text-[#6E6E6E] hover:text-[#FF774D] transition-colors"
+                  className="mt-[2px] min-h-11 inline-flex items-center gap-1.5 text-[12.5px] text-[#6E6E6E] hover:text-[#FF774D] transition-colors"
                 >
                   <span className="text-[#8A8580]">+</span> Add phone <span className="text-[#8A8580]">(optional)</span>
                 </button>
@@ -217,7 +217,7 @@ export default function ClaimScreen(p: ClaimScreenProps) {
           <button
             onClick={f.onSubmit}
             disabled={!f.canSubmit || f.isSubmitting}
-            className="w-full mt-4 rounded-[15px] py-[17px] font-[family-name:var(--font-heading)] font-black text-[17px] text-white bg-[#FF774D] hover:bg-[#E6693F] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 transition-all shadow-[0_18px_40px_-12px_rgba(255,119,77,0.38)]"
+            className="w-full mt-4 rounded-[15px] py-[17px] font-[family-name:var(--font-heading)] font-black text-[17px] text-[#1F1F1F] bg-[#FF774D] hover:bg-[#E6693F] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 transition-all shadow-[0_18px_40px_-12px_rgba(255,119,77,0.38)]"
           >
             {f.isSubmitting ? (
               <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin align-middle" />
@@ -232,7 +232,7 @@ export default function ClaimScreen(p: ClaimScreenProps) {
 
           {p.openInAppHref && (
             <div className="text-center mt-[15px] text-[12.5px]">
-              <a className="text-[#FF774D] font-bold" href={p.openInAppHref}>Already on Konectr? Open in the app ↗</a>
+              <a className="inline-flex min-h-11 items-center text-[#C2410C] font-bold" href={p.openInAppHref}>Already on Konectr? Open in the app ↗</a>
             </div>
           )}
         </>

@@ -88,7 +88,7 @@ function Tile({ icon, label, value, valueClass = '', sub, onClick, actionHint }:
         )}
       </div>
       <div className="text-[10.5px] text-[#6E6E6E] font-extrabold tracking-[0.08em] mt-3">{label}</div>
-      <div className={`font-[family-name:var(--font-heading)] font-black text-[20px] -tracking-[0.02em] mt-1 leading-tight truncate ${valueClass}`}>{value}</div>
+      <div className={`font-[family-name:var(--font-heading)] font-black text-[20px] -tracking-[0.02em] mt-1 leading-tight line-clamp-2 break-words ${valueClass}`}>{value}</div>
       {sub && <div className="text-[12.5px] text-[#616161] font-semibold mt-[3px] truncate">{sub}</div>}
     </>
   );
