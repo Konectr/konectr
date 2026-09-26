@@ -4,7 +4,7 @@
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { after } from 'next/server';
-import { getActivityByShareCode, getUpcomingPublicPlans } from '@/lib/supabase';
+import { getActivityByShareCode, getIndexablePlans, getUpcomingPublicPlans, type SharedActivity } from '@/lib/supabase';
 import { SHARE_OG_IMAGE } from '@/lib/metadata';
 import { recordShareLinkView } from '@/lib/shareLinkTelemetry';
 import { formatWeekdayDate, formatTime, isActivityEnded, isLateWithdrawal } from '@/lib/datetime';
@@ -13,6 +13,36 @@ import ActivityRsvpPage from './ActivityRsvpPage';
 type Props = {
   params: Promise<{ code: string }>;
 };
+
+// schema.org Event so search and AI answer engines can cite the plan. Plan
+// facts only: no starter name, photo or coordinates (plans, never people).
+function eventJsonLd(activity: SharedActivity, code: string) {
+  const url = `https://konectr.app/a/${code}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: activity.title,
+    ...(activity.details ? { description: activity.details } : {}),
+    startDate: activity.start_time,
+    endDate: activity.end_time,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: {
+      '@type': 'Place',
+      name: activity.venue_name,
+      address: { '@type': 'PostalAddress', addressCountry: 'MY' },
+    },
+    offers: {
+      '@type': 'Offer',
+      url,
+      price: 0,
+      priceCurrency: 'MYR',
+      availability: 'https://schema.org/InStock',
+    },
+    organizer: { '@type': 'Organization', name: 'Konectr', url: 'https://konectr.app' },
+    url,
+  };
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
@@ -99,13 +129,27 @@ export default async function ActivityPreviewPage({ params }: Props) {
     activity.status === 'cancelled' ||
     isActivityEnded(activity.end_time);
   const upcomingPlans = isOver ? await getUpcomingPublicPlans(code) : [];
+  const indexable =
+    !isOver &&
+    (await getIndexablePlans()).some((p) => p.share_code.toUpperCase() === code.toUpperCase());
 
   return (
-    <ActivityRsvpPage
-      activity={activity}
-      shareCode={code}
-      isLate={isLate}
-      upcomingPlans={upcomingPlans}
-    />
+    <>
+      {indexable && activity && (
+        <script
+          type="application/ld+json"
+          // Title/details are user-written: escape `<` so they can't close the tag.
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(eventJsonLd(activity, code)).replace(/</g, '\\u003c'),
+          }}
+        />
+      )}
+      <ActivityRsvpPage
+        activity={activity}
+        shareCode={code}
+        isLate={isLate}
+        upcomingPlans={upcomingPlans}
+      />
+    </>
   );
 }

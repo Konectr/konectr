@@ -5,6 +5,10 @@ import { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
 import { getAllPosts } from "@/lib/notion";
 import { allPosts as staticPosts } from "@/content/blog";
+import { getIndexablePlans } from "@/lib/supabase";
+
+// Plans come and go hourly; rebuild the sitemap instead of freezing it at deploy.
+export const revalidate = 3600;
 
 const baseUrl = "https://konectr.app";
 
@@ -75,5 +79,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  return [...staticEntries, ...blogEntries, ...standaloneEntries];
+  // Upcoming public plans, so answer engines can cite a joinable /a/ page.
+  const planEntries = (await getIndexablePlans()).map((plan) => ({
+    url: `${baseUrl}/a/${plan.share_code}`,
+    lastModified: now,
+    changeFrequency: "hourly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticEntries, ...blogEntries, ...standaloneEntries, ...planEntries];
 }

@@ -350,6 +350,17 @@ export async function getUpcomingPublicPlans(excludeShareCode: string, limit = 3
 }
 
 /**
+ * The plans we let search and answer engines index: sitemap entries + Event
+ * JSON-LD on /a/[code]. Same public / non-residential / has-spots filter as the
+ * ended-plan suggestions, because get_activity_by_share_code has no is_public
+ * check. ponytail: the RPC caps at 6 soonest plans; raise the cap if supply
+ * ever outgrows it.
+ */
+export function getIndexablePlans(): Promise<UpcomingPlan[]> {
+  return getUpcomingPublicPlans('', 6);
+}
+
+/**
  * Drops nulls/blanks from a participant-name list.
  *
  * `get_activity_rsvp_teaser` builds names with `split_part(display_name, ' ', 1)`,
