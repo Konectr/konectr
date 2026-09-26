@@ -12,12 +12,14 @@ import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "./ui/button";
 import { brand } from "@/config/brand";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 
 export function Navigation() {
   const t = useTranslations("navigation");
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   const { scrollY } = useScroll();
+  const cta = usePrimaryCta("nav");
 
   // Check if on homepage (pathname is "/" after locale is stripped by next-intl)
   const isHomepage = pathname === "/";
@@ -82,14 +84,17 @@ export function Navigation() {
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
           <ThemeToggle />
+          {/* Visible on phones too — it was sm+ only, so mobile had no CTA until the hero. */}
           <Button
             size="sm"
-            className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold hidden sm:inline-flex"
+            className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
             asChild
           >
-            <Link href="/#waitlist">
-              {t("joinWaitlist")}
-            </Link>
+            {cta.href === "#waitlist" ? (
+              <Link href="/#waitlist">{t("joinWaitlist")}</Link>
+            ) : (
+              <a href={cta.href} onClick={cta.onClick}>{cta.label}</a>
+            )}
           </Button>
         </div>
       </div>

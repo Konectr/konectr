@@ -9,6 +9,14 @@ import NextLink from "next/link";
 import { brand } from "@/config/brand";
 import { Heading } from "@/components/shared";
 
+const SOCIAL_NAMES: Record<string, string> = {
+  facebook: "Facebook",
+  instagram: "Instagram",
+  twitter: "X",
+  linkedin: "LinkedIn",
+  tiktok: "TikTok",
+};
+
 export function Footer() {
   const tFooter = useTranslations("footer");
 
@@ -39,7 +47,8 @@ export function Footer() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-[color,background-color,border-color]"
+                  aria-label={`Konectr on ${SOCIAL_NAMES[social.icon]}`}
+                  className="w-11 h-11 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-[color,background-color,border-color]"
                 >
                   <SocialIcon name={social.icon} />
                 </Link>
@@ -129,7 +138,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-8 text-center">
-          <p className="text-white/40 text-sm">
+          <p className="text-white/60 text-sm">
             {tFooter("copyright", { year: new Date().getFullYear() })}
           </p>
         </div>

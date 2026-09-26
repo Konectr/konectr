@@ -46,6 +46,7 @@ export function CTAFooter() {
                   width="100%"
                   frameBorder="0"
                   title="Konectr Waitlist"
+                  loading="lazy"
                   className="bg-white rounded-2xl"
                   style={{ minHeight: '500px' }}
                 />

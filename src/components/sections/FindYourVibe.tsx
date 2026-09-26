@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { staggerContainer, scaleIn, viewportOnce } from "@/lib/animations";
 import { SectionHeader } from "@/components/shared";
 import { Button } from "@/components/ui/button";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 
 // Activity category emojis - synced with mobile app (Dec 2025)
 const vibesMeta = [
@@ -52,6 +53,7 @@ const vibesMeta = [
 
 export function FindYourVibe() {
   const t = useTranslations("home.findYourVibe");
+  const cta = usePrimaryCta("find_your_vibe");
 
   return (
     <section id="vibes" className="py-24 md:py-32 bg-background">
@@ -70,8 +72,7 @@ export function FindYourVibe() {
             <motion.div
               key={vibe.key}
               variants={scaleIn}
-              whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
-              className="group cursor-pointer"
+              className="group"
             >
               <div
                 className={`relative rounded-2xl overflow-hidden ring-2 ring-transparent ${vibe.hoverColor} transition-[box-shadow] duration-300 aspect-[4/5]`}
@@ -127,7 +128,10 @@ export function FindYourVibe() {
             size="lg"
             className="rounded-full text-lg font-bold px-8 py-4 h-auto shadow-[var(--shadow-brand)] hover:shadow-[var(--shadow-brand-lg)] hover:-translate-y-1"
           >
-            <a href="#waitlist">{t("downloadApp")}</a>
+            {/* "Download the app" only where a download exists; the waitlist keeps its own label. */}
+            <a href={cta.href} onClick={cta.onClick}>
+              {cta.href === "#waitlist" ? cta.label : t("downloadApp")}
+            </a>
           </Button>
         </motion.div>
       </div>

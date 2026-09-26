@@ -13,9 +13,7 @@ import { Heading } from "@/components/shared";
 const communityPhotos = [
   "/images/avatars/avatar-1.jpg",
   "/images/avatars/avatar-2.jpg",
-  "/images/avatars/avatar-3.jpg",
-  "/images/avatars/avatar-4.jpg",
-  "/images/avatars/avatar-5.jpg",
+  // avatar-3..5.jpg are solid-black files — they rendered as three black discs.
 ];
 
 export function JoinMovement() {

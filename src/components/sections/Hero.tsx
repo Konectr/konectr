@@ -3,74 +3,18 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
-import { ANDROID_STORE_URL, HAS_ANDROID_STORE, detectPlatform, type Platform } from "@/lib/smartLink";
-
-// TestFlight Public Link — set via Vercel env when the beta link is generated
-// in App Store Connect. Falls back to #waitlist if not configured.
-const TESTFLIGHT_URL = process.env.NEXT_PUBLIC_TESTFLIGHT_URL || "#waitlist";
-const HAS_TESTFLIGHT = TESTFLIGHT_URL !== "#waitlist";
-
-type PosthogLike = { capture: (event: string, props?: Record<string, unknown>) => void };
-function trackTestFlightClick(platform: Platform | null) {
-  if (typeof window === "undefined") return;
-  const ph = (window as unknown as { posthog?: PosthogLike }).posthog;
-  ph?.capture("clicked_testflight_cta", { platform: platform ?? "unknown", source: "home_hero" });
-}
-function trackPlayClick() {
-  if (typeof window === "undefined") return;
-  const ph = (window as unknown as { posthog?: PosthogLike }).posthog;
-  ph?.capture("clicked_beta_cta", { mode: "open", platform: "android", source: "home_hero" });
-}
+import { HAS_TESTFLIGHT, usePrimaryCta } from "@/lib/usePrimaryCta";
 
 export function Hero() {
   const t = useTranslations("home.hero");
-  const [platform, setPlatform] = useState<Platform | null>(null);
-
-  useEffect(() => {
-    // Platform must be detected after hydration (it reads navigator). Doing it in a
-    // lazy initial state would diverge from the SSR-rendered (null) markup and cause
-    // a hydration mismatch, so the post-mount effect is intentional here.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPlatform(detectPlatform());
-  }, []);
-
-  // iOS + desktop visitors get the TestFlight CTA once the env var is wired
-  // (desktop users can scan/AirDrop the link to their iPhone). Android gets the
-  // Play listing once NEXT_PUBLIC_ANDROID_STORE_URL is set, the waitlist before.
-  // null (pre-hydration) defaults to waitlist, keeping SSR markup stable / flash-free.
-  const showTestFlightCta =
-    HAS_TESTFLIGHT && (platform === "ios" || platform === "desktop");
-  const showPlayCta = HAS_ANDROID_STORE && platform === "android";
-
-  // Primary CTA differs only by destination/label/tracking between the store
-  // and waitlist variants — collapse to one button so the styling stays in sync.
-  const primaryCta = showTestFlightCta
-    ? {
-        href: TESTFLIGHT_URL,
-        label: "Open the beta on iPhone",
-        id: "cta-testflight" as string | undefined,
-        onClick: () => trackTestFlightClick(platform),
-      }
-    : showPlayCta
-    ? {
-        href: ANDROID_STORE_URL,
-        label: "Get it on Google Play",
-        id: "cta-play" as string | undefined,
-        onClick: trackPlayClick as (() => void) | undefined,
-      }
-    : {
-        href: "#waitlist",
-        label: t("joinWaitlist"),
-        id: undefined as string | undefined,
-        onClick: undefined as (() => void) | undefined,
-      };
+  // Platform-aware destination shared with the nav + section CTAs.
+  const primaryCta = usePrimaryCta("home_hero");
 
   return (
     <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
@@ -115,7 +59,7 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 pt-28 pb-20 md:pt-24 text-center">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -158,35 +102,27 @@ export function Hero() {
         </motion.div>
 
         {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2 }}
+        {/* Not animated: the h1 is the LCP element and an opacity-0 start delayed it (PSI 2026-09-08: LCP 19.1s). */}
+        <h1
           className="font-heading text-4xl sm:text-5xl md:text-7xl font-black text-white leading-tight mb-6 whitespace-pre-line"
         >
           {t("headline")}
-        </motion.h1>
+        </h1>
 
         {/* Subtext */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+        <p
           className="text-xl md:text-2xl text-white/90 font-medium mb-10 max-w-2xl mx-auto"
         >
           {t("subtext")}
-        </motion.p>
+        </p>
 
         {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+        <div
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Button
             size="lg"
-            className="rounded-full bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
+            className="rounded-full bg-white text-[#1F1F1F] hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-[color,background-color,border-color,box-shadow,opacity,transform] hover:-translate-y-1"
             asChild
           >
             <a id={primaryCta.id} href={primaryCta.href} onClick={primaryCta.onClick}>
@@ -204,7 +140,7 @@ export function Hero() {
               {t("seeHowItWorks")}
             </a>
           </Button>
-        </motion.div>
+        </div>
 
         {/* Venue showcase - Activity pills */}
         <motion.div
@@ -226,8 +162,7 @@ export function Hero() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-              whileHover={{ scale: 1.05, y: -4 }}
-              className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-5 py-3 rounded-2xl cursor-pointer hover:bg-white/25 transition-colors"
+              className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-5 py-3 rounded-2xl"
             >
               <span className="text-2xl">{item.emoji}</span>
               <span className="text-white font-semibold">{t(`activities.${item.labelKey}`)}</span>
@@ -241,7 +176,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}
