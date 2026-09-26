@@ -2,7 +2,7 @@
 // Proprietary and confidential.
 'use client';
 
-import { useState, useEffect, type MouseEvent, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type MouseEvent, type ReactNode } from 'react';
 import type { Vibe } from './vibes';
 
 // Kinetic Brand Design System v3.0 tokens (lib/core/theme/kinetic_colors.dart):
@@ -113,16 +113,58 @@ function Tile({ icon, label, value, valueClass = '', sub, onClick, actionHint }:
 export function MapsSheet({ venueName, lat, lng, onClose }: {
   venueName: string; lat: number | null; lng: number | null; onClose: () => void;
 }) {
+  const sheetRef = useRef<HTMLDivElement>(null);
+  // Latest onClose without re-running the mount-once effect (the parent passes
+  // an inline closure that changes identity on every teaser-poll re-render).
+  const closeRef = useRef(onClose);
+  useEffect(() => { closeRef.current = onClose; });
+
+  // Lock body scroll, close on Escape, and trap focus within the sheet while
+  // open — same dialog contract as WithdrawSheet. Without the trap, Tab walks
+  // the claim form behind the aria-modal overlay.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    // The WHERE tile (or whatever opened us) gets focus back on close —
+    // without this, unmounting the focused sheet node drops focus to <body>
+    // and the next Tab restarts from the top of the page.
+    const prevFocus = document.activeElement as HTMLElement | null;
+
+    const sheet = sheetRef.current;
+    const focusables = () =>
+      Array.from(
+        sheet?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), a[href], input, [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+    focusables()[0]?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeRef.current();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const els = focusables();
+      if (els.length === 0) return;
+      const first = els[0];
+      const last = els[els.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
+      prevFocus?.focus?.();
     };
-  }, [onClose]);
+  }, []);
 
   const hasCoords = lat != null && lng != null;
   const coordQ = hasCoords ? `${lat},${lng}` : '';
@@ -146,6 +188,7 @@ export function MapsSheet({ venueName, lat, lng, onClose }: {
       onClick={onClose}
     >
       <div
+        ref={sheetRef}
         className="w-full sm:max-w-[360px] bg-white rounded-t-[22px] sm:rounded-[22px] p-4 pb-6 shadow-[0_-10px_40px_-12px_rgba(0,0,0,0.3)]"
         onClick={(e) => e.stopPropagation()}
       >
