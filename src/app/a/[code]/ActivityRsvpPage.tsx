@@ -4,7 +4,7 @@
 // Proprietary and confidential.
 
 import { useState, useEffect, useCallback } from 'react';
-import type { SharedActivity } from '@/lib/supabase';
+import type { SharedActivity, UpcomingPlan } from '@/lib/supabase';
 import { getActivityRsvpTeaser, cleanParticipantNames, verifyWebRsvpEmail, type RsvpTeaserResponse } from '@/lib/supabase';
 import { detectPlatform, getSmartProfileLinkProps, type Platform, HAS_ANDROID_STORE } from '@/lib/smartLink';
 import { isValidEmail } from '@/lib/utils';
@@ -56,9 +56,11 @@ interface Props {
   // Inside the 3h cutoff → late withdrawal? Computed server-side (render-pure);
   // the spot is always released, RPC stays authoritative.
   isLate?: boolean;
+  // Next joinable public plans, fetched server-side only for ended / not-found.
+  upcomingPlans?: UpcomingPlan[];
 }
 
-export default function ActivityRsvpPage({ activity, shareCode, isLate = false }: Props) {
+export default function ActivityRsvpPage({ activity, shareCode, isLate = false, upcomingPlans = [] }: Props) {
   const [rsvpState, setRsvpState] = useState<'loading' | 'pre-rsvp' | 'post-rsvp'>('loading');
   const [storedRsvp, setStoredRsvp] = useState<StoredRsvp | null>(null);
   // True only for the session in which the claim was submitted — a refresh
@@ -259,9 +261,14 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
       <SimpleStateLayout
         emoji="🔍"
         title="Activity not found"
-        subtitle="This link may have expired or the activity was removed."
+        subtitle={
+          upcomingPlans.length > 0
+            ? 'This link may have expired. Here’s what’s on this week instead.'
+            : 'This link may have expired or the activity was removed.'
+        }
         platform={platform}
         shareCode={shareCode}
+        plans={upcomingPlans}
       />
     );
   }
@@ -282,15 +289,24 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
     return (
       <SimpleStateLayout
         emoji={notHappening ? '🚫' : '⏰'}
-        title={notHappening ? 'This plan is no longer happening' : 'This activity has ended'}
+        title={
+          notHappening
+            ? 'This plan is no longer happening'
+            : upcomingPlans.length > 0
+              ? 'This one’s over'
+              : 'This activity has ended'
+        }
         subtitle={
-          platform === 'android' && !HAS_ANDROID_STORE
-            ? 'Konectr for Android is in closed testing — leave your email to get access.'
-            : 'Real plans, real people. Join the Konectr beta to see what’s next.'
+          upcomingPlans.length > 0
+            ? 'Here’s what’s on this week. Grab a spot.'
+            : platform === 'android' && !HAS_ANDROID_STORE
+              ? 'Konectr for Android is in closed testing — leave your email to get access.'
+              : 'Real plans, real people. Join the Konectr beta to see what’s next.'
         }
         platform={platform}
         shareCode={shareCode}
         activityId={activity.id}
+        plans={upcomingPlans}
       />
     );
   }

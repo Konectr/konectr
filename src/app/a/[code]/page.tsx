@@ -4,10 +4,10 @@
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { after } from 'next/server';
-import { getActivityByShareCode } from '@/lib/supabase';
+import { getActivityByShareCode, getUpcomingPublicPlans } from '@/lib/supabase';
 import { SHARE_OG_IMAGE } from '@/lib/metadata';
 import { recordShareLinkView } from '@/lib/shareLinkTelemetry';
-import { formatWeekdayDate, formatTime, isLateWithdrawal } from '@/lib/datetime';
+import { formatWeekdayDate, formatTime, isActivityEnded, isLateWithdrawal } from '@/lib/datetime';
 import ActivityRsvpPage from './ActivityRsvpPage';
 
 type Props = {
@@ -91,5 +91,21 @@ export default async function ActivityPreviewPage({ params }: Props) {
   // the client render pure; the cancel_web_rsvp RPC is the authoritative gate).
   const isLate = activity ? isLateWithdrawal(activity.start_time) : false;
 
-  return <ActivityRsvpPage activity={activity} shareCode={code} isLate={isLate} />;
+  // Dead-end states (23% of human views landed on an ended plan, 30d to
+  // 2026-09-23) get the next few joinable plans. Same "over" rule as the client.
+  const isOver =
+    !activity ||
+    activity.status === 'expired' ||
+    activity.status === 'cancelled' ||
+    isActivityEnded(activity.end_time);
+  const upcomingPlans = isOver ? await getUpcomingPublicPlans(code) : [];
+
+  return (
+    <ActivityRsvpPage
+      activity={activity}
+      shareCode={code}
+      isLate={isLate}
+      upcomingPlans={upcomingPlans}
+    />
+  );
 }

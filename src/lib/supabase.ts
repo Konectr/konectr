@@ -321,6 +321,34 @@ export async function getPublicActivitiesByTag(tag: string): Promise<CampaignAct
   }
 }
 
+export interface UpcomingPlan {
+  share_code: string;
+  title: string;
+  venue_name: string | null;
+  venue_type: string | null;
+  start_time: string;
+  spots_available: number;
+}
+
+/**
+ * Up to `limit` joinable public plans in the next 14 days, for the ended /
+ * not-found states of /a/[code]. Returns [] on any error — including before the
+ * get_public_upcoming_plans migration is applied — so the page degrades to the
+ * plain ended card instead of breaking.
+ */
+export async function getUpcomingPublicPlans(excludeShareCode: string, limit = 3): Promise<UpcomingPlan[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_public_upcoming_plans', {
+      p_exclude_share_code: excludeShareCode,
+      p_limit: limit,
+    });
+    if (error) return [];
+    return (data as UpcomingPlan[]) ?? [];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Drops nulls/blanks from a participant-name list.
  *
