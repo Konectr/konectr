@@ -325,7 +325,7 @@ describe('POST /api/rsvp', () => {
       const body = await res.json();
 
       expect(res.status).toBe(500);
-      expect(body.error).toBe('Connection refused');
+      expect(body.error).toBe('Something went wrong. Please try again.'); // internal error text is never echoed
     });
   });
 

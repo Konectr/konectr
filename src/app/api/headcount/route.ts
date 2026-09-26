@@ -10,6 +10,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// 500s never echo Postgres/Notion error text to the browser; the detail is logged server-side.
+const GENERIC_500 = "Something went wrong. Please try again.";
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -45,6 +48,6 @@ export async function POST(request: NextRequest) {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Internal error';
     console.error('headcount route error:', message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: GENERIC_500 }, { status: 500 });
   }
 }

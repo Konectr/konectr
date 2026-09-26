@@ -161,6 +161,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.error('RSVP creation error:', message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }

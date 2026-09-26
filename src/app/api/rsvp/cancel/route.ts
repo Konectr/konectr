@@ -9,6 +9,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cancelWebRsvp } from '@/lib/supabase';
 import { createHash } from 'crypto';
 
+// 500s never echo Postgres/Notion error text to the browser; the detail is logged server-side.
+const GENERIC_500 = "Something went wrong. Please try again.";
+
 function hashIp(ip: string): string {
   return createHash('sha256').update(ip).digest('hex');
 }
@@ -52,6 +55,6 @@ export async function POST(request: NextRequest) {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to cancel RSVP';
     console.error('RSVP cancel error:', message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: GENERIC_500 }, { status: 500 });
   }
 }

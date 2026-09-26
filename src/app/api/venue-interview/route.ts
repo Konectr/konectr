@@ -4,6 +4,9 @@
 import { Client } from "@notionhq/client";
 import { NextRequest, NextResponse } from "next/server";
 
+// 500s never echo Postgres/Notion error text to the browser; the detail is logged server-side.
+const GENERIC_500 = "Something went wrong. Please try again.";
+
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const DATABASE_ID = process.env.NOTION_INTERVIEW_DATABASE_ID || "";
 
@@ -141,8 +144,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, id: page.id });
   } catch (err: unknown) {
     console.error("Notion API error:", err);
-    const message =
-      err instanceof Error ? err.message : "Failed to create interview record";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: GENERIC_500 }, { status: 500 });
   }
 }

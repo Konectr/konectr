@@ -19,7 +19,22 @@ const ALT_HOSTS = [
   "www.konectrcircle.com",
 ];
 
+// Baseline hardening headers (none were set before 2026-09-23; Vercel already sends HSTS without includeSubDomains — left alone because not every konectr.app subdomain is known to be HTTPS-only).
+// No full CSP on purpose: Tally, PostHog, reCAPTCHA and the consent-gated ad
+// pixels each need their own allowlist — add one only with a report-only trial.
+// frame-ancestors allows tally.so because the waitlist form may land on /thanks
+// inside its own iframe on completion.
+const SECURITY_HEADERS = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Content-Security-Policy", value: "frame-ancestors 'self' https://tally.so" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+];
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [{ source: "/:path*", headers: SECURITY_HEADERS }];
+  },
   async redirects() {
     return [
       ...ALT_HOSTS.map((host) => ({

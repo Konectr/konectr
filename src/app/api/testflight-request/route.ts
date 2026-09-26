@@ -7,6 +7,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// 500s never echo Postgres/Notion error text to the browser; the detail is logged server-side.
+const GENERIC_500 = "Something went wrong. Please try again.";
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 // utm values come from the client's sessionStorage capture — untrusted input,
@@ -41,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('TestFlight request RPC error:', error.message);
       return NextResponse.json(
-        { error: error.message || 'Failed to register' },
+        { error: GENERIC_500 },
         { status: 500 }
       );
     }
@@ -50,6 +53,6 @@ export async function POST(request: NextRequest) {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to register';
     console.error('TestFlight request error:', message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: GENERIC_500 }, { status: 500 });
   }
 }
