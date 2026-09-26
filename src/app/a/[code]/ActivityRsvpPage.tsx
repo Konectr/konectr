@@ -36,6 +36,18 @@ import ClaimScreen from './redesign/ClaimScreen';
 import ChattingScreen from './redesign/ChattingScreen';
 import WithdrawSheet from './redesign/WithdrawSheet';
 import SimpleStateLayout from './redesign/SimpleStateLayout';
+
+// The web RSVP is this site's main conversion; before 2026-09-26 it fired no
+// PostHog event, so share-link → RSVP could not be funnelled. No PII: the share
+// code identifies the plan, not the guest.
+function trackRsvp(event: string, props: Record<string, unknown>) {
+  try {
+    (window as unknown as { posthog?: { capture?: (e: string, p?: Record<string, unknown>) => void } })
+      .posthog?.capture?.(event, props);
+  } catch {
+    // tracking must never block the RSVP
+  }
+}
 import OpenInApp from './redesign/OpenInApp';
 
 interface Props {
@@ -167,9 +179,11 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false }
       const data = await res.json();
 
       if (!res.ok) {
+        trackRsvp('web_rsvp_failed', { share_code: shareCode, status: res.status });
         setError(data.error || 'Something went wrong');
         return;
       }
+      trackRsvp('web_rsvp_submitted', { share_code: shareCode, has_phone: !!phoneNumber.trim() });
 
       const rsvpData: StoredRsvp = {
         claimToken: data.claim_token,
