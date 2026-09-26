@@ -100,7 +100,7 @@ export default function CopyCodeButton({ code }: Props) {
       <button
         type="button"
         onClick={handleCopy}
-        className="flex items-center justify-center gap-2 w-full bg-[#FF774D] text-white py-3 px-4 rounded-lg text-sm font-bold hover:bg-[#E5693F] active:scale-[0.98] transition-colors"
+        className="flex items-center justify-center gap-2 w-full bg-[#FF774D] text-[#1F1F1F] py-3 px-4 rounded-lg text-sm font-bold hover:bg-[#E5693F] active:scale-[0.98] transition-colors"
       >
         {state === 'copied' ? (
           <Check className="w-4 h-4" aria-hidden />

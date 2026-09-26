@@ -179,7 +179,7 @@ function ChatPreview({ guestName, crewNames }: { guestName: string; crewNames: s
           placeholder="Write a message…"
           className="flex-1 px-3 py-[10px] rounded-[11px] border border-[#E5E5E5] text-[14px] text-[#1F1F1F] placeholder:text-[#B5B0AB] bg-white"
         />
-        <button className="px-4 rounded-[11px] bg-[#FF774D] text-white text-[14px] font-bold">Send</button>
+        <button className="px-4 rounded-[11px] bg-[#FF774D] text-[#1F1F1F] text-[14px] font-bold">Send</button>
       </div>
     </div>
   );
@@ -188,7 +188,7 @@ function ChatPreview({ guestName, crewNames }: { guestName: string; crewNames: s
 function Bubble({ self, name, web, children }: { self: boolean; name: string; web?: boolean; children: ReactNode }) {
   return (
     <div className={`flex ${self ? 'justify-end' : 'justify-start'}`}>
-      <div className={`max-w-[78%] px-[13px] py-2 rounded-[14px] ${self ? 'bg-[#FF774D] text-white' : 'bg-white border border-[#F0F0F0] text-[#1F1F1F]'}`}>
+      <div className={`max-w-[78%] px-[13px] py-2 rounded-[14px] ${self ? 'bg-[#FF774D] text-[#1F1F1F]' : 'bg-white border border-[#F0F0F0] text-[#1F1F1F]'}`}>
         {!self && (
           <div className="flex items-center gap-1.5 mb-0.5">
             <span className="text-[10.5px] font-bold text-[#FF774D]">{name}</span>

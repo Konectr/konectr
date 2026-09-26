@@ -99,7 +99,7 @@ export default function ThanksContent({ rid }: { rid?: string }) {
         </p>
         <Link
           href="/"
-          className="inline-block px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:opacity-90"
+          className="inline-block px-6 py-3 rounded-xl bg-primary text-[#1F1F1F] font-semibold hover:opacity-90"
         >
           Back to konectr.app
         </Link>

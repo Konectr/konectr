@@ -62,7 +62,7 @@ export default function CookiesContent() {
           </p>
           <button
             onClick={resetChoice}
-            className="px-5 py-2.5 rounded-xl bg-primary text-white font-semibold hover:opacity-90"
+            className="px-5 py-2.5 rounded-xl bg-primary text-[#1F1F1F] font-semibold hover:opacity-90"
           >
             Reset cookie choice
           </button>

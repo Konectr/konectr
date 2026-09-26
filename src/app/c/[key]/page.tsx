@@ -86,7 +86,7 @@ export default async function CampaignHubPage({ params }: Params) {
           <SmartDownloadLink
             code={campaign.campaign_key}
             kind="campaign"
-            className="mt-6 block w-full rounded-xl bg-[#FF774D] px-6 py-3.5 text-center font-semibold text-white transition-colors hover:bg-[#e5663f]"
+            className="mt-6 block w-full rounded-xl bg-[#FF774D] px-6 py-3.5 text-center font-semibold text-[#1F1F1F] transition-colors hover:bg-[#e5663f]"
           >
             Open in Konectr
           </SmartDownloadLink>

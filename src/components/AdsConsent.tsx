@@ -125,7 +125,7 @@ export default function AdsConsent() {
               </button>
               <button
                 onClick={() => choose('granted')}
-                className="px-4 py-2 text-sm rounded-lg bg-[#FF774D] text-white font-semibold hover:bg-[#FF774D]/90"
+                className="px-4 py-2 text-sm rounded-lg bg-[#FF774D] text-[#1F1F1F] font-semibold hover:bg-[#FF774D]/90"
               >
                 OK
               </button>

@@ -181,7 +181,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
                 <div
                   className={`max-w-[75%] px-3 py-2 rounded-xl ${
                     m.is_self
-                      ? 'bg-[#FF774D] text-white'
+                      ? 'bg-[#FF774D] text-[#1F1F1F]'
                       : 'bg-white border border-[#F0F0F0] text-[#1F1F1F]'
                   }`}
                 >
@@ -251,7 +251,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
             <button
               onClick={handleSend}
               disabled={!input.trim() || sending}
-              className="px-4 py-2 bg-[#FF774D] text-white rounded-lg text-sm font-bold hover:bg-[#E5693F] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-[#FF774D] text-[#1F1F1F] rounded-lg text-sm font-bold hover:bg-[#E5693F] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {sending ? '...' : 'Send'}
             </button>

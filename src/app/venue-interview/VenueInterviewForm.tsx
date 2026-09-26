@@ -100,7 +100,7 @@ export default function VenueInterviewForm() {
               setStep(0);
               setSubmitted(false);
             }}
-            className="w-full py-3 rounded-xl bg-[#FF774D] text-white font-semibold text-base active:scale-[0.98] transition-transform"
+            className="w-full py-3 rounded-xl bg-[#FF774D] text-[#1F1F1F] font-semibold text-base active:scale-[0.98] transition-transform"
           >
             Start New Interview
           </button>
@@ -176,14 +176,14 @@ export default function VenueInterviewForm() {
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            className="flex-1 py-3 rounded-xl bg-[#FF774D] text-white font-semibold text-base disabled:opacity-50 active:scale-[0.98] transition-transform"
+            className="flex-1 py-3 rounded-xl bg-[#FF774D] text-[#1F1F1F] font-semibold text-base disabled:opacity-50 active:scale-[0.98] transition-transform"
           >
             {submitting ? "Saving..." : "Save Interview"}
           </button>
         ) : (
           <button
             onClick={() => setStep((s) => s + 1)}
-            className="flex-1 py-3 rounded-xl bg-[#FF774D] text-white font-semibold text-base active:scale-[0.98] transition-transform"
+            className="flex-1 py-3 rounded-xl bg-[#FF774D] text-[#1F1F1F] font-semibold text-base active:scale-[0.98] transition-transform"
           >
             Next
           </button>
@@ -358,7 +358,7 @@ function FieldRenderer({
                   onClick={() => onToggle(option)}
                   className={`px-3.5 py-2 rounded-full border text-sm font-medium transition-colors ${
                     selected
-                      ? "bg-[#FF774D] text-white border-[#FF774D]"
+                      ? "bg-[#FF774D] text-[#1F1F1F] border-[#FF774D]"
                       : "bg-white text-gray-600 border-gray-200 active:bg-gray-50"
                   }`}
                 >

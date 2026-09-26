@@ -63,7 +63,7 @@ function Step({
   return (
     <li className="flex items-start gap-3">
       <span
-        className="flex-shrink-0 w-6 h-6 mt-px rounded-full bg-[#FF774D] text-white text-xs font-bold flex items-center justify-center"
+        className="flex-shrink-0 w-6 h-6 mt-px rounded-full bg-[#FF774D] text-[#1F1F1F] text-xs font-bold flex items-center justify-center"
         aria-hidden
       >
         {number}

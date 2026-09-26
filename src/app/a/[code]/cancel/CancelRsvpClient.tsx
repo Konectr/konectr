@@ -123,7 +123,7 @@ export default function CancelRsvpClient({
             <button
               onClick={submit}
               disabled={phase === 'working'}
-              className="w-full py-3 rounded-xl bg-[#FF774D] text-white text-sm font-semibold hover:bg-[#F0663C] disabled:opacity-60 transition-colors"
+              className="w-full py-3 rounded-xl bg-[#FF774D] text-[#1F1F1F] text-sm font-semibold hover:bg-[#F0663C] disabled:opacity-60 transition-colors"
             >
               {phase === 'working'
                 ? 'Cancelling…'

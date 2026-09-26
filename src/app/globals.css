@@ -84,7 +84,8 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0 0);
   --primary: oklch(0.72 0.18 35); /* Sunset Orange */
-  --primary-foreground: oklch(1 0 0);
+  /* Graphite, not white: white on Sunset Orange is 2.63:1 (fails WCAG AA); graphite is 6.28:1. */
+  --primary-foreground: oklch(0.2178 0 0);
   --secondary: oklch(0.86 0.16 85); /* Solar Amber */
   --secondary-foreground: oklch(0.2 0 0);
   --muted: oklch(0.97 0 0);
@@ -118,7 +119,8 @@
   --popover: oklch(0.18 0 0);
   --popover-foreground: oklch(0.98 0 0);
   --primary: oklch(0.72 0.18 35); /* Keep Sunset Orange */
-  --primary-foreground: oklch(1 0 0);
+  /* Graphite, not white: white on Sunset Orange is 2.63:1 (fails WCAG AA); graphite is 6.28:1. */
+  --primary-foreground: oklch(0.2178 0 0);
   --secondary: oklch(0.86 0.16 85); /* Keep Solar Amber */
   --secondary-foreground: oklch(0.13 0 0);
   --muted: oklch(0.22 0 0);

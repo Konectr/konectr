@@ -169,7 +169,7 @@ function Withdrawn({ isLate, onDone }: { isLate: boolean; onDone: () => void }) 
       </p>
       <button
         onClick={onDone}
-        className="w-full mt-5 rounded-[15px] py-[16px] font-[family-name:var(--font-heading)] font-black text-[16px] text-white bg-[#FF774D] hover:bg-[#E6693F] active:scale-[0.98] transition-all"
+        className="w-full mt-5 rounded-[15px] py-[16px] font-[family-name:var(--font-heading)] font-black text-[16px] text-[#1F1F1F] bg-[#FF774D] hover:bg-[#E6693F] active:scale-[0.98] transition-all"
       >
         Back to the plan
       </button>
@@ -189,7 +189,7 @@ function ErrorState({ message, onRetry, onDismiss }: { message?: string | null; 
       </p>
       <button
         onClick={onRetry}
-        className="w-full mt-5 rounded-[15px] py-[16px] font-[family-name:var(--font-heading)] font-black text-[16px] text-white bg-[#FF774D] hover:bg-[#E6693F] active:scale-[0.98] transition-all"
+        className="w-full mt-5 rounded-[15px] py-[16px] font-[family-name:var(--font-heading)] font-black text-[16px] text-[#1F1F1F] bg-[#FF774D] hover:bg-[#E6693F] active:scale-[0.98] transition-all"
       >
         Try again
       </button>

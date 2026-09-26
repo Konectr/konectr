@@ -148,7 +148,7 @@ function GlanceSheet({
 
           <a
             href={TESTFLIGHT_URL}
-            className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-[#FF774D] hover:bg-[#E6693F] text-white font-[family-name:var(--font-heading)] font-extrabold text-[15px] px-6 py-[14px] rounded-full transition-colors"
+            className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-[#FF774D] hover:bg-[#E6693F] text-[#1F1F1F] font-[family-name:var(--font-heading)] font-extrabold text-[15px] px-6 py-[14px] rounded-full transition-colors"
           >
             Get Konectr
           </a>
@@ -277,7 +277,7 @@ export default function LeaderboardBoard({
               </p>
               <a
                 href={TESTFLIGHT_URL}
-                className="mt-5 inline-flex items-center justify-center bg-[#FF774D] hover:bg-[#E6693F] text-white font-[family-name:var(--font-heading)] font-extrabold text-[14px] px-6 py-3 rounded-full transition-colors"
+                className="mt-5 inline-flex items-center justify-center bg-[#FF774D] hover:bg-[#E6693F] text-[#1F1F1F] font-[family-name:var(--font-heading)] font-extrabold text-[14px] px-6 py-3 rounded-full transition-colors"
               >
                 Get Konectr
               </a>
