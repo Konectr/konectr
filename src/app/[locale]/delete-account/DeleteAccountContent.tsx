@@ -22,9 +22,9 @@ const inApp = [
 ];
 
 const removed = [
-  "Your name, photos, bio, interests, languages and date of birth",
+  "Your name, photos, bio, interests, languages, prompt answers and date of birth",
   "Your email address and phone number",
-  "Your profile and cover photos, deleted from our storage",
+  "Your profile, cover and pinned photos, deleted from our storage",
   "Your availability, moods, streaks, stats and badges",
   "Your Circle, circle lists and pending circle requests",
   "Your notification settings and notification tokens",

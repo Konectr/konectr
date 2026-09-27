@@ -54,6 +54,7 @@ const sections = [
           "Gender (for profile display)",
           "Profile photo (optional)",
           "Bio, interests, and languages spoken",
+          "Pinned photos (up to three, with optional captions) and answers to profile prompts (optional)",
           "What you say you are looking for (optional — it stays until you change or clear it)",
           "Photos you send in a plan's chat, and any of those you or another attendee choose to publish to This Week",
         ],
@@ -122,6 +123,11 @@ const sections = [
         subtitle: "This Week wall (photos you choose to publish)",
         content:
           "A photo sent in a plan's group chat can be shared to This Week by anyone who was on that plan. A published photo is visible to every signed-in Konectr member in your city for 14 days, shown only as the venue, the kind of plan and the group size — never a name, a date, or a link to the plan. Any attendee of that plan can take it down at any time, we review every photo before it goes live, location data is stripped from the image, and the file is deleted from our storage when the 14 days end. Only share photos that everyone in them is comfortable with.",
+      },
+      {
+        subtitle: "Pinned photos and prompts",
+        content:
+          "Your pinned photos and prompt answers are shown to people in your Circle, your matches and anyone who has joined a plan with you, never to someone you have blocked. If you turn on \"Show photos & prompts to everyone\" in Privacy Settings, every signed-in Konectr member can see them. Location data is stripped from pinned photos. If we hide one after a report, it stays visible to you with a notice. You can remove them at any time, and they are deleted with your account.",
       },
       {
         subtitle: "We NEVER Share",
