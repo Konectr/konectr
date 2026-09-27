@@ -27,7 +27,7 @@ export interface WebHeadcount {
 }
 
 interface Props {
-  claimToken: string;
+  guestToken: string;
   onOut: () => void;
 }
 
@@ -60,7 +60,7 @@ export function headcountClock(h: WebHeadcount, now = new Date()): string {
   return `Closes in ${Math.floor(mins / 60)}h ${mins % 60}m`;
 }
 
-export default function WebHeadcountCard({ claimToken, onOut }: Props) {
+export default function WebHeadcountCard({ guestToken, onOut }: Props) {
   const [hc, setHc] = useState<WebHeadcount | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +71,7 @@ export default function WebHeadcountCard({ claimToken, onOut }: Props) {
       const res = await fetch('/api/headcount', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claim_token: claimToken }),
+        body: JSON.stringify({ guest_token: guestToken }),
       });
       if (!res.ok) return;
       const data = await res.json();
@@ -79,7 +79,7 @@ export default function WebHeadcountCard({ claimToken, onOut }: Props) {
     } catch {
       /* keep the last card; a poll miss is not an error worth showing */
     }
-  }, [claimToken]);
+  }, [guestToken]);
 
   useEffect(() => {
     load();
@@ -96,7 +96,7 @@ export default function WebHeadcountCard({ claimToken, onOut }: Props) {
       const res = await fetch('/api/headcount', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claim_token: claimToken, in: isIn }),
+        body: JSON.stringify({ guest_token: guestToken, in: isIn }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Could not record your answer'); load(); return; }
@@ -106,7 +106,7 @@ export default function WebHeadcountCard({ claimToken, onOut }: Props) {
     } finally {
       setBusy(false);
     }
-  }, [busy, claimToken, load]);
+  }, [busy, guestToken, load]);
 
   if (!hc || hc.state === 'closed') return null;
 

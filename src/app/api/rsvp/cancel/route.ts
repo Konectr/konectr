@@ -19,18 +19,21 @@ function hashIp(ip: string): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { claim_token } = body;
+    const { guest_token } = body;
 
-    if (!claim_token || typeof claim_token !== 'string' || !claim_token.trim()) {
-      return NextResponse.json({ error: 'Claim code is required' }, { status: 400 });
+    if (!guest_token || typeof guest_token !== 'string' || !guest_token.trim()) {
+      return NextResponse.json(
+        { error: 'Use the Cancel link in your RSVP email, or cancel in the Konectr app.' },
+        { status: 400 }
+      );
     }
 
-    // Hash IP for the RPC's per-IP rate limit (weak 4-char token → abuse guard).
+    // Hash IP for the RPC's per-IP rate limit (defence in depth; the guest token is 32 bytes).
     const forwardedFor = request.headers.get('x-forwarded-for');
     const ip = forwardedFor?.split(',')[0]?.trim() || 'unknown';
     const ipHash = hashIp(ip);
 
-    const result = await cancelWebRsvp(claim_token.trim(), ipHash);
+    const result = await cancelWebRsvp(guest_token.trim(), ipHash);
 
     switch (result.outcome) {
       case 'rate_limited':

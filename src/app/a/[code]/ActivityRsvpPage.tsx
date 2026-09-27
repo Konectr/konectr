@@ -96,14 +96,23 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
 
   // Email links carry ?v=<token>. Verify client-side (link scanners mostly GET
   // without running JS), then drop it so a shared URL doesn't carry it along.
+  // ?g= is the guest's web credential (audit C2); it re-links an RSVP stored
+  // before 2026-09-27, which only had the short code. Runs before the
+  // localStorage effect below, so that effect reads the upgraded record.
   useEffect(() => {
     const url = new URL(window.location.href);
     const token = url.searchParams.get('v');
-    if (!token) return;
-    verifyWebRsvpEmail(token).catch(() => {});
+    const guestToken = url.searchParams.get('g');
+    if (!token && !guestToken) return;
+    if (token) verifyWebRsvpEmail(token).catch(() => {});
+    if (guestToken) {
+      const existing = getStoredRsvp(shareCode);
+      if (existing) storeRsvp(shareCode, { ...existing, guestToken });
+    }
     url.searchParams.delete('v');
+    url.searchParams.delete('g');
     window.history.replaceState(null, '', url.toString());
-  }, []);
+  }, [shareCode]);
 
   // Check localStorage on mount + auto-fill + fetch teaser
   useEffect(() => {
@@ -189,6 +198,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
 
       const rsvpData: StoredRsvp = {
         claimToken: data.claim_token,
+        guestToken: data.guest_token,
         guestName: data.guest_name,
         rsvpAt: new Date().toISOString(),
         participantCount: data.participant_count,
@@ -229,13 +239,18 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
 
   const handleCancelRsvp = useCallback(async () => {
     if (!storedRsvp) return;
+    if (!storedRsvp.guestToken) {
+      setCancelError('Use the Cancel link in your RSVP email, or cancel in the Konectr app.');
+      setCancelPhase('error');
+      return;
+    }
     setCancelPhase('working');
     setCancelError(null);
     try {
       const res = await fetch('/api/rsvp/cancel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claim_token: storedRsvp.claimToken }),
+        body: JSON.stringify({ guest_token: storedRsvp.guestToken }),
       });
       const data = await res.json();
 
@@ -428,11 +443,19 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
           chat={
             <>
               {/* PF-42: the "still in?" card, pinned above the chat while open. */}
-              <WebHeadcountCard
-                claimToken={storedRsvp.claimToken}
-                onOut={() => setCancelPhase('confirming')}
-              />
-              <WebChatPanel claimToken={storedRsvp.claimToken} guestName={storedRsvp.guestName} />
+              {storedRsvp.guestToken ? (
+                <>
+                  <WebHeadcountCard
+                    guestToken={storedRsvp.guestToken}
+                    onOut={() => setCancelPhase('confirming')}
+                  />
+                  <WebChatPanel guestToken={storedRsvp.guestToken} guestName={storedRsvp.guestName} />
+                </>
+              ) : (
+                <p className="text-[12.5px] text-[#8A6A5A] text-center py-4">
+                  Open the link in your latest RSVP email to see the group chat.
+                </p>
+              )}
             </>
           }
           belowChat={

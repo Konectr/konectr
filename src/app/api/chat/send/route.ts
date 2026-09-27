@@ -1,7 +1,7 @@
 // © Konectr 2026. All rights reserved.
 // API route: POST /api/chat/send
 // Guest web chat message → Activity Chatter group.
-// Auth model: possession of claim_token = auth (same as RSVP flow).
+// Auth model: possession of the guest token (web_rsvp_guest_tokens, audit C2) = auth (same as RSVP flow).
 // 5-message cap enforced server-side in post_web_chat_message RPC.
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -13,11 +13,11 @@ const GENERIC_500 = "Something went wrong. Please try again.";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { claim_token, content } = body;
+    const { guest_token, content } = body;
 
-    if (!claim_token || typeof claim_token !== 'string') {
+    if (!guest_token || typeof guest_token !== 'string') {
       return NextResponse.json(
-        { error: 'claim_token is required' },
+        { error: 'guest_token is required' },
         { status: 400 }
       );
     }
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data, error } = await supabase.rpc('post_web_chat_message', {
-      p_claim_token: claim_token,
+      p_claim_token: guest_token,
       p_content: trimmed,
     });
 

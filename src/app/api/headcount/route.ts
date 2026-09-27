@@ -1,10 +1,10 @@
 // © Konectr 2026. All rights reserved.
 // API route: POST /api/headcount
 // The PF-42 "still in?" card for a web guest. Auth model: possession of the
-// claim_token = auth (same as chat history / send).
-//   { claim_token }              → the card, or null when no headcount exists
-//   { claim_token, in: true }    → "I'm in"
-//   { claim_token, in: false }   → clear my answer ("Change")
+// guest token (web_rsvp_guest_tokens, audit C2) = auth (same as chat history / send).
+//   { guest_token }              → the card, or null when no headcount exists
+//   { guest_token, in: true }    → "I'm in"
+//   { guest_token, in: false }   → clear my answer ("Change")
 // "I'm out" is the existing cancel-RSVP flow, never this route.
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -16,15 +16,15 @@ const GENERIC_500 = "Something went wrong. Please try again.";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { claim_token, in: isIn } = body as { claim_token?: unknown; in?: unknown };
+    const { guest_token, in: isIn } = body as { guest_token?: unknown; in?: unknown };
 
-    if (!claim_token || typeof claim_token !== 'string' || !claim_token.trim()) {
-      return NextResponse.json({ error: 'claim_token is required' }, { status: 400 });
+    if (!guest_token || typeof guest_token !== 'string' || !guest_token.trim()) {
+      return NextResponse.json({ error: 'guest_token is required' }, { status: 400 });
     }
 
     if (typeof isIn === 'boolean') {
       const { data, error } = await supabase.rpc('answer_headcount_web', {
-        p_claim_token: claim_token.trim(),
+        p_claim_token: guest_token.trim(),
         p_in: isIn,
       });
       if (error) {
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data, error } = await supabase.rpc('get_web_headcount', {
-      p_claim_token: claim_token.trim(),
+      p_claim_token: guest_token.trim(),
     });
     if (error) {
       console.error('get_web_headcount error:', error.message);

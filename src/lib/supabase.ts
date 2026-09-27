@@ -62,7 +62,10 @@ export async function getActivityByShareCode(shareCode: string): Promise<SharedA
 // ============================================================================
 
 export interface WebRsvpResponse {
+  /** Short RSVP-XXXX code: only redeemable in the app by a signed-in user. */
   claim_token: string;
+  /** 32-byte web credential for chat, headcount and cancel (audit C2). */
+  guest_token: string;
   guest_name: string;
   activity_title: string;
   participant_count: number;
@@ -121,11 +124,11 @@ export interface CancelWebRsvpResult {
 }
 
 export async function cancelWebRsvp(
-  claimToken: string,
+  guestToken: string,
   ipHash: string | null
 ): Promise<CancelWebRsvpResult> {
   const { data, error } = await supabase.rpc('cancel_web_rsvp', {
-    p_claim_token: claimToken,
+    p_claim_token: guestToken,
     p_ip_hash: ipHash,
   });
 

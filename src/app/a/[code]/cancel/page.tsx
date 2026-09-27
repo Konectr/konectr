@@ -1,5 +1,5 @@
 // © Konectr 2026. All rights reserved.
-// Standalone cancel page: /a/[code]/cancel?token=RSVP-XXXX
+// Standalone cancel page: /a/[code]/cancel?token=<guest token> (audit C2: never the RSVP-XXXX code)
 // For guests arriving from an email "can't make it?" link (no localStorage / different device).
 
 import { Metadata } from 'next';

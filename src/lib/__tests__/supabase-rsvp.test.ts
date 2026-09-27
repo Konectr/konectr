@@ -26,6 +26,7 @@ describe('createWebRsvp', () => {
   it('returns WebRsvpResponse on success', async () => {
     const mockData: WebRsvpResponse = {
       claim_token: 'RSVP-X1Y2',
+      guest_token: 'a'.repeat(64),
       guest_name: 'Alex',
       activity_title: 'Coffee Chat',
       participant_count: 3,

@@ -13,11 +13,11 @@ const GENERIC_500 = "Something went wrong. Please try again.";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { claim_token, limit } = body;
+    const { guest_token, limit } = body;
 
-    if (!claim_token || typeof claim_token !== 'string') {
+    if (!guest_token || typeof guest_token !== 'string') {
       return NextResponse.json(
-        { error: 'claim_token is required' },
+        { error: 'guest_token is required' },
         { status: 400 }
       );
     }
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const fetchLimit = typeof limit === 'number' && limit > 0 && limit <= 200 ? limit : 50;
 
     const { data, error } = await supabase.rpc('get_web_chat_messages', {
-      p_claim_token: claim_token,
+      p_claim_token: guest_token,
       p_limit: fetchLimit,
     });
 

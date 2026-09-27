@@ -11,6 +11,9 @@ const USER_PROFILE_KEY = 'konectr_user_profile';
 
 export interface StoredRsvp {
   claimToken: string;
+  // Web credential (audit C2, 2026-09-27). Absent on RSVPs stored before then —
+  // those guests re-link by opening any RSVP email (?g=).
+  guestToken?: string;
   guestName: string;
   rsvpAt: string;
   participantCount: number;

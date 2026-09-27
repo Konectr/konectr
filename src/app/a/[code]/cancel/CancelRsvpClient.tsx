@@ -16,6 +16,9 @@ interface Props {
 
 type Phase = 'idle' | 'working' | 'withdrawn' | 'error';
 
+const LINK_EXPIRED =
+  'This cancel link has expired. Use the Cancel link in your latest RSVP email, or cancel in the Konectr app.';
+
 export default function CancelRsvpClient({
   shareCode,
   token,
@@ -23,7 +26,6 @@ export default function CancelRsvpClient({
   venueName,
   isLate,
 }: Props) {
-  const [code, setCode] = useState(token ?? '');
   const [phase, setPhase] = useState<Phase>('idle');
   const [error, setError] = useState<string | null>(null);
   // Whether the completed withdrawal was late (RPC-authoritative; falls back to
@@ -31,9 +33,11 @@ export default function CancelRsvpClient({
   const [wasLate, setWasLate] = useState(isLate);
 
   async function submit() {
-    const t = code.trim();
-    if (!t) {
-      setError('Enter your claim code (looks like RSVP-XXXX).');
+    // Only the guest token from an RSVP email can cancel on the web (audit C2).
+    // Links sent before 2026-09-27 carry the old RSVP-XXXX code instead.
+    const t = (token ?? '').trim();
+    if (!t || t.toUpperCase().startsWith('RSVP-')) {
+      setError(LINK_EXPIRED);
       setPhase('error');
       return;
     }
@@ -43,7 +47,7 @@ export default function CancelRsvpClient({
       const res = await fetch('/api/rsvp/cancel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claim_token: t }),
+        body: JSON.stringify({ guest_token: t }),
       });
       const data = await res.json();
       if (data?.outcome === 'withdrawn' || data?.outcome === 'already_withdrawn') {
@@ -99,24 +103,6 @@ export default function CancelRsvpClient({
               </p>
             )}
 
-            {!token && (
-              <div className="mb-3">
-                <label
-                  htmlFor="claim"
-                  className="block text-[11px] uppercase tracking-wider font-semibold text-[#999] mb-1.5"
-                >
-                  Your claim code
-                </label>
-                <input
-                  id="claim"
-                  type="text"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="RSVP-XXXX"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-[#E5E5E5] text-[15px] font-mono text-[#1F1F1F] placeholder:text-[#BBB] focus:outline-none focus:border-[#FF774D] focus:ring-4 focus:ring-[#FF774D]/10 transition-all"
-                />
-              </div>
-            )}
 
             {phase === 'error' && <p className="text-[11px] text-[#C0392B] mb-2">{error}</p>}
 

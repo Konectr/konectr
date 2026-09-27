@@ -29,7 +29,7 @@ interface HistoryResponse {
 }
 
 interface Props {
-  claimToken: string;
+  guestToken: string;
   guestName: string;
 }
 
@@ -47,7 +47,7 @@ function formatTime(iso: string): string {
   }
 }
 
-export default function WebChatPanel({ claimToken, guestName }: Props) {
+export default function WebChatPanel({ guestToken, guestName }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [messagesRemaining, setMessagesRemaining] = useState<number>(10);
   const [input, setInput] = useState('');
@@ -64,7 +64,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
       const res = await fetch('/api/chat/history', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claim_token: claimToken }),
+        body: JSON.stringify({ guest_token: guestToken }),
       });
       if (!res.ok) {
         setLoadFailed(true);
@@ -82,7 +82,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
       setLoadFailed(true);
       setLoading(false);
     }
-  }, [claimToken]);
+  }, [guestToken]);
 
   // Initial load + poll
   useEffect(() => {
@@ -109,7 +109,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
       const res = await fetch('/api/chat/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claim_token: claimToken, content }),
+        body: JSON.stringify({ guest_token: guestToken, content }),
       });
       const data = await res.json();
 
@@ -127,7 +127,7 @@ export default function WebChatPanel({ claimToken, guestName }: Props) {
     } finally {
       setSending(false);
     }
-  }, [input, sending, claimToken, messagesRemaining, loadHistory]);
+  }, [input, sending, guestToken, messagesRemaining, loadHistory]);
 
   const capReached = messagesRemaining <= 0;
 
