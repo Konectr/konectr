@@ -397,3 +397,57 @@ export async function getActivityRsvpTeaser(
     return null;
   }
 }
+
+// ── Konectr Hub public page (/h/[slug], PF-45) ──────────────────────────────
+// Shape of get_public_hub_page(p_slug) — anon-granted, hubs_009. Only returns
+// venues that are is_konectr_hub AND is_active; approved photos only; public
+// plans in the next 14 days as counts + share_code (no user ids, no names).
+export interface PublicHubAnnouncement {
+  id: string;
+  body: string;
+  expires_at: string;
+  image_url: string | null;
+}
+
+export interface PublicHubPlan {
+  title: string;
+  category: string | null;
+  start_time: string;
+  share_code: string | null;
+  headcount: number | null; // only when ≥3 people
+  headcount_label: 'small_group' | null;
+  spots_left: number | null;
+}
+
+export interface PublicHubPage {
+  name: string;
+  slug: string;
+  city: string | null;
+  category: string | null;
+  description: string | null;
+  photo_url: string | null;
+  photos: string[];
+  hours: { day_of_week: number; open_time: string | null; close_time: string | null; is_closed: boolean }[];
+  links: { instagram: string | null; tiktok: string | null; maps: string | null };
+  good_for: string[];
+  announcements: { this_week: PublicHubAnnouncement[]; this_month: PublicHubAnnouncement[] };
+  perks: { min_group: number; title: string }[];
+  plans: PublicHubPlan[];
+}
+
+/**
+ * null = not a live Hub. The RPC raises P0002 `hub_not_found` for an unknown,
+ * inactive or non-Hub slug, which PostgREST returns as HTTP 500 — that is a
+ * 404, not an outage. Any OTHER error throws, so ISR keeps serving the last
+ * good page instead of caching a false 404 during a Supabase blip.
+ */
+export async function getPublicHubPage(slug: string): Promise<PublicHubPage | null> {
+  // Same slug rule as the RPC; saves a round-trip for junk paths.
+  if (slug.length > 80 || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) return null;
+  const { data, error } = await supabase.rpc('get_public_hub_page', { p_slug: slug });
+  if (error) {
+    if (error.code === 'P0002') return null;
+    throw new Error(`get_public_hub_page failed: ${error.code} ${error.message}`);
+  }
+  return (data as PublicHubPage) ?? null;
+}
