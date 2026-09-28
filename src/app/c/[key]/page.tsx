@@ -16,6 +16,12 @@ import SmartDownloadLink from '@/components/SmartDownloadLink';
 // ISR: campaign config is slow-moving; hubs are shared in chat bursts.
 export const revalidate = 300;
 
+// Empty list = each key cached on first request. Without it Next renders this
+// route per request and `revalidate` is ignored (ƒ in the build table).
+export function generateStaticParams() {
+  return [];
+}
+
 type Params = { params: Promise<{ key: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {

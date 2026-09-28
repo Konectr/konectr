@@ -451,3 +451,13 @@ export async function getPublicHubPage(slug: string): Promise<PublicHubPage | nu
   }
   return (data as PublicHubPage) ?? null;
 }
+
+/** Live Hub slugs for sitemap.xml (get_public_hub_slugs, anon). Empty on error: a sitemap never fails the build. */
+export async function getPublicHubSlugs(): Promise<{ slug: string; updated_at: string }[]> {
+  const { data, error } = await supabase.rpc('get_public_hub_slugs');
+  if (error) {
+    console.error('get_public_hub_slugs failed', error.code, error.message);
+    return [];
+  }
+  return data ?? [];
+}

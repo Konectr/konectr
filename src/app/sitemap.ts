@@ -5,7 +5,7 @@ import { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
 import { getAllPosts } from "@/lib/notion";
 import { allPosts as staticPosts } from "@/content/blog";
-import { getIndexablePlans } from "@/lib/supabase";
+import { getIndexablePlans, getPublicHubSlugs } from "@/lib/supabase";
 
 // Plans come and go hourly; rebuild the sitemap instead of freezing it at deploy.
 export const revalidate = 3600;
@@ -87,5 +87,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticEntries, ...blogEntries, ...standaloneEntries, ...planEntries];
+  // Live Konectr Hubs (PF-45); same predicate as the /h/ page, so no 404s.
+  const hubEntries = (await getPublicHubSlugs()).map((hub) => ({
+    url: `${baseUrl}/h/${hub.slug}`,
+    lastModified: new Date(hub.updated_at),
+    changeFrequency: "daily" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticEntries, ...blogEntries, ...standaloneEntries, ...planEntries, ...hubEntries];
 }
