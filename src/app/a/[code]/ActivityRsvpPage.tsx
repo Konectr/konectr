@@ -316,7 +316,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
             ? 'Here’s what’s on this week. Grab a spot.'
             : platform === 'android' && !HAS_ANDROID_STORE
               ? 'Konectr for Android is in closed testing — leave your email to get access.'
-              : 'Real plans, real people. Join the Konectr beta to see what’s next.'
+              : 'Real plans, real people. Get Konectr on the App Store to see what’s next.'
         }
         platform={platform}
         shareCode={shareCode}

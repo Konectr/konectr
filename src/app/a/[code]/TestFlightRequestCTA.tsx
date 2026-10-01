@@ -121,7 +121,7 @@ export default function TestFlightRequestCTA({ shareCode, activityId, variant = 
         className={buttonClasses}
       >
         <AppleIcon />
-        Konectr (beta)
+        Get Konectr on iPhone
       </a>
     );
   }
@@ -139,7 +139,7 @@ export default function TestFlightRequestCTA({ shareCode, activityId, variant = 
         className={buttonClasses}
       >
         <AppleIcon />
-        Konectr (beta)
+        Get Konectr on iPhone
       </button>
 
       {open && (
