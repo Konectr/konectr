@@ -26,6 +26,28 @@ worked on later from the Mac Mini: `git pull origin main`, then open this file.
 
 ## Open
 
+### BUG-004 · Create Activity "Here for..." text box looks dated / clunky -- modernise
+- **Logged:** 2026-10-01
+- **Area:** mobile iOS (seen 3:57 PM)
+- **Page / screen:** Create Activity sheet -> "Here for..." section -> "Here for... (optional)" multiline field
+- **Evidence:** Screenshot from founder (field contains pasted venue + Google Maps link: "📍 LYL International Karting Circuit, Monkeys Canopy, Cheras -- https://share.google/YQwRvdq0BUaPOdTrb...", text selected)
+- **What's wrong (from screenshot):**
+  - Old-style Material **outlined box with floating label** ("Here for... (optional)") that duplicates the section header "Here for..." directly above it -- redundant.
+  - **Text is oversized** for a description field and wraps into a narrow column (text area doesn't use the field's full width; large empty gutter on the right).
+  - **Selection highlight renders as chunky salmon blocks per line with gaps** between lines (line-height / selection colour) -- looks broken.
+  - **Pasted URL shown raw** and breaks mid-word across lines ("https:// / share.google/ / YQwRvdq0...") -- no link detection/shortening.
+  - Field content gets **cut off behind the iOS edit menu + "I'm in" button**; the field doesn't auto-grow/scroll nicely with the keyboard up.
+- **Expected / requested (founder):** Make it feel like a **modern 2026 text box** (iMessage / Notion / Linear / Threads composer style):
+  - No outlined border + floating label; soft filled background (subtle rounded rect), placeholder text that disappears on type, single header (drop the duplicate label).
+  - Body-size text (~16pt), comfortable line height, full-width wrapping, auto-grow to a max height then internal scroll.
+  - Native-looking selection colour (brand tint at low opacity, continuous, no gaps).
+  - Detect links: show pasted URLs as a compact chip/preview (e.g. "📍 Google Maps" link) instead of raw wrapped text; never break mid-word awkwardly.
+  - Optional character counter subtly in the corner if there's a limit.
+  - Field and CTA stay visible above the keyboard (proper keyboard insets / scroll-into-view).
+  - Apply the same text-field style consistently across the app (other Create Activity inputs, chat, profile edit) -- consider a shared input component.
+- **Severity:** P2 (UX/design polish)
+- **Status:** Open
+
 ### BUG-003 · "You're in!" post-create dialog: clipped text, no cancel/close -- redesign minimal
 - **Logged:** 2026-10-01
 - **Area:** mobile iOS (seen 4:04 PM)
