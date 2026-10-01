@@ -252,7 +252,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Can I pause my account?",
-        answer: "Yes. Settings, Account, Pause Account. Your profile hides, you won't get notifications, but all data is preserved. Unpause anytime."
+        answer: "There's no pause option. If you want to step away, turn Konectr's notifications off in your phone's settings. If you want to leave for good, go to Profile, Settings, Delete Account: your profile disappears straight away and you have 30 days to change your mind."
       },
       {
         question: "How do I delete my account?",
