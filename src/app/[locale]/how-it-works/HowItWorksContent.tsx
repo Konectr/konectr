@@ -79,7 +79,7 @@ const faqs = [
   {
     question: "What cities is Konectr available in?",
     answer:
-      "We're launching in select cities first and expanding quickly. Join the waitlist to be notified when we launch in your area!",
+      "Kuala Lumpur, for now. We're building one strong community before we expand to more Malaysian cities. Follow @konectrapp for news on new cities.",
   },
   {
     question: "How is this different from Meetup or Bumble BFF?",
