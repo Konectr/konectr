@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 
 const values = [
   {
@@ -37,6 +38,7 @@ const values = [
 
 
 export function AboutContent() {
+  const cta = usePrimaryCta("about_cta");
   return (
     <main className="bg-background">
       {/* Story Section */}
@@ -191,7 +193,11 @@ export function AboutContent() {
               className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8"
               asChild
             >
-              <Link href="/#cta">Get Early Access</Link>
+              {cta.href === "#waitlist" ? (
+                <Link href="/#waitlist">Get the app</Link>
+              ) : (
+                <a href={cta.href} onClick={cta.onClick}>Get the app</a>
+              )}
             </Button>
           </motion.div>
         </div>

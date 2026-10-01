@@ -9,6 +9,7 @@ import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 // next-intl Link prefixes the active locale, so internal links resolve
 // directly instead of bouncing through the middleware's 307 locale redirect.
 import { Link } from "@/i18n/navigation";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 import type { BlogPostFull } from "@/lib/notion";
 import type { BlogPost } from "@/components/blog/BlogCard";
 import { BlogCard } from "@/components/blog/BlogCard";
@@ -19,6 +20,7 @@ interface BlogPostContentProps {
 }
 
 export function BlogPostContent({ post, allPosts }: BlogPostContentProps) {
+  const cta = usePrimaryCta("blog_post_cta");
   // Get related posts (same category, excluding current)
   const relatedPosts = allPosts
     .filter((p) => p.category === post.category && p.slug !== post.slug)
@@ -252,7 +254,11 @@ export function BlogPostContent({ post, allPosts }: BlogPostContentProps) {
                 className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
                 asChild
               >
-                <Link href="/#waitlist">Join Waitlist</Link>
+                {cta.href === "#waitlist" ? (
+                  <Link href="/#waitlist">Get the app</Link>
+                ) : (
+                  <a href={cta.href} onClick={cta.onClick}>Get the app</a>
+                )}
               </Button>
             </div>
           </motion.div>
@@ -311,7 +317,11 @@ export function BlogPostContent({ post, allPosts }: BlogPostContentProps) {
               className="rounded-full bg-white text-primary hover:bg-white/90 font-bold px-8"
               asChild
             >
-              <Link href="/#cta">Get Early Access</Link>
+              {cta.href === "#waitlist" ? (
+                <Link href="/#waitlist">Get the app</Link>
+              ) : (
+                <a href={cta.href} onClick={cta.onClick}>Get the app</a>
+              )}
             </Button>
           </motion.div>
         </div>

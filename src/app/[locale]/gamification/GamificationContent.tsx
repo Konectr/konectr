@@ -6,6 +6,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 import {
   tiers,
   badgeCategories,
@@ -16,6 +17,7 @@ import {
 } from "./gamification-data";
 
 export function GamificationContent() {
+  const cta = usePrimaryCta("gamification_cta");
   return (
     <main className="bg-background">
       {/* Section 1: Tier Progression */}
@@ -402,7 +404,11 @@ export function GamificationContent() {
                 className="rounded-full bg-white text-primary hover:bg-white/90 font-bold px-8"
                 asChild
               >
-                <Link href="/#waitlist">Get Early Access</Link>
+                {cta.href === "#waitlist" ? (
+                  <Link href="/#waitlist">Get the app</Link>
+                ) : (
+                  <a href={cta.href} onClick={cta.onClick}>Get the app</a>
+                )}
               </Button>
               <Button
                 size="lg"
