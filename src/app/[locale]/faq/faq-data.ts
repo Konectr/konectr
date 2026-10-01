@@ -196,7 +196,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "How do I know what to expect at an activity?",
-        answer: "Every listing shows: venue with photos, group size, duration, vibe tags (Chill, Active, Social, Creative, Focus, Adventure), what's included, what to bring, and notes from whoever started it."
+        answer: "Every listing shows the venue, the time, the group size, the vibe (Chill, Active, Social, Creative, Focus, Adventure) and a note from whoever started it."
       },
       {
         question: "What's the etiquette for a first activity?",
