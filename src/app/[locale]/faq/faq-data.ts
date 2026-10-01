@@ -192,7 +192,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What if no one talks to me?",
-        answer: "There's no host — everyone's a peer, so nobody's a guest. Small groups mean you can't get lost. Many activities have icebreakers built in. If it still happens, let us know—we'll follow up."
+        answer: "Everyone on a plan is an equal member, so nobody's a guest. Small groups mean you can't get lost, and the activity itself gives you something to talk about. If it still happens, let us know and we'll follow up."
       },
       {
         question: "How do I know what to expect at an activity?",
