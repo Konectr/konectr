@@ -7,9 +7,11 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ANDROID_STORE_URL, HAS_ANDROID_STORE, detectPlatform, type Platform } from "@/lib/smartLink";
 
-// TestFlight Public Link — set via Vercel env. Falls back to #waitlist if not configured.
-const TESTFLIGHT_URL = process.env.NEXT_PUBLIC_TESTFLIGHT_URL || "#waitlist";
-export const HAS_TESTFLIGHT = TESTFLIGHT_URL !== "#waitlist";
+// iOS App Store link, set via Vercel env. NEXT_PUBLIC_TESTFLIGHT_URL is the legacy
+// fallback; with neither set, every CTA falls back to #waitlist.
+const IOS_STORE_URL =
+  process.env.NEXT_PUBLIC_IOS_STORE_URL || process.env.NEXT_PUBLIC_TESTFLIGHT_URL || "#waitlist";
+export const HAS_IOS_STORE = IOS_STORE_URL !== "#waitlist";
 
 type PosthogLike = { capture: (event: string, props?: Record<string, unknown>) => void };
 function capture(event: string, props: Record<string, unknown>) {
@@ -25,9 +27,9 @@ export type PrimaryCta = {
 
 /**
  * The one "get Konectr" destination for every marketing CTA (hero, nav, section
- * buttons). iOS + desktop → TestFlight once the env var is wired (desktop can
- * AirDrop/scan it); Android → Play once NEXT_PUBLIC_ANDROID_STORE_URL is set;
- * everything else → the waitlist. Before 2026-09-23 only the hero did this and
+ * buttons). iOS, desktop and the server render (platform not yet known) → the
+ * App Store once the env var is wired; Android → Play once
+ * NEXT_PUBLIC_ANDROID_STORE_URL is set; everything else → the Android notify list. Before 2026-09-23 only the hero did this and
  * the nav + "Download the app" sent iPhone visitors to the waitlist of a live beta.
  *
  * `source` tags the click event so hero vs nav vs section clicks are separable.
@@ -38,15 +40,15 @@ export function usePrimaryCta(source: string): PrimaryCta {
 
   useEffect(() => {
     // Platform reads navigator, so it must be detected after hydration; a lazy
-    // initial state would diverge from the SSR (null → waitlist) markup.
+    // initial state would diverge from the SSR (null → App Store) markup.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPlatform(detectPlatform());
   }, []);
 
-  if (HAS_TESTFLIGHT && (platform === "ios" || platform === "desktop")) {
+  if (HAS_IOS_STORE && (platform === null || platform === "ios" || platform === "desktop")) {
     return {
-      href: TESTFLIGHT_URL,
-      label: "Open the beta on iPhone",
+      href: IOS_STORE_URL,
+      label: "Download on the App Store",
       id: source === "home_hero" ? "cta-testflight" : undefined,
       onClick: () => capture("clicked_testflight_cta", { platform, source }),
     };

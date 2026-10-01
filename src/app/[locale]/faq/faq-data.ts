@@ -38,7 +38,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Is Konectr available in my city?",
-        answer: "Konectr is currently available in Kuala Lumpur, Malaysia only. We're starting with one city to build a strong, active community before expanding. Next cities planned: more Malaysian cities, then Southeast Asia. Join the waitlist at konectr.app for expansion updates."
+        answer: "Konectr is currently available in Kuala Lumpur, Malaysia only. We're starting with one city to build a strong, active community before expanding. Next cities planned: more Malaysian cities, then Southeast Asia. Follow @konectrapp for news on new cities."
       },
       {
         question: "How is Konectr different from Meetup or Bumble BFF?",
@@ -65,7 +65,7 @@ export const faqCategories: FAQCategory[] = [
       {
         question: "How do I create an account?",
         answer: HAS_ANDROID_STORE
-          ? "Get Konectr from the download link at konectr.app — iPhone via the TestFlight beta, Android on Google Play. Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
+          ? "Get Konectr from the App Store on iPhone or Google Play on Android (links at konectr.app). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
           : "Get Konectr from the download link at konectr.app (iPhone today; Android is in closed testing on Google Play — email hello@konectr.app for access). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
       },
       {
@@ -124,7 +124,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What happens after an activity ends?",
-        answer: "Confirm you met and everyone who turned up earns XP and progress toward badges. You can leave kudos and add people to your Circle. The group chat stays open for 48 hours after the end time, so you can sort out photos and next plans, then it closes."
+        answer: "Confirm you met and everyone who turned up earns XP and progress toward badges. You can add people you got on with to your Circle. The group chat stays open for 48 hours after the end time, so you can sort out photos and next plans, then it closes."
       },
       {
         question: "What can I do in the activity chat?",
@@ -188,15 +188,15 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Can I bring a friend?",
-        answer: "Some activities allow +1s (look for the tag). Most don't because small group dynamics work best with solo joiners. Better option: have your friend download Konectr and join activities themselves."
+        answer: "Everyone joins a plan on their own spot. Want to bring a friend? Have them download Konectr and join the same plan themselves."
       },
       {
         question: "What if no one talks to me?",
-        answer: "There's no host — everyone's a peer, so nobody's a guest. Small groups mean you can't get lost. Many activities have icebreakers built in. If it still happens, let us know—we'll follow up."
+        answer: "Everyone on a plan is an equal member, so nobody's a guest. Small groups mean you can't get lost, and the activity itself gives you something to talk about. If it still happens, let us know and we'll follow up."
       },
       {
         question: "How do I know what to expect at an activity?",
-        answer: "Every listing shows: venue with photos, group size, duration, vibe tags (Chill, Active, Social, Creative, Focus, Adventure), what's included, what to bring, and notes from whoever started it."
+        answer: "Every listing shows the venue, the time, the group size, the vibe (Chill, Active, Social, Creative, Focus, Adventure) and a note from whoever started it."
       },
       {
         question: "What's the etiquette for a first activity?",
@@ -226,7 +226,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What badges can I earn?",
-        answer: "Badges come in families: Social (people you meet), Explorer (venues you visit), Activity (plans you turn up to), Streak (consistency), Starter (activities you start), plus Geography and Special one-offs. Try all six vibes to grow your collection."
+        answer: "Badges come in families: Social (people you meet), Explorer (venues you visit), Activity (plans you turn up to), Streak (consistency), Starter (activities you start), plus Special one-offs like KL Champion and Early Adopter. Try all six vibes to grow your collection."
       },
       {
         question: "How do badges help me?",
@@ -252,7 +252,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Can I pause my account?",
-        answer: "Yes. Settings, Account, Pause Account. Your profile hides, you won't get notifications, but all data is preserved. Unpause anytime."
+        answer: "There's no pause option. If you want to step away, turn Konectr's notifications off in your phone's settings. If you want to leave for good, go to Profile, Settings, Delete Account: your profile disappears straight away and you have 30 days to change your mind."
       },
       {
         question: "How do I delete my account?",

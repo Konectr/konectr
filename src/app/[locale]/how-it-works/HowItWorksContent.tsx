@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 import { useState } from "react";
 
 const steps = [
@@ -78,7 +79,7 @@ const faqs = [
   {
     question: "What cities is Konectr available in?",
     answer:
-      "We're launching in select cities first and expanding quickly. Join the waitlist to be notified when we launch in your area!",
+      "Kuala Lumpur, for now. We're building one strong community before we expand to more Malaysian cities. Follow @konectrapp for news on new cities.",
   },
   {
     question: "How is this different from Meetup or Bumble BFF?",
@@ -88,6 +89,7 @@ const faqs = [
 ];
 
 export function HowItWorksContent() {
+  const cta = usePrimaryCta("how_it_works_cta");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -283,7 +285,7 @@ export function HowItWorksContent() {
               Ready to find your people?
             </h2>
             <p className="text-white/90 text-lg mb-8 max-w-xl mx-auto">
-              Join thousands of others who are ditching the scroll for real
+              Join the people in KL who are ditching the scroll for real
               adventures.
             </p>
             <Button
@@ -291,7 +293,11 @@ export function HowItWorksContent() {
               className="rounded-full bg-white text-primary hover:bg-white/90 font-bold px-8"
               asChild
             >
-              <Link href="/#cta">Get Early Access</Link>
+              {cta.href === "#waitlist" ? (
+                <Link href="/#waitlist">Get the app</Link>
+              ) : (
+                <a href={cta.href} onClick={cta.onClick}>Get the app</a>
+              )}
             </Button>
           </motion.div>
         </div>

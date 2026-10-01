@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     path: "/faq",
     title: "Konectr FAQs — Pricing, Safety, How Matching Works",
     description:
-      "Answers to common questions about Konectr: is it free, how matching works, safety measures, and how to join the KL beta.",
+      "Answers to common questions about Konectr: is it free, how matching works, safety measures, and how to get the app in KL.",
   });
 }
 

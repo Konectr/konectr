@@ -5,7 +5,7 @@
     "safety": "Safety",
     "blog": "Blog",
     "feedback": "Feedback",
-    "joinWaitlist": "Join Waitlist"
+    "joinWaitlist": "Get notified for Android"
   },
   "footer": {
     "tagline": "Real adventures with real people, right now. Join the movement.",
@@ -40,7 +40,7 @@
   "cta": {
     "notifyMe": "Notify Me",
     "learnMore": "Learn More",
-    "getEarlyAccess": "Get Early Access",
+    "getEarlyAccess": "Get the app",
     "sendMessage": "Send Message",
     "viewFaqs": "View FAQs",
     "contactSupport": "Contact Support",

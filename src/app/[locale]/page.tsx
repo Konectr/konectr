@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     path: "",
     title: "Konectr — Meet New People in Kuala Lumpur | Real Activities",
     description:
-      "Meet new people in Kuala Lumpur through real activities. Konectr matches you for coffee, hikes, fitness and more — right now. Join the free beta.",
+      "Meet new people in Kuala Lumpur through real activities. Konectr matches you for coffee, hikes, fitness and more, right now. Free on the App Store.",
   });
 }
 
