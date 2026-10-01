@@ -13,7 +13,8 @@ Konectr is not a dating app (no swiping), not Meetup (it matches existing intent
 - [Blog](https://konectr.app/blog): Guides on making friends and finding activities in Kuala Lumpur
 
 ## App
-- [Get Konectr](https://konectr.app): public beta in Kuala Lumpur since June 2026 (iPhone via TestFlight; App Store and Google Play releases in review).
+- [Konectr on the App Store](https://apps.apple.com/my/app/konectr/id6758149668): free for iPhone, live in Kuala Lumpur.
+- [Konectr on Google Play](https://play.google.com/store/apps/details?id=com.konectr.konectrMobile): free for Android, live in Kuala Lumpur.
 
 ## Joining a plan without the app
 - Every plan has a public page at `https://konectr.app/a/{code}`. Anyone can RSVP there with just an email, no app install, and add it to their calendar.
