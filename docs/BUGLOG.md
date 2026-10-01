@@ -26,6 +26,27 @@ worked on later from the Mac Mini: `git pull origin main`, then open this file.
 
 ## Open
 
+### BUG-003 · "You're in!" post-create dialog: clipped text, no cancel/close -- redesign minimal
+- **Logged:** 2026-10-01
+- **Area:** mobile iOS (seen 4:04 PM)
+- **Page / screen:** Create Activity sheet -> submit -> "You're in! Let's see who vibes." success dialog (activity: "F1 Week - Go-Kart Grand Prix!")
+- **Evidence:** Screenshot from founder
+- **What happened:**
+  - a) **Broken / clipped text:** the primary button label "Go to activity" is cut off -- only the top half of the glyphs render (vertical clipping, button height/padding or text-scale issue). The activity title "Grand Prix!" line above it is also clipped at the bottom where it meets the button area.
+  - b) **No cancel / close:** the dialog has only "Go to activity" and "Undo". There is no X or "Close/Done" to simply dismiss and stay where you are. ("Undo" deletes the activity, so it is not a cancel.)
+  - Also seen: the hero icon is a plain yellow circle (looks like a missing emoji/illustration placeholder); behind the dialog the Create Activity submit button is still showing a loading spinner.
+- **Expected / requested change (founder, design):** Redesign this dialog to be **minimalistic**:
+  - Clean title + activity name, no clipped text at any text scale (test with iOS Larger Text / Dynamic Type).
+  - Actions:
+    1. **Go to activity** (primary)
+    2. **Go to that day** -- opens the calendar on the activity's date (NEW)
+    3. **Close / Done** -- dismiss, stay on current screen (NEW, explicit cancel; also allow tap-outside / X)
+    4. Undo -- keep, but de-emphasised (text link)
+  - Replace or remove the yellow-circle placeholder.
+  - Ensure the Create Activity sheet's loading spinner is resolved/closed once the success dialog shows.
+- **Severity:** P2 (bug parts: clipped text, missing close) + design change request
+- **Status:** Open
+
 ### BUG-002 · Keyboard stuck open on Home screen, won't dismiss
 - **Logged:** 2026-10-01
 - **Area:** mobile iOS (seen once, 4:09 PM)
