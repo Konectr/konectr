@@ -124,7 +124,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What happens after an activity ends?",
-        answer: "Confirm you met and everyone who turned up earns XP and progress toward badges. You can leave kudos and add people to your Circle. The group chat stays open for 48 hours after the end time, so you can sort out photos and next plans, then it closes."
+        answer: "Confirm you met and everyone who turned up earns XP and progress toward badges. You can add people you got on with to your Circle. The group chat stays open for 48 hours after the end time, so you can sort out photos and next plans, then it closes."
       },
       {
         question: "What can I do in the activity chat?",
