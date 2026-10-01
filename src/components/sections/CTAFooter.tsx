@@ -52,9 +52,6 @@ export function CTAFooter() {
                 />
               </div>
 
-              <p className="text-white/60 text-sm mt-6">
-                {tCta("noSpam")}
-              </p>
             </div>
           </motion.div>
         </div>
