@@ -26,6 +26,18 @@ worked on later from the Mac Mini: `git pull origin main`, then open this file.
 
 ## Open
 
+### BUG-002 · Keyboard stuck open on Home screen, won't dismiss
+- **Logged:** 2026-10-01
+- **Area:** mobile iOS (seen once, 4:09 PM)
+- **Page / screen:** Home ("Good afternoon, Konectr") -- Your plans / "This weekend" / Next Up card (F1 Week - Go-Kart Gra..., Sat Oct 3)
+- **Evidence:** Screenshot from founder (keyboard covering bottom half of Home, no text field visible or focused on screen)
+- **What happened:** The iOS keyboard stayed on screen over the Home feed and refused to go away. No visible text input on the page, so there was nothing to tap "done"/return on, and it would not dismiss. Happened once; trigger not captured.
+- **Expected:** Keyboard only appears while a text field is focused and dismisses when leaving that field/screen (tap outside, scroll, or navigating back to Home).
+- **Likely causes to check (for the fix session):** a TextField on a previous screen/sheet (search, chat, create-plan, circle sheet) kept focus when its route was popped or a sheet was dismissed, so the FocusNode stayed attached; Home has no tap-outside / scroll-to-dismiss (`FocusScope.of(context).unfocus()`, `keyboardDismissBehavior: onDrag`); an offstage/hidden TextField in the Home tree holding focus.
+- **Repro to try:** open any screen/sheet with a text field (search, chat, create plan, add to circle), focus it, then go back / swipe-dismiss the sheet / switch tabs to Home while keyboard is up.
+- **Severity:** P1 major (blocks half the screen; user may have to force-close)
+- **Status:** Open
+
 ### BUG-001 · "Add to Circle" from activity Participants sheet: profile sheet bounces open/closed repeatedly before request sends
 - **Logged:** 2026-10-01
 - **Area:** mobile iOS
