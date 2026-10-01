@@ -26,6 +26,18 @@ worked on later from the Mac Mini: `git pull origin main`, then open this file.
 
 ## Open
 
+### BUG-005 · "This Week" tab: swipe to last week doesn't work
+- **Logged:** 2026-10-01
+- **Area:** mobile iOS (dark mode, seen 9:52)
+- **Page / screen:** Bottom nav "This Week" tab -> THIS WEEK header (16 SEP - 22 SEP), "This week I want run club, weekend plans and meet new people" intent sentence, "This weekend" list (Pickle ball, Sun 20, 3:00 PM, Bistari Condominium)
+- **Evidence:** Screenshot from founder -- page indicator under the header shows **2 dots with the 2nd (current week) active**, implying a previous page (last week) exists to the left
+- **What happened:** Swiping right to go back to last week does nothing. The dot indicator advertises a swipeable previous page but the gesture doesn't navigate.
+- **Expected:** Swipe right -> last week's page (with its dates/plans); swipe left -> back to this week. Dots update with the page. If last week isn't meant to be reachable, remove the 2-dot indicator so it doesn't promise a swipe.
+- **Likely causes to check (for the fix session):** PageView gesture swallowed by a parent/child horizontal gesture (tab-level swipe, horizontally scrollable chips in the intent sentence, or the iOS back-swipe edge gesture); PageView `physics` set to NeverScrollable; initialPage = last index with no page built at index 0; or dots rendered from a hardcoded count.
+- **Also check:** tapping the dots should switch weeks too (accessibility / discoverability).
+- **Severity:** P2
+- **Status:** Open
+
 ### BUG-004 · Create Activity "Here for..." text box looks dated / clunky -- modernise
 - **Logged:** 2026-10-01
 - **Area:** mobile iOS (seen 3:57 PM)
