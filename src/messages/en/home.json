@@ -4,7 +4,7 @@
     "betaLive": "Now on the App Store in KL",
     "headline": "Stop scrolling.\nStart living.",
     "subtext": "Real adventures with real people, right now.",
-    "joinWaitlist": "Join Waitlist",
+    "joinWaitlist": "Get notified for Android",
     "seeHowItWorks": "See How It Works",
     "activities": {
       "cafe": "Cafe",
@@ -92,9 +92,9 @@
   },
   "cta": {
     "title": "Ready to ditch the scroll?",
-    "subtitle": "Be part of the first 1,000. Lock in your spot and shape the app.",
+    "subtitle": "Konectr is on the App Store for iPhone. On Android? Leave your email and we'll tell you when it lands on Google Play.",
     "notifyMe": "Notify Me",
     "learnMore": "Learn More",
-    "noSpam": "No spam. Just updates on launch."
+    "noSpam": "No spam. One email when Android is ready."
   }
 }

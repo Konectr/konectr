@@ -38,7 +38,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Is Konectr available in my city?",
-        answer: "Konectr is currently available in Kuala Lumpur, Malaysia only. We're starting with one city to build a strong, active community before expanding. Next cities planned: more Malaysian cities, then Southeast Asia. Join the waitlist at konectr.app for expansion updates."
+        answer: "Konectr is currently available in Kuala Lumpur, Malaysia only. We're starting with one city to build a strong, active community before expanding. Next cities planned: more Malaysian cities, then Southeast Asia. Follow @konectrapp for news on new cities."
       },
       {
         question: "How is Konectr different from Meetup or Bumble BFF?",

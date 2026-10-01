@@ -27,8 +27,9 @@ export type PrimaryCta = {
 
 /**
  * The one "get Konectr" destination for every marketing CTA (hero, nav, section
- * buttons). iOS + desktop → the App Store once the env var is wired; Android → Play once NEXT_PUBLIC_ANDROID_STORE_URL is set;
- * everything else → the waitlist. Before 2026-09-23 only the hero did this and
+ * buttons). iOS, desktop and the server render (platform not yet known) → the
+ * App Store once the env var is wired; Android → Play once
+ * NEXT_PUBLIC_ANDROID_STORE_URL is set; everything else → the Android notify list. Before 2026-09-23 only the hero did this and
  * the nav + "Download the app" sent iPhone visitors to the waitlist of a live beta.
  *
  * `source` tags the click event so hero vs nav vs section clicks are separable.
@@ -39,12 +40,12 @@ export function usePrimaryCta(source: string): PrimaryCta {
 
   useEffect(() => {
     // Platform reads navigator, so it must be detected after hydration; a lazy
-    // initial state would diverge from the SSR (null → waitlist) markup.
+    // initial state would diverge from the SSR (null → App Store) markup.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPlatform(detectPlatform());
   }, []);
 
-  if (HAS_IOS_STORE && (platform === "ios" || platform === "desktop")) {
+  if (HAS_IOS_STORE && (platform === null || platform === "ios" || platform === "desktop")) {
     return {
       href: IOS_STORE_URL,
       label: "Download on the App Store",
