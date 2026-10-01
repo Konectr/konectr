@@ -226,7 +226,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What badges can I earn?",
-        answer: "Badges come in families: Social (people you meet), Explorer (venues you visit), Activity (plans you turn up to), Streak (consistency), Starter (activities you start), plus Geography and Special one-offs. Try all six vibes to grow your collection."
+        answer: "Badges come in families: Social (people you meet), Explorer (venues you visit), Activity (plans you turn up to), Streak (consistency), Starter (activities you start), plus Special one-offs like KL Champion and Early Adopter. Try all six vibes to grow your collection."
       },
       {
         question: "How do badges help me?",

@@ -118,7 +118,7 @@ export function GamificationContent() {
               Collect Badges
             </h2>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-              Seven families of badges that record what you actually did
+              Six families of badges that record what you actually did
             </p>
           </motion.div>
 
@@ -363,8 +363,8 @@ export function GamificationContent() {
           >
             {[
               { emoji: "🏔️", value: "6 Tiers" },
-              { emoji: "🏅", value: "53 Badges" },
-              { emoji: "🔥", value: "6 Streak Milestones" },
+              { emoji: "🏅", value: "6 Badge Families" },
+              { emoji: "🔥", value: "4 Streak Milestones" },
               { emoji: "🎁", value: "30-Day Rewards" },
             ].map((stat) => (
               <div key={stat.value}>

@@ -91,12 +91,6 @@ export const badgeCategories = [
     example: "First Start",
   },
   {
-    emoji: "📍",
-    name: "Geography",
-    description: "Cover real ground in the city you live in",
-    example: "KL Champion",
-  },
-  {
     emoji: "✨",
     name: "Special",
     description: "Earned once, for being here early or being invited in",
@@ -117,8 +111,6 @@ export const streakMilestones = [
   { days: 7, label: "1 Week", color: "#F97316", description: "Weekly Warrior — earns a shield" },
   { days: 14, label: "2 Weeks", color: "#3B82F6", description: "Fortnight Force" },
   { days: 30, label: "1 Month", color: "#9333EA", description: "Monthly Master — earns a shield" },
-  { days: 100, label: "100 Days", color: "#DC2626", description: "Centurion Legend" },
-  { days: 365, label: "1 Year", color: "#FFD700", description: "Year One Immortal" },
 ];
 
 export const flamePhases = [
