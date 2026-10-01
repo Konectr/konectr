@@ -10,6 +10,8 @@ Konectr's official marketing website and landing page. Built with Next.js 16 and
 
 **Live URL**: https://konectr.app
 
+**How we work (since 2026-10-01):** tickets are GitHub Issues in `Konectr/konectr-mvp` (one tracker for app, backend, web and console); process in `Development/docs/ENGINEERING.md`. Changes go branch → PR (`Closes Konectr/konectr-mvp#n`) → green `web-ci.yml` → merge to `main`, which deploys. `docs/BUGLOG.md` is only a capture inbox for when GitHub can't be reached.
+
 ---
 
 ## Tech Stack

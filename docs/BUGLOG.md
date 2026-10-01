@@ -1,12 +1,15 @@
 # Konectr Bug Log
 
-Logging-only inbox. Bugs are captured here from any device (phone / cloud sessions) and
-worked on later from the Mac Mini: `git pull origin main`, then open this file.
+**Capture inbox only (since 2026-10-01).** The tracker for every bug and task is GitHub Issues in
+`Konectr/konectr-mvp` (`Development/docs/ENGINEERING.md`). Log here only when you can't reach GitHub (phone
+without the GitHub app, a cloud session without issue access). The next Mac session turns each Open entry
+into an issue (quoting BUG-NNN), moves it to "Moved to issues" with the issue number, and works it there.
+This file never holds status.
 
 **Rules**
 - Log sessions only append entries. No code changes happen in a logging session.
 - Newest bugs go at the top of "Open".
-- When a bug is fixed, move it to "Fixed" with the commit hash and date.
+- Each Open entry becomes a GitHub issue at the next Mac session; status lives on the issue, not here.
 
 **Entry format**
 
