@@ -4,7 +4,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
 import { ANDROID_STORE_URL, HAS_ANDROID_STORE, detectPlatform, type Platform } from "@/lib/smartLink";
 
 // iOS App Store link, set via Vercel env. NEXT_PUBLIC_TESTFLIGHT_URL is the legacy
@@ -32,10 +31,10 @@ export type PrimaryCta = {
  * NEXT_PUBLIC_ANDROID_STORE_URL is set; everything else → the Android notify list. Before 2026-09-23 only the hero did this and
  * the nav + "Download the app" sent iPhone visitors to the waitlist of a live beta.
  *
+ * No next-intl dependency, so pages outside [locale] (e.g. /leaderboard) can use it.
  * `source` tags the click event so hero vs nav vs section clicks are separable.
  */
 export function usePrimaryCta(source: string): PrimaryCta {
-  const t = useTranslations("home.hero");
   const [platform, setPlatform] = useState<Platform | null>(null);
 
   useEffect(() => {
@@ -61,5 +60,5 @@ export function usePrimaryCta(source: string): PrimaryCta {
       onClick: () => capture("clicked_beta_cta", { mode: "open", platform: "android", source }),
     };
   }
-  return { href: "#waitlist", label: t("joinWaitlist") };
+  return { href: "#waitlist", label: "Get the app" };
 }
