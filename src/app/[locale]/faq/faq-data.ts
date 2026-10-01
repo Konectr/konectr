@@ -65,7 +65,7 @@ export const faqCategories: FAQCategory[] = [
       {
         question: "How do I create an account?",
         answer: HAS_ANDROID_STORE
-          ? "Get Konectr from the download link at konectr.app — iPhone via the TestFlight beta, Android on Google Play. Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
+          ? "Get Konectr from the App Store on iPhone or Google Play on Android (links at konectr.app). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
           : "Get Konectr from the download link at konectr.app (iPhone today; Android is in closed testing on Google Play — email hello@konectr.app for access). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
       },
       {
