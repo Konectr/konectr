@@ -26,6 +26,21 @@ worked on later from the Mac Mini: `git pull origin main`, then open this file.
 
 ## Open
 
+### BUG-006 · Messages > Activity Chatter: chat avatars show broken "?" glyph and are inconsistent
+- **Logged:** 2026-10-01
+- **Area:** mobile iOS (dark mode, seen 9:43)
+- **Page / screen:** Bottom nav Messages -> "Activity Chatter" tab -> chat list
+- **Evidence:** Screenshot from founder, three avatars circled
+- **What happened:**
+  - "EAT, CHAT & MEET THE ..." (title starts with 🥐) -> avatar shows a **grey diamond "?"** (Unicode replacement character).
+  - "ZERO SKILL. MAXIMUM ..." (title starts with 🤸) -> avatar shows a **yellow diamond "?"**.
+  - "A LITTLE COFFEE, ..." (title starts with ☕) -> avatar shows ☕ correctly, but the emoji is then **duplicated** in the title right next to it.
+  - Titles without a leading emoji ("Sunday HYROX simulation", "Sled + wall balls...") show a **letter initial "S"** -- so the list mixes letters, emoji and broken glyphs.
+- **Likely root cause (strong hypothesis):** the avatar takes the **first character of the title via a code-unit index** (e.g. `title[0]` / `substring(0,1)`). ☕ (U+2615) is one UTF-16 unit so it survives; 🥐 and 🤸 are astral emoji (surrogate pairs), so taking one code unit yields half a surrogate pair -> rendered as "?" in a diamond. Fix: use grapheme clusters (Dart `characters` package: `title.characters.first`) everywhere initials/emoji are derived (also check profile initials, crew stacks, Participants sheet, web `/a/[code]` initials).
+- **Expected:** One consistent avatar rule for activity chats. Preferred: the **activity category/vibe icon** (☕ Chill, 💪 Active, etc. per `category_reference.dart`) or the activity's photo -- not a character from the title. Never render a broken glyph. If an emoji avatar is used, strip that emoji from the displayed title to avoid duplication.
+- **Severity:** P2 (visible on a core screen; looks broken)
+- **Status:** Open
+
 ### BUG-005 · "This Week" tab: swipe to last week doesn't work
 - **Logged:** 2026-10-01
 - **Area:** mobile iOS (dark mode, seen 9:52)
