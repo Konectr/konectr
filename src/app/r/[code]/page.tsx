@@ -12,10 +12,9 @@ import CopyCodeButton from "./CopyCodeButton";
 
 const LOGO_ICON_ORANGE = "/logos/konectr-icon-orange.svg";
 
-// Same env the homepage Hero and the RSVP page's TestFlightRequestCTA read.
-// Set = the public TestFlight link exists, so the iPhone line can point at it;
-// unset = the beta is invite-only and the line stays plain text.
-const TESTFLIGHT_URL = process.env.NEXT_PUBLIC_TESTFLIGHT_URL || "";
+// Same env smartLink reads. Set = the iPhone line links to the App Store;
+// unset = the line stays plain text.
+const IOS_STORE_URL = process.env.NEXT_PUBLIC_IOS_STORE_URL || "";
 
 type Props = {
   params: Promise<{ code: string }>;
@@ -146,20 +145,20 @@ export default async function ReferralPage({ params }: Props) {
             <ol className="space-y-4">
               <Step number={1} title="Install Konectr">
                 <p className="text-[#666] text-xs leading-relaxed mb-3">
-                  iPhone: Konectr is in{" "}
-                  {TESTFLIGHT_URL ? (
+                  iPhone: get Konectr on the{" "}
+                  {IOS_STORE_URL ? (
                     <a
-                      href={TESTFLIGHT_URL}
+                      href={IOS_STORE_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#FF774D] font-medium hover:underline"
                     >
-                      TestFlight beta
+                      App Store
                     </a>
                   ) : (
-                    "TestFlight beta"
-                  )}{" "}
-                  right now. Android:{" "}
+                    "App Store"
+                  )}
+                  . Android:{" "}
                   {HAS_ANDROID_STORE ? (
                     <>
                       get it on{" "}
@@ -174,7 +173,7 @@ export default async function ReferralPage({ params }: Props) {
                       .
                     </>
                   ) : (
-                    "join the waitlist and we’ll email you the moment it launches."
+                    "Konectr is coming to Google Play. Join the list and we’ll email you when it lands."
                   )}
                 </p>
                 {/* Download CTA */}
