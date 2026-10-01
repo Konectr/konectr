@@ -304,7 +304,7 @@ export function BlogPostContent({ post, allPosts }: BlogPostContentProps) {
               Ready to start connecting?
             </h2>
             <p className="text-white/90 text-lg mb-8 max-w-xl mx-auto">
-              Join thousands of others making real friendships through shared activities.
+              Join people in KL making real friendships through shared activities.
             </p>
             <Button
               size="lg"

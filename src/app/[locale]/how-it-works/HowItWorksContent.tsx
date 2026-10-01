@@ -283,7 +283,7 @@ export function HowItWorksContent() {
               Ready to find your people?
             </h2>
             <p className="text-white/90 text-lg mb-8 max-w-xl mx-auto">
-              Join thousands of others who are ditching the scroll for real
+              Join the people in KL who are ditching the scroll for real
               adventures.
             </p>
             <Button

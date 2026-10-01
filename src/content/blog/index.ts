@@ -321,7 +321,7 @@ These are the stories that remind us why we built Konectr. Real people, making r
 
 ## What We've Learned
 
-Looking at thousands of Konectr meetups, we've noticed some patterns:
+Across the meetups we've seen so far, a few patterns stand out:
 
 ### The 3-Meetup Rule
 If you meet up with the same person three times, there's a 70% chance you'll become ongoing friends.
