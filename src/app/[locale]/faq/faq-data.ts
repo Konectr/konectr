@@ -188,7 +188,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Can I bring a friend?",
-        answer: "Some activities allow +1s (look for the tag). Most don't because small group dynamics work best with solo joiners. Better option: have your friend download Konectr and join activities themselves."
+        answer: "Everyone joins a plan on their own spot. Want to bring a friend? Have them download Konectr and join the same plan themselves."
       },
       {
         question: "What if no one talks to me?",
