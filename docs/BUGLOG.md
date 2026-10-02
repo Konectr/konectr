@@ -29,6 +29,24 @@ This file never holds status.
 
 ## Open
 
+### BUG-010 · Nearby > Your plans: option to pin an activity when a day has several (feature request)
+- **Logged:** 2026-10-02
+- **Area:** mobile iOS (dark mode, seen 7:47)
+- **Page / screen:** Nearby (home) -> "Your plans" (Upcoming) -> day group "Saturday" with 5+ plans (F1 Week - Go-Kart, Afternoon coffee cat..., Walk and explore, Evening park loop, Drinks after work, ...) separated by "≈ N min between plans" travel hints
+- **Evidence:** Screenshot from founder ("PIN ACTIVITY" drawn over the Saturday list)
+- **Requested:** Give users the **option to pin** the activity of their choice when they have multiple activities on the same day, so the one they care about stays at the top of that day.
+  - Entry point: add "📌 Pin to top" / "Unpin" to the row's "..." menu (and long-press).
+  - Pinned plan floats to the top of its day group with a small pin icon; others keep their time order. Suggest max 1 pinned per day (pinning another replaces it) -- confirm with founder.
+  - Pin is per user (private), persisted server-side so it syncs across devices; auto-clears once the activity is past.
+  - Optional: the pinned plan becomes the "NEXT UP" card on Home for that day; travel-time hints should still compute in chronological order, not pinned order.
+- **Also seen on this screen (verify):**
+  - A grey **"Show menu" tooltip is stuck** on screen over the F1 Week row (iOS long-press tooltip from the "..." button) -- should disappear on release or not show at all (`tooltip: null` / custom semantics label).
+  - Titles truncate hard ("F1 Week - G...", "Afternoon · LYL...") because the host avatar + "Circle" chip + "..." eat the row width -- consider 2-line titles or moving the Circle chip below the title.
+  - The sticky "Your plans / Upcoming" header clips the card scrolling under it (top "Evening out" row half-cut with no fade/background).
+  - The orange "+" FAB overlaps the "..." menu of the row behind it -- add bottom padding / hide FAB on scroll.
+- **Severity:** P3 (enhancement) + P2 for the stuck tooltip
+- **Status:** Open
+
 ### BUG-009 · Profile > Pinned photos: uploading one photo adds it twice (duplicate)
 - **Logged:** 2026-10-02
 - **Area:** mobile iOS (seen 4:24)
