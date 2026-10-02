@@ -29,6 +29,34 @@ This file never holds status.
 
 ## Open
 
+### BUG-008 · Website still uses beta/waitlist CTAs -- switch to App Store + Play Store now both apps are live
+- **Logged:** 2026-10-02
+- **Area:** web (konectr.app) -- sitewide, highest impact on `/a/[code]` RSVP share page
+- **Page / screen:** `/a/[code]` RSVP page (e.g. the Merdeka 118 teh tarik plan, "Started by Konectr", 5 spots left) seen on iPhone at 4:28
+- **Evidence:** Screenshot from founder, circled: the RSVP form block (name / email / +60 phone / "I'm in") and the bottom CTA block ("OR" -> black "Get Konectr on iPhone" + "Already on Konectr? Open in the app")
+- **Context:** Konectr is now **live on both the App Store and Google Play**. The web still treats the app as iPhone-only beta / Android waitlist.
+- **What's wrong:**
+  - CTA says "Get Konectr on iPhone" only (from `TestFlightRequestCTA.tsx` -- TestFlight-era component); Android visitors get the "Coming soon to Android -- get notified" waitlist (`AndroidWaitlistCTA.tsx`) instead of a Play Store link.
+  - Download is visually secondary ("OR" under the web RSVP form). Now that the app is public, installing the app should be the primary path, with the web RSVP as the fallback.
+  - Store URL env vars `NEXT_PUBLIC_IOS_STORE_URL` / `NEXT_PUBLIC_ANDROID_STORE_URL` were still unset at last check, so `smartLink.ts` falls back to `https://konectr.app/#waitlist`.
+  - Also verify: in the screenshot "I'm in ->" looks **disabled (pale)** even though name + phone are filled -- confirm whether the phone validation is rejecting `102833593` (9 digits after +60) or it's just the styling.
+- **Expected / requested:**
+  - Platform-aware primary CTA everywhere: iOS -> **App Store** ("Download on the App Store" badge), Android -> **Google Play** ("Get it on Google Play" badge), desktop -> both badges + QR code. Keep "Already on Konectr? Open in the app" deep link.
+  - On `/a/[code]`: decide hierarchy (founder call) -- recommended: "Join in the app" (store/deep link with share code) as primary, web RSVP form kept as "No app? RSVP on web" secondary.
+  - Retire TestFlight request flow + Android waitlist on the web (or hide behind the store URLs being set). Remove/replace "beta" and "waitlist" copy sitewide.
+- **Files to sweep (grep hits for testflight / store URL / #waitlist / AndroidWaitlist):**
+  - `src/app/a/[code]/` -- `ActivityRsvpPage.tsx`, `TestFlightRequestCTA.tsx`, `AndroidWaitlistCTA.tsx`, `redesign/SimpleStateLayout.tsx` (ended / not-found states)
+  - `src/app/r/[code]/page.tsx` (referral landing -- step 1 "install")
+  - `src/lib/smartLink.ts`, `src/lib/usePrimaryCta.ts` (shared CTA destination), `src/lib/seo.ts` (`APP_STRUCTURED_DATA` MobileApplication still points at TestFlight -> use store URLs, add Android)
+  - `src/components/Navigation.tsx`, `src/components/sections/` (Hero, FindYourVibe, CTAFooter Tally waitlist)
+  - Pages: about, how-it-works, gamification, feedback (+ detail), blog post, `/hyrox`, `/h/[slug]`, `/leaderboard`
+  - `public/llms.txt` (TestFlight link), `public/.well-known/assetlinks.json` (confirm real Android SHA-256, not placeholder) + AASA
+  - `messages/*.json` (8 locales) for "beta" / "waitlist" / "coming soon to Android" strings; `src/config/brand.ts` launch copy
+  - `/api/testflight-request`, `/api/android-waitlist` -- keep for history or retire
+- **Founder actions:** set `NEXT_PUBLIC_IOS_STORE_URL` + `NEXT_PUBLIC_ANDROID_STORE_URL` in Vercel (production + preview) with the real store links; update Tally waitlist form / homepage waitlist section decision.
+- **Severity:** P0 / P1 -- every shared link is the app's main acquisition funnel and currently can't send Android users to the store
+- **Status:** Open
+
 ### BUG-007 · Messages > Activity Chatter: add a sorting mechanism (feature request)
 - **Logged:** 2026-10-01
 - **Area:** mobile iOS (dark mode, seen 8:38 -- older build, bottom nav still shows "Suggested" tab)
