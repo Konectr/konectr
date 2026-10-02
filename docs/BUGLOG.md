@@ -45,7 +45,11 @@ This file never holds status.
   - Consider the same control on the "Direct" tab (recent / unread).
 - **Related:** BUG-006 (inconsistent avatars) is visible here too -- letter initials vs ☕ emoji.
 - **Severity:** P3 (enhancement)
-- **Status:** Open
+- **Status:** Open · blocked by the feature freeze; same box as parked PF-25 (noted there 2026-10-01).
+
+---
+
+## Fixed
 
 ### BUG-006 · Messages > Activity Chatter: chat avatars show broken "?" glyph and are inconsistent
 - **Logged:** 2026-10-01
@@ -60,7 +64,7 @@ This file never holds status.
 - **Likely root cause (strong hypothesis):** the avatar takes the **first character of the title via a code-unit index** (e.g. `title[0]` / `substring(0,1)`). ☕ (U+2615) is one UTF-16 unit so it survives; 🥐 and 🤸 are astral emoji (surrogate pairs), so taking one code unit yields half a surrogate pair -> rendered as "?" in a diamond. Fix: use grapheme clusters (Dart `characters` package: `title.characters.first`) everywhere initials/emoji are derived (also check profile initials, crew stacks, Participants sheet, web `/a/[code]` initials).
 - **Expected:** One consistent avatar rule for activity chats. Preferred: the **activity category/vibe icon** (☕ Chill, 💪 Active, etc. per `category_reference.dart`) or the activity's photo -- not a character from the title. Never render a broken glyph. If an emoji avatar is used, strip that emoji from the displayed title to avoid duplication.
 - **Severity:** P2 (visible on a core screen; looks broken)
-- **Status:** Open
+- **Status:** Fixed 2026-10-02 · `cfdf6e7e` on `fix/buglog-005-006` (konectr-mvp, pushed, not yet merged to main) · Initials now use the first grapheme, not a UTF-16 unit, in the shared helper + 4 other sites. Avatar design (title emoji vs category vs venue photo, the duplicated-emoji part) still open as FOUNDER_BUGLOG_2026-09 item 31.
 
 ### BUG-005 · "This Week" tab: swipe to last week doesn't work
 - **Logged:** 2026-10-01
@@ -72,7 +76,7 @@ This file never holds status.
 - **Likely causes to check (for the fix session):** PageView gesture swallowed by a parent/child horizontal gesture (tab-level swipe, horizontally scrollable chips in the intent sentence, or the iOS back-swipe edge gesture); PageView `physics` set to NeverScrollable; initialPage = last index with no page built at index 0; or dots rendered from a hardcoded count.
 - **Also check:** tapping the dots should switch weeks too (accessibility / discoverability).
 - **Severity:** P2
-- **Status:** Open
+- **Status:** Fixed 2026-10-02 · `cfdf6e7e` on `fix/buglog-005-006` (konectr-mvp, pushed, not yet merged to main) · Dots hidden when there is no pager (city_lately is off live, so no previous page was ever built). There is no 'last week' page; the left page is Lately.
 
 ### BUG-004 · Create Activity "Here for..." text box looks dated / clunky -- modernise
 - **Logged:** 2026-10-01
@@ -94,7 +98,7 @@ This file never holds status.
   - Field and CTA stay visible above the keyboard (proper keyboard insets / scroll-into-view).
   - Apply the same text-field style consistently across the app (other Create Activity inputs, chat, profile edit) -- consider a shared input component.
 - **Severity:** P2 (UX/design polish)
-- **Status:** Open
+- **Status:** Fixed 2026-10-02 · `db5fcca7` on `fix/buglog-003-004` (konectr-mvp, pushed, not yet merged to main) · Filled borderless field, single header, 16pt text, continuous selection, counter only when typing; plan-name field matches. Link chips left out (new capability).
 
 ### BUG-003 · "You're in!" post-create dialog: clipped text, no cancel/close -- redesign minimal
 - **Logged:** 2026-10-01
@@ -115,7 +119,7 @@ This file never holds status.
   - Replace or remove the yellow-circle placeholder.
   - Ensure the Create Activity sheet's loading spinner is resolved/closed once the success dialog shows.
 - **Severity:** P2 (bug parts: clipped text, missing close) + design change request
-- **Status:** Open
+- **Status:** Fixed 2026-10-02 · `db5fcca7` on `fix/buglog-003-004` (konectr-mvp, pushed, not yet merged to main) · X / tap-outside / back now close the dialog and the create sheet (Android back no longer strands a spinning wizard), tick animation replaces the yellow dot, graphite CTA label. Clipped label was already fixed in 6fb67497 (live in 1.1.1). 'Go to that day' is freeze-parked as PF-50.
 
 ### BUG-002 · Keyboard stuck open on Home screen, won't dismiss
 - **Logged:** 2026-10-01
@@ -127,7 +131,7 @@ This file never holds status.
 - **Likely causes to check (for the fix session):** a TextField on a previous screen/sheet (search, chat, create-plan, circle sheet) kept focus when its route was popped or a sheet was dismissed, so the FocusNode stayed attached; Home has no tap-outside / scroll-to-dismiss (`FocusScope.of(context).unfocus()`, `keyboardDismissBehavior: onDrag`); an offstage/hidden TextField in the Home tree holding focus.
 - **Repro to try:** open any screen/sheet with a text field (search, chat, create plan, add to circle), focus it, then go back / swipe-dismiss the sheet / switch tabs to Home while keyboard is up.
 - **Severity:** P1 major (blocks half the screen; user may have to force-close)
-- **Status:** Open
+- **Status:** Fixed 2026-10-02 · `b3e66d9a` on `fix/buglog-001-002` (konectr-mvp, pushed, not yet merged to main) · Keyboard now dismissed on every tab change and Discover segment switch. Cause: Explore search kept focus because Pulse keep-alive holds the Discover tab alive.
 
 ### BUG-001 · "Add to Circle" from activity Participants sheet: profile sheet bounces open/closed repeatedly before request sends
 - **Logged:** 2026-10-01
@@ -146,11 +150,4 @@ This file never holds status.
 - **Likely causes to check (for the fix session):** a pop/navigation fired on tap plus a rebuild/listener re-pushing the profile sheet (double navigation); participant list refresh re-triggering the "open profile" action; snackbar shown on the root scaffold after popping all sheets; button state not bound to circle-request status.
 - **Also verify:** whether multiple circle requests were sent to Timmy (check for duplicate rows in the circle request table for this pair); profile sheet showing only an initial "T" with no photo/bio -- confirm whether that is expected for this user or a loading/data bug.
 - **Severity:** P1 major (core social action feels broken, possible duplicate requests)
-- **Status:** Open
-
-
----
-
-## Fixed
-
-_None yet._
+- **Status:** Fixed 2026-10-02 · `b3e66d9a` on `fix/buglog-001-002` (konectr-mvp, pushed, not yet merged to main) · Profile sheet now guards double taps and confirms in place with a disabled 'Request sent' button; the toast that rendered under the modals is gone. No code reopened the sheets: the bounce was re-taps with no feedback. Duplicates impossible (unique index + ON CONFLICT DO NOTHING, verified live).
