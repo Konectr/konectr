@@ -29,6 +29,21 @@ This file never holds status.
 
 ## Open
 
+### BUG-009 · Profile > Pinned photos: uploading one photo adds it twice (duplicate)
+- **Logged:** 2026-10-02
+- **Area:** mobile iOS (seen 4:24)
+- **Page / screen:** Profile tab -> "Pinned photos" ("Visible to your Circle, matches and plan-mates") -> "+ Add photo" / "+" tile
+- **Evidence:** Screenshot from founder -- the same picnic selfie appears in **slot 1 and slot 2** (both circled), slot 3 empty "+". Founder drew a "2" next to the profile-completion banner (75%).
+- **What happened:** Adding a single pinned photo results in two identical photos in the grid.
+- **Expected:** One upload = one photo. Re-picking the same image should be ignored or replace, never duplicated. Profile completion % counts unique photos only.
+- **Likely causes to check (for the fix session):** upload handler fired twice (double tap on "+ Add photo" not debounced, or both the header "+ Add photo" and the "+" tile listeners triggered); optimistic local insert + realtime/refetch insert of the same row (no dedupe by id/storage path); insert retried after a slow response; image picker callback registered twice after rebuild. Check the DB/storage: are there 2 rows / 2 storage objects, or 1 row rendered twice?
+- **Also seen on this screen (verify):**
+  - A hard black full-width divider line under the "Complete your profile" banner looks out of place vs the rest of the soft UI.
+  - Bottom nav bar overlaps the "Your Interests" chips (Wine Tasting / Street Food peek out below the nav) -- check bottom padding so the last content clears the floating nav.
+  - Confirm whether the duplicate photo is inflating the 75% completion score.
+- **Severity:** P1 (user-facing data bug on own profile, visible to others)
+- **Status:** Open
+
 ### BUG-008 · Website still uses beta/waitlist CTAs -- switch to App Store + Play Store now both apps are live
 - **Logged:** 2026-10-02
 - **Area:** web (konectr.app) -- sitewide, highest impact on `/a/[code]` RSVP share page
