@@ -64,8 +64,8 @@ export interface ClaimScreenProps {
   /** When full: replaces the form (e.g. "this one's full" + beta CTA). */
   isFull?: boolean;
   fullSlot?: ReactNode;
-  /** Rendered under the form — "or" divider + platform/beta CTAs. */
-  belowForm?: ReactNode;
+  /** Store CTA, rendered above the form; the web RSVP is the fallback below it. */
+  appCta?: ReactNode;
   /** Deep-link for existing app users; hidden when absent. */
   openInAppHref?: string;
 }
@@ -114,6 +114,24 @@ export default function ClaimScreen(p: ClaimScreenProps) {
         <div className="mt-6">{p.fullSlot}</div>
       ) : (
         <>
+          {p.appCta && (
+            <>
+              <div className="mt-6">{p.appCta}</div>
+
+              {p.openInAppHref && (
+                <div className="text-center mt-[15px] text-[12.5px]">
+                  <a className="inline-flex min-h-11 items-center text-[#C2410C] font-bold" href={p.openInAppHref}>Already on Konectr? Open in the app ↗</a>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2 mt-6">
+                <div className="flex-1 h-px bg-[#EDEBE9]" />
+                <span className="text-[10px] uppercase tracking-wider text-[#B5B0AB]">No app? RSVP on web</span>
+                <div className="flex-1 h-px bg-[#EDEBE9]" />
+              </div>
+            </>
+          )}
+
           <div className="font-[family-name:var(--font-heading)] font-black text-[20px] -tracking-[0.02em] mt-6">
             Grab a spot <span className="text-[#FF774D]">&amp;</span> you&apos;re matched.
           </div>
@@ -228,13 +246,6 @@ export default function ClaimScreen(p: ClaimScreenProps) {
 
           {f.error && <p className="text-[12.5px] text-red-500 mt-2 text-center">{f.error}</p>}
 
-          {p.belowForm}
-
-          {p.openInAppHref && (
-            <div className="text-center mt-[15px] text-[12.5px]">
-              <a className="inline-flex min-h-11 items-center text-[#C2410C] font-bold" href={p.openInAppHref}>Already on Konectr? Open in the app ↗</a>
-            </div>
-          )}
         </>
       )}
     </RsvpLayout>

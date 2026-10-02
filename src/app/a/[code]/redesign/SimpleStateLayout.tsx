@@ -6,8 +6,7 @@ import Link from 'next/link';
 import type { Platform } from '@/lib/smartLink';
 import type { UpcomingPlan } from '@/lib/supabase';
 import { formatTime, getRelativeDayPhrase } from '@/lib/datetime';
-import AndroidWaitlistCTA from '../AndroidWaitlistCTA';
-import TestFlightRequestCTA from '../TestFlightRequestCTA';
+import StoreCTAs from '@/components/StoreCTAs';
 import Footer from './Footer';
 
 const LOGO_ICON_ORANGE = '/logos/konectr-icon-orange.svg';
@@ -23,7 +22,7 @@ const VENUE_EMOJI: Record<string, string> = {
 };
 
 // Shared full-screen layout for the terminal RSVP states (Not Found / Ended):
-// centered logo + emoji + copy + a platform-aware download / beta CTA. When
+// centered logo + emoji + copy + a platform-aware store CTA. When
 // `plans` is non-empty (ended / not-found), the next joinable plans sit above
 // the CTA so a dead link still leads somewhere.
 export default function SimpleStateLayout({
@@ -31,16 +30,12 @@ export default function SimpleStateLayout({
   title,
   subtitle,
   platform,
-  shareCode,
-  activityId,
   plans = [],
 }: {
   emoji: string;
   title: string;
   subtitle: string;
   platform: Platform | null;
-  shareCode: string;
-  activityId?: string;
   plans?: UpcomingPlan[];
 }) {
   return (
@@ -83,11 +78,7 @@ export default function SimpleStateLayout({
             ))}
           </ul>
         )}
-        {platform === 'android' ? (
-          <AndroidWaitlistCTA shareCode={shareCode} activityId={activityId} />
-        ) : (
-          <TestFlightRequestCTA shareCode={shareCode} activityId={activityId} variant="compact" />
-        )}
+        <StoreCTAs platform={platform} variant="compact" />
       </div>
       <Footer />
     </div>

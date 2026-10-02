@@ -7,14 +7,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import SmartDownloadLink from "@/components/SmartDownloadLink";
 import { SHARE_OG_IMAGE } from "@/lib/metadata";
-import { ANDROID_STORE_URL, HAS_ANDROID_STORE } from "@/lib/smartLink";
+import { ANDROID_STORE_URL, IOS_STORE_URL } from "@/lib/smartLink";
 import CopyCodeButton from "./CopyCodeButton";
 
 const LOGO_ICON_ORANGE = "/logos/konectr-icon-orange.svg";
-
-// Same env smartLink reads. Set = the iPhone line links to the App Store;
-// unset = the line stays plain text.
-const IOS_STORE_URL = process.env.NEXT_PUBLIC_IOS_STORE_URL || "";
 
 type Props = {
   params: Promise<{ code: string }>;
@@ -146,35 +142,24 @@ export default async function ReferralPage({ params }: Props) {
               <Step number={1} title="Install Konectr">
                 <p className="text-[#666] text-xs leading-relaxed mb-3">
                   iPhone: get Konectr on the{" "}
-                  {IOS_STORE_URL ? (
-                    <a
-                      href={IOS_STORE_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#FF774D] font-medium hover:underline"
-                    >
-                      App Store
-                    </a>
-                  ) : (
-                    "App Store"
-                  )}
-                  . Android:{" "}
-                  {HAS_ANDROID_STORE ? (
-                    <>
-                      get it on{" "}
-                      <a
-                        href={ANDROID_STORE_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#FF774D] font-medium hover:underline"
-                      >
-                        Google Play
-                      </a>
-                      .
-                    </>
-                  ) : (
-                    "Konectr is coming to Google Play. Join the list and we’ll email you when it lands."
-                  )}
+                  <a
+                    href={IOS_STORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#FF774D] font-medium hover:underline"
+                  >
+                    App Store
+                  </a>
+                  . Android: get it on{" "}
+                  <a
+                    href={ANDROID_STORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#FF774D] font-medium hover:underline"
+                  >
+                    Google Play
+                  </a>
+                  .
                 </p>
                 {/* Download CTA */}
                 <SmartDownloadLink

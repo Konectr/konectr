@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
-import { HAS_IOS_STORE, usePrimaryCta } from "@/lib/usePrimaryCta";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 
 export function Hero() {
   const t = useTranslations("home.hero");
@@ -77,28 +77,17 @@ export function Hero() {
           />
         </motion.div>
 
-        {/* Badge: switches to the App Store line once the iOS store link is wired */}
+        {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
           className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-5 py-2.5 rounded-full mb-8"
         >
-          {HAS_IOS_STORE ? (
-            <>
-              <span className="text-lg">🧪</span>
-              <span className="text-white font-semibold text-sm">
-                {t("betaLive")}
-              </span>
-            </>
-          ) : (
-            <>
-              <span className="text-lg">✨</span>
-              <span className="text-white font-semibold text-sm">
-                {t("launching", { date: brand.launchDate })}
-              </span>
-            </>
-          )}
+          <span className="text-lg">✨</span>
+          <span className="text-white font-semibold text-sm">
+            {t("betaLive")}
+          </span>
         </motion.div>
 
         {/* Headline */}

@@ -19,8 +19,7 @@ import { notFound } from 'next/navigation';
 import { getPublicHubPage, type PublicHubAnnouncement, type PublicHubPage } from '@/lib/supabase';
 import { BASE_URL, SHARE_OG_IMAGE, trimDescription } from '@/lib/metadata';
 import { formatTime, getRelativeDayPhrase } from '@/lib/datetime';
-import TestFlightRequestCTA from '../../a/[code]/TestFlightRequestCTA';
-import AndroidWaitlistCTA from '../../a/[code]/AndroidWaitlistCTA';
+import StoreCTAs from '@/components/StoreCTAs';
 import Footer from '../../a/[code]/redesign/Footer';
 
 // ISR, same as /c/: Hub pages get shared in bursts; announcements and plans
@@ -268,10 +267,7 @@ export default async function HubPage({ params }: Params) {
             activity join you at {hub.name}.
           </p>
           <div className="mx-auto mt-5 max-w-[340px]">
-            <TestFlightRequestCTA shareCode={`h/${hub.slug}`} variant="full" />
-          </div>
-          <div className="mx-auto mt-4 max-w-[340px] text-left">
-            <AndroidWaitlistCTA shareCode={`h/${hub.slug}`} />
+            <StoreCTAs platform={null} />
           </div>
         </section>
 
