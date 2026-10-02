@@ -62,6 +62,28 @@ This file never holds status.
 - **Severity:** P1 (user-facing data bug on own profile, visible to others)
 - **Status:** Open
 
+### BUG-007 · Messages > Activity Chatter: add a sorting mechanism (feature request)
+- **Logged:** 2026-10-01
+- **Area:** mobile iOS (dark mode, seen 8:38 -- older build, bottom nav still shows "Suggested" tab)
+- **Page / screen:** Bottom nav Messages -> "Activity Chatter" tab -> chat list
+- **Evidence:** Screenshot from founder ("SORT ME" + up/down arrow drawn over list)
+- **Current behaviour (from screenshot):** Fixed implicit order -- appears to be by last message time (HIKE @ BUKIT GASING 7:28 PM, then Wed, Wed), with chats that have "No messages yet" (GAMES & CHILL, Let's Go bowling!) dumped at the bottom with no date. User can't change the order; no way to bring the soonest upcoming activity to the top.
+- **Requested:** A sort control on the Activity Chatter list. Suggested options:
+  1. **Recent activity** (last message / system event time) -- default
+  2. **Happening soonest** (activity start date ascending; past activities last or archived)
+  3. **Unread first**
+  4. Optional: **A-Z**
+  - UI: small "Sort" chip/icon next to the Activity Chatter / Direct toggle (bottom sheet with radio options), remember the last choice per user (local storage).
+  - Show each row's activity date (e.g. "Sat, Oct 3") so date-based sorting is legible -- rows currently show "N going" but not the activity date for every chat.
+  - Consider the same control on the "Direct" tab (recent / unread).
+- **Related:** BUG-006 (inconsistent avatars) is visible here too -- letter initials vs ☕ emoji.
+- **Severity:** P3 (enhancement)
+- **Status:** Open · blocked by the feature freeze; same box as parked PF-25 (noted there 2026-10-01).
+
+---
+
+## Fixed
+
 ### BUG-008 · Website still uses beta/waitlist CTAs -- switch to App Store + Play Store now both apps are live
 - **Logged:** 2026-10-02
 - **Area:** web (konectr.app) -- sitewide, highest impact on `/a/[code]` RSVP share page
@@ -88,29 +110,7 @@ This file never holds status.
   - `/api/testflight-request`, `/api/android-waitlist` -- keep for history or retire
 - **Founder actions:** set `NEXT_PUBLIC_IOS_STORE_URL` + `NEXT_PUBLIC_ANDROID_STORE_URL` in Vercel (production + preview) with the real store links; update Tally waitlist form / homepage waitlist section decision.
 - **Severity:** P0 / P1 -- every shared link is the app's main acquisition funnel and currently can't send Android users to the store
-- **Status:** Open
-
-### BUG-007 · Messages > Activity Chatter: add a sorting mechanism (feature request)
-- **Logged:** 2026-10-01
-- **Area:** mobile iOS (dark mode, seen 8:38 -- older build, bottom nav still shows "Suggested" tab)
-- **Page / screen:** Bottom nav Messages -> "Activity Chatter" tab -> chat list
-- **Evidence:** Screenshot from founder ("SORT ME" + up/down arrow drawn over list)
-- **Current behaviour (from screenshot):** Fixed implicit order -- appears to be by last message time (HIKE @ BUKIT GASING 7:28 PM, then Wed, Wed), with chats that have "No messages yet" (GAMES & CHILL, Let's Go bowling!) dumped at the bottom with no date. User can't change the order; no way to bring the soonest upcoming activity to the top.
-- **Requested:** A sort control on the Activity Chatter list. Suggested options:
-  1. **Recent activity** (last message / system event time) -- default
-  2. **Happening soonest** (activity start date ascending; past activities last or archived)
-  3. **Unread first**
-  4. Optional: **A-Z**
-  - UI: small "Sort" chip/icon next to the Activity Chatter / Direct toggle (bottom sheet with radio options), remember the last choice per user (local storage).
-  - Show each row's activity date (e.g. "Sat, Oct 3") so date-based sorting is legible -- rows currently show "N going" but not the activity date for every chat.
-  - Consider the same control on the "Direct" tab (recent / unread).
-- **Related:** BUG-006 (inconsistent avatars) is visible here too -- letter initials vs ☕ emoji.
-- **Severity:** P3 (enhancement)
-- **Status:** Open · blocked by the feature freeze; same box as parked PF-25 (noted there 2026-10-01).
-
----
-
-## Fixed
+- **Status:** Fixed 2026-10-03 · `2077df3` on `fix/buglog-008` (konectr-web, PR #23, not yet merged to main) · Issue Konectr/konectr-mvp#160 · One store-URL source with the live listings as fallback; share pages, hubs, /hyrox and the home footer now show App Store / Google Play (desktop both), store button above the RSVP form. Pale "I'm in" was the required email field, not phone validation.
 
 ### BUG-006 · Messages > Activity Chatter: chat avatars show broken "?" glyph and are inconsistent
 - **Logged:** 2026-10-01
