@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 import { getFeedbackTickets } from "@/lib/feedback-api";
 import { categoryMeta, type FeedbackTicket, type FeedbackCategory } from "@/types/feedback";
 import FeedbackTicketCard from "./components/FeedbackTicketCard";
@@ -20,6 +21,7 @@ const sortOptions = [
 type SortOption = typeof sortOptions[number]["value"];
 
 export default function FeedbackBoardContent() {
+  const cta = usePrimaryCta("feedback_board");
   const [tickets, setTickets] = useState<FeedbackTicket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -178,11 +180,12 @@ export default function FeedbackBoardContent() {
               className="bg-primary hover:bg-primary/90"
             >
               <a
-                href={process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist"}
+                href={cta.href === "#waitlist" ? "https://konectr.app/#waitlist" : cta.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={cta.onClick}
               >
-                Download on App Store
+                {cta.label}
               </a>
             </Button>
             <Button variant="outline" asChild>

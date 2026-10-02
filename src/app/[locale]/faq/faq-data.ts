@@ -64,9 +64,7 @@ export const faqCategories: FAQCategory[] = [
     faqs: [
       {
         question: "How do I create an account?",
-        answer: HAS_ANDROID_STORE
-          ? "Get Konectr from the App Store on iPhone or Google Play on Android (links at konectr.app). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
-          : "Get Konectr from the download link at konectr.app (iPhone today; Android is in closed testing on Google Play — email hello@konectr.app for access). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
+        answer: "Get Konectr from the App Store on iPhone or Google Play on Android (links at konectr.app). Sign up with your email (we'll send a one-time code), add your interests and a photo. Takes about 2 minutes."
       },
       {
         question: "Do I need to verify my identity?",
@@ -281,10 +279,8 @@ export const faqCategories: FAQCategory[] = [
         answer: "Currently everything is free. We may add optional premium features later (priority matching, advanced filters), but core functionality—meeting people—stays free."
       },
       {
-        question: "When is Android coming?",
-        answer: HAS_ANDROID_STORE
-          ? "It's here. Konectr is live on Google Play — search for Konectr or use the download link at konectr.app. If the listing hasn't reached your region yet, email hello@konectr.app."
-          : "Android is in closed testing on Google Play right now — email hello@konectr.app and we'll add you. The public Play listing goes live as soon as Google approves it."
+        question: "Is Konectr on Android?",
+        answer: "Yes. Konectr is free on Google Play. Search for Konectr or use the download link at konectr.app."
       },
       {
         question: "What new features are coming?",

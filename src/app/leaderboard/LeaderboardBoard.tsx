@@ -14,8 +14,14 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { LeaderboardEntry } from '@/lib/supabase';
+import { usePrimaryCta } from '@/lib/usePrimaryCta';
 
-const TESTFLIGHT_URL = process.env.NEXT_PUBLIC_TESTFLIGHT_URL || '/en#waitlist';
+// Platform-aware store link; this page sits outside [locale], so the waitlist
+// fallback needs an explicit locale.
+function useGetKonectrHref(): string {
+  const cta = usePrimaryCta('leaderboard');
+  return cta.href === '#waitlist' ? '/en#waitlist' : cta.href;
+}
 
 const AVATAR_TINTS = [
   { bg: '#FFE1D6', fg: '#B4441F' },
@@ -69,6 +75,7 @@ function GlanceSheet({
   period: string;
   onClose: () => void;
 }) {
+  const getKonectrHref = useGetKonectrHref();
   const sheetRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -147,7 +154,7 @@ function GlanceSheet({
           </p>
 
           <a
-            href={TESTFLIGHT_URL}
+            href={getKonectrHref}
             className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-[#FF774D] hover:bg-[#E6693F] text-[#1F1F1F] font-[family-name:var(--font-heading)] font-extrabold text-[15px] px-6 py-[14px] rounded-full transition-colors"
           >
             Get Konectr
@@ -181,6 +188,7 @@ export default function LeaderboardBoard({
   thisWeekLabel: string;
   lastWeekLabel: string;
 }) {
+  const getKonectrHref = useGetKonectrHref();
   const [tab, setTab] = useState<Tab>('this');
   const [glance, setGlance] = useState<{ entry: LeaderboardEntry; index: number } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -276,7 +284,7 @@ export default function LeaderboardBoard({
                 Show up, confirm your meetup in the app, and claim the top spot.
               </p>
               <a
-                href={TESTFLIGHT_URL}
+                href={getKonectrHref}
                 className="mt-5 inline-flex items-center justify-center bg-[#FF774D] hover:bg-[#E6693F] text-[#1F1F1F] font-[family-name:var(--font-heading)] font-extrabold text-[14px] px-6 py-3 rounded-full transition-colors"
               >
                 Get Konectr

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Link } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { usePrimaryCta } from "@/lib/usePrimaryCta";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   getFeedbackTicket,
@@ -24,6 +25,7 @@ interface Props {
 }
 
 export default function FeedbackTicketDetailContent({ ticketId }: Props) {
+  const cta = usePrimaryCta("feedback_ticket");
   const [ticket, setTicket] = useState<FeedbackTicketDetail | null>(null);
   const [attachments, setAttachments] = useState<FeedbackAttachment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -286,9 +288,10 @@ export default function FeedbackTicketDetailContent({ ticketId }: Props) {
                     </p>
                     <Button asChild variant="outline">
                       <a
-                        href={process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist"}
+                        href={cta.href === "#waitlist" ? "https://konectr.app/#waitlist" : cta.href}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={cta.onClick}
                       >
                         Download Konectr
                       </a>

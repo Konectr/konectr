@@ -64,7 +64,7 @@ export const APP_STRUCTURED_DATA = {
   "@context": "https://schema.org",
   "@type": "MobileApplication",
   name: "Konectr",
-  operatingSystem: "iOS",
+  operatingSystem: "iOS, Android",
   applicationCategory: "SocialNetworkingApplication",
   downloadUrl: process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist",
   installUrl: process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist",
