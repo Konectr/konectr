@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
 import { Heading } from "@/components/shared";
+import StoreCTAs from "@/components/StoreCTAs";
 
 export function CTAFooter() {
   const tCta = useTranslations("home.cta");
@@ -39,17 +40,10 @@ export function CTAFooter() {
                 {tCta("subtitle")}
               </p>
 
-              {/* Tally Waitlist Form - Using direct src for reliable loading */}
-              <div className="max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white">
-                <iframe
-                  src="https://tally.so/embed/mY1xRq?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-                  width="100%"
-                  frameBorder="0"
-                  title="Konectr Waitlist"
-                  loading="lazy"
-                  className="bg-white rounded-2xl"
-                  style={{ minHeight: '500px' }}
-                />
+              {/* Store buttons replaced the Tally waitlist once both stores went live.
+                  The section keeps id="waitlist" so old /#waitlist links land here. */}
+              <div className="max-w-xs mx-auto">
+                <StoreCTAs platform={null} source="home_footer" />
               </div>
 
             </div>

@@ -3,6 +3,8 @@
 
 // Centralized SEO utilities for structured data generation
 
+import { ANDROID_STORE_URL, IOS_STORE_URL } from "@/lib/smartLink";
+
 const BASE_URL = "https://konectr.app";
 
 type BreadcrumbItem = {
@@ -66,8 +68,8 @@ export const APP_STRUCTURED_DATA = {
   name: "Konectr",
   operatingSystem: "iOS, Android",
   applicationCategory: "SocialNetworkingApplication",
-  downloadUrl: process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist",
-  installUrl: process.env.NEXT_PUBLIC_IOS_STORE_URL || "https://konectr.app/#waitlist",
+  downloadUrl: [IOS_STORE_URL, ANDROID_STORE_URL],
+  installUrl: [IOS_STORE_URL, ANDROID_STORE_URL],
   description:
     "Konectr is an activity-first social meetup app, live in Kuala Lumpur. Declare an intent — what activity (coffee, hike, gym, dinner), what time, what area, what vibe — and match with others doing the same thing nearby. No swiping; badges, not star ratings.",
   offers: {

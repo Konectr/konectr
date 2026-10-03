@@ -12,8 +12,7 @@
 
 import type { Campaign, CampaignActivity, CampaignVenue } from '@/lib/supabase';
 import { formatTime, formatWeekdayDate } from '@/lib/datetime';
-import TestFlightRequestCTA from '../a/[code]/TestFlightRequestCTA';
-import AndroidWaitlistCTA from '../a/[code]/AndroidWaitlistCTA';
+import StoreCTAs from '@/components/StoreCTAs';
 import GymDirectory from './GymDirectory';
 
 function truncate(text: string, max = 120): string {
@@ -207,11 +206,7 @@ export default function HyroxContent({
           </p>
 
           <div className="mt-5 max-w-[340px] mx-auto">
-            <TestFlightRequestCTA shareCode={campaign.tag_name} variant="full" />
-          </div>
-
-          <div className="mt-4 max-w-[340px] mx-auto text-left">
-            <AndroidWaitlistCTA shareCode={campaign.tag_name} />
+            <StoreCTAs platform={null} />
           </div>
         </section>
 

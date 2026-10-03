@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { SharedActivity, UpcomingPlan } from '@/lib/supabase';
 import { getActivityRsvpTeaser, cleanParticipantNames, verifyWebRsvpEmail, type RsvpTeaserResponse } from '@/lib/supabase';
-import { detectPlatform, getSmartProfileLinkProps, type Platform, HAS_ANDROID_STORE } from '@/lib/smartLink';
+import { detectPlatform, getSmartProfileLinkProps, type Platform } from '@/lib/smartLink';
 import { isValidEmail } from '@/lib/utils';
 import { getUtmFields } from '@/lib/attribution';
 import { copyText } from '@/lib/copyText';
@@ -25,8 +25,7 @@ import {
   type StoredRsvp,
 } from '@/lib/rsvpStorage';
 import { countryCodes } from './countryCodes';
-import AndroidWaitlistCTA from './AndroidWaitlistCTA';
-import TestFlightRequestCTA from './TestFlightRequestCTA';
+import StoreCTAs from '@/components/StoreCTAs';
 import WebChatPanel from './WebChatPanel';
 import WebHeadcountCard from './WebHeadcountCard';
 import { resolveVibe } from './redesign/vibes';
@@ -282,7 +281,6 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
             : 'This link may have expired or the activity was removed.'
         }
         platform={platform}
-        shareCode={shareCode}
         plans={upcomingPlans}
       />
     );
@@ -294,7 +292,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
   const notHappening = activity.status === 'expired' || activity.status === 'cancelled';
   const ended = notHappening || isActivityEnded(activity.end_time);
   const deepLink = `konectr://activity/${shareCode}`;
-  // Host row: tap tries the app profile, falls back to store/waitlist sign-up.
+  // Host row: tap tries the app profile, falls back to the store.
   const creatorLink = activity.user_id ? getSmartProfileLinkProps(activity.user_id) : null;
 
   // =============================================
@@ -314,13 +312,9 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
         subtitle={
           upcomingPlans.length > 0
             ? 'Here’s what’s on this week. Grab a spot.'
-            : platform === 'android' && !HAS_ANDROID_STORE
-              ? 'Konectr for Android is in closed testing — leave your email to get access.'
-              : 'Real plans, real people. Get Konectr on the App Store to see what’s next.'
+            : 'Real plans, real people. Get Konectr to see what’s next.'
         }
         platform={platform}
-        shareCode={shareCode}
-        activityId={activity.id}
         plans={upcomingPlans}
       />
     );
@@ -386,12 +380,6 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
       await copyText(url);
     }
   };
-
-  // Platform-aware download / beta CTA reused across states.
-  const platformCta = (variant: 'full' | 'compact') =>
-    platform === 'android'
-      ? <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-      : <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant={variant} />;
 
   // =============================================
   // Active Activity — Kinetic redesign
@@ -460,17 +448,13 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
           }
           belowChat={
             <div className="mt-5 space-y-4">
-              {platform === 'android' ? (
-                <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-              ) : (
-                <div className="bg-[#FFF4F1] border border-[#F3E4DD] rounded-[16px] p-4 text-center">
-                  <p className="text-[12.5px] text-[#8A6A5A] font-medium mb-3 leading-relaxed">
-                    Get reminded, see who&apos;s coming, and keep chatting in the app
-                  </p>
-                  <TestFlightRequestCTA shareCode={shareCode} activityId={activity.id} variant="full" />
-                  <OpenInApp deepLink={deepLink} />
-                </div>
-              )}
+              <div className="bg-[#FFF4F1] border border-[#F3E4DD] rounded-[16px] p-4 text-center">
+                <p className="text-[12.5px] text-[#8A6A5A] font-medium mb-3 leading-relaxed">
+                  Get reminded, see who&apos;s coming, and keep chatting in the app
+                </p>
+                <StoreCTAs platform={platform} />
+                {platform !== 'android' && <OpenInApp deepLink={deepLink} />}
+              </div>
               {/* Claim code — quiet fallback */}
               <div className="text-center">
                 <p className="text-[10px] text-[#BBB] mb-1">Having trouble? Use your claim code</p>
@@ -528,25 +512,12 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
       isFull={isFull}
       openInAppHref={platform !== 'android' ? deepLink : undefined}
       fullSlot={
-        platform === 'android' ? (
-          <AndroidWaitlistCTA shareCode={shareCode} activityId={activity.id} />
-        ) : (
-          <div className="text-center">
-            <p className="text-[14px] text-[#616161] mb-3">This one&apos;s full — grab another that fits.</p>
-            {platformCta('compact')}
-          </div>
-        )
-      }
-      belowForm={
-        <div className="mt-6">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex-1 h-px bg-[#EDEBE9]" />
-            <span className="text-[10px] uppercase tracking-wider text-[#B5B0AB]">or</span>
-            <div className="flex-1 h-px bg-[#EDEBE9]" />
-          </div>
-          {platformCta('full')}
+        <div className="text-center">
+          <p className="text-[14px] text-[#616161] mb-3">This one&apos;s full — grab another that fits.</p>
+          <StoreCTAs platform={platform} variant="compact" />
         </div>
       }
+      appCta={<StoreCTAs platform={platform} />}
       form={{
         name: guestName,
         onName: setGuestName,

@@ -4,8 +4,6 @@
 // FAQ data shared between FAQContent (client) and page.tsx (server JSON-LD)
 // v3 — 58 questions across 9 categories (updated 2026-03-01)
 
-import { HAS_ANDROID_STORE } from "@/lib/smartLink";
-
 export type FAQ = {
   question: string;
   answer: string;
@@ -284,9 +282,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "What new features are coming?",
-        answer: HAS_ANDROID_STORE
-          ? "Near-term: more Malaysian cities, venue partnerships. Future: AI recommendations, weather-aware suggestions, group planning tools. What stays: activity-first matching, small groups, badges (not ratings)."
-          : "Near-term: Android, more Malaysian cities, venue partnerships. Future: AI recommendations, weather-aware suggestions, group planning tools. What stays: activity-first matching, small groups, badges (not ratings)."
+        answer: "Near-term: more Malaysian cities, venue partnerships. Future: AI recommendations, weather-aware suggestions, group planning tools. What stays: activity-first matching, small groups, badges (not ratings)."
       }
     ]
   },

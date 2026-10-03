@@ -5,12 +5,11 @@ import type { MouseEvent } from 'react';
 
 export type Platform = 'ios' | 'android' | 'desktop';
 
-const WAITLIST_FALLBACK = 'https://konectr.app/#waitlist';
 const DEEP_LINK_FALLBACK_MS = 2000;
 
 // The download tap is the primary paid-traffic intent action — report it to
 // PostHog (always, prod-gated upstream) and Meta (only if the consent-gated
-// pixel loaded). Desktop clicks route to the waitlist, not a store, so only
+// pixel loaded). Desktop clicks route to the homepage, not a store, so only
 // the mobile paths call this. Defensive: tracking must never block navigation.
 function trackDownloadClick(kind: string, platform: Platform) {
   try {
@@ -34,21 +33,22 @@ export function detectPlatform(): Platform {
   return 'desktop';
 }
 
-// Env state: NEXT_PUBLIC_IOS_STORE_URL and NEXT_PUBLIC_TESTFLIGHT_URL both point
-// at the TestFlight public link. NEXT_PUBLIC_ANDROID_STORE_URL is set the day the
-// Play production listing resolves (build 68 approved 2026-09-19; set once the
-// store URL returns 200). Until then every Android surface — this fallback, the
-// Hero CTA, AndroidWaitlistCTA, /r copy — keeps the waitlist behaviour.
-export const ANDROID_STORE_URL = process.env.NEXT_PUBLIC_ANDROID_STORE_URL || '';
-export const HAS_ANDROID_STORE = ANDROID_STORE_URL.length > 0;
+// Both stores are live (2026-10-01). Env vars can override; the fallbacks are the
+// real listings, so an unset or Preview env never sends anyone to a waitlist.
+export const IOS_STORE_URL =
+  process.env.NEXT_PUBLIC_IOS_STORE_URL || 'https://apps.apple.com/my/app/konectr/id6758149668';
+export const ANDROID_STORE_URL =
+  process.env.NEXT_PUBLIC_ANDROID_STORE_URL ||
+  'https://play.google.com/store/apps/details?id=com.konectr.konectrMobile';
 
-function getStoreUrl(platform: Platform): string {
-  const ios = process.env.NEXT_PUBLIC_IOS_STORE_URL || WAITLIST_FALLBACK;
-  const android = ANDROID_STORE_URL || WAITLIST_FALLBACK;
+// Desktop has no app to install, so it lands on the homepage's store buttons.
+const DESKTOP_FALLBACK = 'https://konectr.app/';
+
+export function getStoreUrl(platform: Platform): string {
   switch (platform) {
-    case 'ios': return ios;
-    case 'android': return android;
-    case 'desktop': return WAITLIST_FALLBACK;
+    case 'ios': return IOS_STORE_URL;
+    case 'android': return ANDROID_STORE_URL;
+    case 'desktop': return DESKTOP_FALLBACK;
   }
 }
 
@@ -60,19 +60,14 @@ export interface SmartDownloadProps {
 /**
  * Build props for a Download CTA that tries the Konectr deep link first
  * (so users who already have the app open it directly on the activity),
- * then falls back to the platform store (or waitlist if stores unset).
+ * then falls back to the platform store.
  *
  * SSR-safe: `href` uses the desktop fallback for initial render; the real
  * per-platform decision happens in `onClick` where `navigator` is available.
- *
- * Fallback URLs are read from:
- * - `NEXT_PUBLIC_IOS_STORE_URL`
- * - `NEXT_PUBLIC_ANDROID_STORE_URL`
- * Either unset → waitlist page.
  */
 export function getSmartDownloadProps(shareCode: string): SmartDownloadProps {
   return {
-    href: WAITLIST_FALLBACK,
+    href: DESKTOP_FALLBACK,
     onClick: (e) => {
       e.preventDefault();
       if (typeof window === 'undefined') return;
@@ -110,11 +105,11 @@ export function getSmartDownloadProps(shareCode: string): SmartDownloadProps {
  * Variant for the started-by row on the RSVP page — deep-links to the creator's
  * public profile (`konectr://profile/{userId}`). Same try-app-then-fallback
  * behavior: users with the app land on the profile; everyone else is routed
- * to the store/waitlist to sign up first.
+ * to the store to sign up first.
  */
 export function getSmartProfileLinkProps(userId: string): SmartDownloadProps {
   return {
-    href: WAITLIST_FALLBACK,
+    href: DESKTOP_FALLBACK,
     onClick: (e) => {
       e.preventDefault();
       if (typeof window === 'undefined') return;
@@ -191,7 +186,7 @@ export function getSmartReferralDownloadProps(code: string): SmartDownloadProps 
  */
 export function getSmartCampaignLinkProps(campaignKey: string): SmartDownloadProps {
   return {
-    href: WAITLIST_FALLBACK,
+    href: DESKTOP_FALLBACK,
     onClick: (e) => {
       e.preventDefault();
       if (typeof window === 'undefined') return;

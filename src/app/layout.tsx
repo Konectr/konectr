@@ -67,7 +67,7 @@ export const metadata: Metadata = {
 // Requires "Cookieless server hash mode" enabled in PostHog project settings.
 // Prod-only so preview deploys and local dev never pollute the project.
 // The official stub queues capture() calls made before array.js loads, which
-// keeps early CTA clicks (Hero.tsx, TestFlightRequestCTA.tsx) from dropping.
+// keeps early CTA clicks (Hero.tsx, StoreCTAs.tsx) from dropping.
 const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 const POSTHOG_HOST =
   process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
