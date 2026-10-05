@@ -50,6 +50,12 @@ export async function getActivityByShareCode(shareCode: string): Promise<SharedA
 
     // Return first result if array, otherwise return as-is
     const activity = Array.isArray(data) ? data[0] : data;
+    // A women-only plan this visitor can't see comes back redacted (no
+    // start_time, venue or starter). Treat it as not found rather than render
+    // a 1970 date.
+    // ponytail: hides the plan from eligible women too; PF-46 web phase owns the
+    // "open it in the app" state.
+    if (activity?.redacted) return null;
     return activity as SharedActivity;
   } catch (err) {
     console.error('Error fetching activity:', err);
