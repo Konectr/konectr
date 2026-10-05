@@ -120,6 +120,11 @@ const sections = [
           "We share your profile information (name, photo, bio, interests), approximate location, and activity preferences with matched users.",
       },
       {
+        subtitle: "Who sees your profile photo",
+        content:
+          "Your profile and cover photos are shown only to people who share a plan with you (including past plans), people in your Circle, people you've messaged, and anyone you've sent a Circle or join request to. They are never shown to someone you've blocked. Everyone else, including anyone who opens a shared plan link, sees your initials instead. If you choose to appear on the public leaderboard, your profile photo is shown there too.",
+      },
+      {
         subtitle: "This Week wall (photos you choose to publish)",
         content:
           "A photo sent in a plan's group chat can be shared to This Week by anyone who was on that plan. A published photo is visible to every signed-in Konectr member in your city for 14 days, shown only as the venue, the kind of plan and the group size — never a name, a date, or a link to the plan. Any attendee of that plan can take it down at any time, we review every photo before it goes live, location data is stripped from the image, and the file is deleted from our storage when the 14 days end. Only share photos that everyone in them is comfortable with.",
@@ -327,7 +332,7 @@ export function PrivacyContent() {
       <section className="pt-12 pb-4">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-muted-foreground text-sm">
-            Last Updated: September 12, 2026 &middot; Effective Date: December 10,
+            Last Updated: October 5, 2026 &middot; Effective Date: December 10,
             2025
           </p>
         </div>

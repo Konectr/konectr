@@ -150,7 +150,7 @@ export const faqCategories: FAQCategory[] = [
       },
       {
         question: "Can I remain anonymous?",
-        answer: "Your full name, phone, email, and exact location are never shared. You control your display name, photos, and bio. First names only shown after you both join the same activity. Chat stays in-app."
+        answer: "Your full name, phone, email, and exact location are never shared. You control your display name, photos, and bio. Your photo is only shown to people you share a plan, a chat or your Circle with; everyone else sees your initials. Chat stays in-app."
       },
       {
         question: "Is my data safe?",

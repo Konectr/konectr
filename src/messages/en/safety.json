@@ -26,8 +26,8 @@
         "description": "3 reports = warning. 6 = suspension. 9 = six-month ban. No exceptions."
       },
       "privateMessaging": {
-        "title": "Private Messaging",
-        "description": "Chat in-app only. Your phone number is never shared."
+        "title": "Private by Default",
+        "description": "Chat stays in-app and your phone number is never shared. Your photo is only shown to people you share a plan, a chat or your Circle with."
       },
       "photoVerification": {
         "title": "Photo Verification",
