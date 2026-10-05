@@ -146,7 +146,7 @@ const sections = [
       {
         subtitle: "Service Providers",
         content:
-          "We work with these service providers, each of which processes data only to perform its function for us: Supabase (database, authentication and file storage, hosted in Singapore); Firebase Cloud Messaging and Firebase Crashlytics (push delivery and crash reports); PostHog (first-party product analytics, hosted in the United States); Brevo (transactional and lifecycle email); Mapbox (map display and reverse geocoding — the map SDK on your device may send anonymised usage telemetry to Mapbox); Google Places (venue search and venue photos); and Google ML Kit (on-device translation model downloads). None of them may use your data for their own purposes.",
+          "We work with these service providers, each of which processes data only to perform its function for us: Supabase (database, authentication and file storage, hosted in Singapore); Firebase Cloud Messaging and Firebase Crashlytics (push delivery and crash reports); PostHog (first-party product analytics and masked session recordings, hosted in the United States); Brevo (transactional and lifecycle email); Mapbox (map display and reverse geocoding — the map SDK on your device may send anonymised usage telemetry to Mapbox); Google Places (venue search and venue photos); and Google ML Kit (on-device translation model downloads). None of them may use your data for their own purposes.",
       },
     ],
   },
@@ -288,8 +288,8 @@ const sections = [
     id: "cookies",
     title: "12. Cookies and Tracking",
     content: [
-      "The Konectr mobile app does not use advertising cookies, advertising SDKs, or cross-app tracking. In-app analytics are first-party (crash reporting and feature usage, tied to your account ID, never sold or shared for advertising).",
-      "Our website (konectr.app) uses: PostHog product analytics in cookieless mode (no cookies or device storage); and — only if you accept the cookie banner — Meta and Google advertising pixels that measure whether our ads brought you here. Declining or ignoring the banner keeps all advertising pixels off. Full details: konectr.app/cookies.",
+      "The Konectr mobile app does not use advertising cookies, advertising SDKs, or cross-app tracking. In-app analytics are first-party (crash reporting, feature usage, and masked session recordings of how the app is used, with on-screen text and images hidden; tied to your account ID, never sold or shared for advertising).",
+      "Our website (konectr.app) uses: PostHog product analytics in cookieless mode (no cookies or device storage), including session recordings of page interactions with form inputs masked; and — only if you accept the cookie banner — Meta and Google advertising pixels that measure whether our ads brought you here. Declining or ignoring the banner keeps all advertising pixels off. Full details: konectr.app/cookies.",
       "We do NOT sell your personal data to advertisers, build advertising profiles of you, or track you across other apps.",
     ],
   },
