@@ -19,5 +19,5 @@ NODE_PATH=$(npm root -g) node render.js          # → out/
 NODE_PATH=$(npm root -g) node sheet.js "out/Konectr Circle" sheet.png 200   # contact sheet
 ```
 
-Facts on the slides (verify before re-posting): accounts are email-verified, iOS is on the
-beta, Android is in closed testing, KL only, strikes 3/6/9, reports reviewed within 24h.
+Facts on the slides (verify before re-posting): accounts are email-verified, live on the
+App Store and Google Play, KL only, strikes 3/6/9, reports reviewed within 24h.

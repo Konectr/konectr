@@ -10,7 +10,7 @@ const APP = {
       { t: 'logo', big: 'Meet *Konectr.*', small: 'Turns "we should hang out sometime" into an actual time.' },
       { t: 'steps', steps: ['Pick a vibe.', "See who's free.", 'Show up.'], small: "That's the whole app. We tried making it longer. Couldn't." },
       { t: 'photo', img: H + 'after.jpg', big: 'No swiping. *No bio anxiety.*', small: 'Just plans, real people, real places.' },
-      { t: 'cta', big: 'Free. In KL. *Right now.*', small: 'Your weekend called.', button: 'Get the iPhone beta', note: 'Link in bio' },
+      { t: 'cta', big: 'Free. In KL. *Right now.*', small: 'Your weekend called.', button: 'Download free', note: 'App Store · Google Play' },
     ]},
     { key: 'SAFE', emoji: '🛡️', slides: [
       { t: 'title', sub: 'Is it safe? Short answer: yes. Long answer, tap.' },
@@ -29,12 +29,12 @@ const APP = {
       { t: 'qa', q: 'So... Bumble BFF?', a: 'No swiping. No "hey" that goes nowhere. *Every match ends in a meetup.*' },
       { t: 'qa', q: "What's Pulse?", a: 'Our AI matchmaker. Tell it you\'re free, *it finds your people.*' },
       { t: 'qa', q: 'Need to cancel?', a: 'Withdraw anytime. Just don\'t ghost, *the crew notices.*' },
-      { t: 'qa', q: 'Android when?', a: 'Closed testing now. Email *hello@konectr.app* to skip the line.' },
+      { t: 'qa', q: 'iPhone or Android?', a: 'Both. Free on the *App Store and Google Play.*' },
     ]},
     { key: 'GET IT', emoji: '📲', slides: [
       { t: 'title', sub: 'How do I get in? Easier than finding parking in Bangsar.' },
-      { t: 'icon', icon: '🍎', chip: 'iOS · Beta', big: 'iPhone? *You\'re in.*', small: "Beta's live. Link in bio." },
-      { t: 'icon', icon: '🤖', chip: 'Android · Closed testing', big: 'Android? *Almost.*', small: 'Email hello@konectr.app and we\'ll add you.' },
+      { t: 'icon', icon: '🍎', chip: 'App Store', big: 'iPhone? *You\'re in.*', small: 'Search "Konectr" on the App Store. Or tap the link in bio.' },
+      { t: 'icon', icon: '🤖', chip: 'Google Play', big: 'Android? *You too.*', small: 'Search "Konectr" on Google Play. Or tap the link in bio.' },
       { t: 'code', big: 'Got an invite *code?*', small: 'Paste it at sign-up. You both get XP. Friendship perks unlocked.' },
       { t: 'cta', big: 'Want to see plans *first?*', small: 'We encourage it.', button: 'Stalk @konectrcircle', note: 'Plans. People. Places.' },
     ]},
@@ -72,7 +72,7 @@ const CIRCLE = {
     ]},
     { key: 'ASK', emoji: '❓', slides: [
       { t: 'title', img: H + 'step-2.jpg', sub: 'Questions? Good. We\'ve got answers.' },
-      { t: 'qa', q: 'Do I need the app?', a: 'Nope. *Tap, RSVP, done.* (The app has perks though. Just saying.)' },
+      { t: 'qa', q: 'Do I need the app?', a: 'Nope. *Tap, RSVP, done.* (The free app has perks though. Just saying.)' },
       { t: 'qa', q: 'Is it free?', a: '*Free free.* Your kopi is on you though.' },
       { t: 'qa', q: "I don't know anyone.", a: 'Perfect. Neither did everyone else. *That\'s the point.*' },
       { t: 'qa', q: "I'm an introvert.", a: 'Same. *Small groups* plus an activity to hide behind.' },
