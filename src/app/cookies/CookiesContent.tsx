@@ -14,7 +14,7 @@ const SECTIONS = [
   },
   {
     title: 'Analytics',
-    body: 'PostHog (product analytics) runs in cookieless mode — it sets no cookies and stores nothing on your device. That is the only analytics on the site unless you accept the banner below.',
+    body: 'PostHog (product analytics) runs in cookieless mode — it sets no cookies and stores nothing on your device. It also records page interactions (session replay), with form inputs masked. That is the only analytics on the site unless you accept the banner below.',
   },
   {
     title: 'Advertising — only with your OK',
@@ -42,7 +42,7 @@ export default function CookiesContent() {
         <h1 className="text-3xl font-bold text-foreground mb-2">Cookie Policy</h1>
         <p className="text-muted-foreground mb-10">
           What konectr.app stores in your browser, why, and how to change your
-          mind. Last updated 21 August 2026.
+          mind. Last updated 5 October 2026.
         </p>
         {SECTIONS.map((s) => (
           <section key={s.title} className="mb-8">
