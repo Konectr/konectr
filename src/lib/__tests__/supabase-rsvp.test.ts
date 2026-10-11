@@ -15,8 +15,21 @@ vi.mock('@supabase/supabase-js', () => ({
 }));
 
 // Import after mocks
-import { createWebRsvp, getActivityRsvpTeaser, cleanParticipantNames } from '../supabase';
+import {
+  createWebRsvp,
+  getActivityRsvpTeaser,
+  cleanParticipantNames,
+  getActivityByShareCode,
+  getWebGuestPlan,
+} from '../supabase';
 import type { WebRsvpResponse, RsvpTeaserResponse } from '../supabase';
+import {
+  REDACTED_SHARE_ROW,
+  MIXED_SHARE_ROW,
+  ATTESTED_RSVP_RESPONSE,
+  GUEST_PLAN,
+  GUEST_TOKEN,
+} from './fixtures/women-only';
 
 describe('createWebRsvp', () => {
   beforeEach(() => {
@@ -210,5 +223,102 @@ describe('cleanParticipantNames', () => {
 
   it('passes a clean list through untouched', () => {
     expect(cleanParticipantNames(['Alex', 'Sam', 'Jordan'])).toEqual(['Alex', 'Sam', 'Jordan']);
+  });
+});
+
+// ============================================================================
+// PF-46 women-only
+// ============================================================================
+
+describe('getActivityByShareCode (PF-46)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns a redacted women-only row instead of treating it as not found', async () => {
+    mockRpc.mockResolvedValue({ data: [REDACTED_SHARE_ROW], error: null });
+
+    const result = await getActivityByShareCode('k7q2wxyz');
+
+    expect(mockRpc).toHaveBeenCalledWith('get_activity_by_share_code', { p_share_code: 'K7Q2WXYZ' });
+    expect(result).toEqual(REDACTED_SHARE_ROW);
+    expect(result?.redacted).toBe(true);
+    expect(result?.start_time).toBeNull();
+  });
+
+  it('returns a mixed plan row unchanged', async () => {
+    mockRpc.mockResolvedValue({ data: [MIXED_SHARE_ROW], error: null });
+
+    expect(await getActivityByShareCode('ABC123')).toEqual(MIXED_SHARE_ROW);
+  });
+});
+
+describe('createWebRsvp attestation (PF-46)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('adds p_attest_woman only when ticked and returns the unlock', async () => {
+    mockRpc.mockResolvedValue({ data: ATTESTED_RSVP_RESPONSE, error: null });
+
+    const result = await createWebRsvp(
+      REDACTED_SHARE_ROW.id, 'Aisha', 'ip', null, 'aisha@example.com', {}, true
+    );
+
+    expect(mockRpc).toHaveBeenCalledWith('create_web_rsvp', {
+      p_activity_id: REDACTED_SHARE_ROW.id,
+      p_guest_name: 'Aisha',
+      p_ip_hash: 'ip',
+      p_phone_hash: null,
+      p_email: 'aisha@example.com',
+      p_utm_source: null,
+      p_utm_medium: null,
+      p_utm_campaign: null,
+      p_attest_woman: true,
+    });
+    expect(result.activity?.venue_name).toBe('Bukit Kiara Trail');
+  });
+
+  it('sends the pre-PF-46 8-key payload when not ticked', async () => {
+    mockRpc.mockResolvedValue({ data: { claim_token: 'RSVP-0000' }, error: null });
+
+    await createWebRsvp('id', 'Jordan', null, null, null, {}, false);
+
+    const payload = mockRpc.mock.calls[0][1];
+    expect(Object.keys(payload)).toHaveLength(8);
+    expect(payload).not.toHaveProperty('p_attest_woman');
+  });
+
+  it('surfaces the trigger error text so the route can map it', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'women_only_attestation_required' } });
+
+    await expect(createWebRsvp(REDACTED_SHARE_ROW.id, 'Aisha', null)).rejects.toThrow(
+      'women_only_attestation_required'
+    );
+  });
+});
+
+describe('getWebGuestPlan (PF-46)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns the guest plan for her token', async () => {
+    mockRpc.mockResolvedValue({ data: GUEST_PLAN, error: null });
+
+    expect(await getWebGuestPlan(GUEST_TOKEN)).toEqual(GUEST_PLAN);
+    expect(mockRpc).toHaveBeenCalledWith('get_web_guest_plan', { p_guest_token: GUEST_TOKEN });
+  });
+
+  it('returns null when the RSVP is gone (withdrawn or removed)', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: null });
+
+    expect(await getWebGuestPlan(GUEST_TOKEN)).toBeNull();
+  });
+
+  it('throws on an RPC error so an outage is not read as "removed"', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'timeout' } });
+
+    await expect(getWebGuestPlan(GUEST_TOKEN)).rejects.toThrow('timeout');
   });
 });

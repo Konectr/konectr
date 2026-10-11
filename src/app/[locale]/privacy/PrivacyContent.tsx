@@ -51,7 +51,7 @@ const sections = [
           "Phone number (optional, if you choose to add it)",
           "Name (display name for your profile)",
           "Date of birth (you must be 18 or over to create an account)",
-          "Gender (for profile display)",
+          "Gender (for profile display, and to control access to women-only activities)",
           "Profile photo (optional)",
           "Bio, interests, and languages spoken",
           "Pinned photos (up to three, with optional captions) and answers to profile prompts (optional)",
@@ -98,6 +98,7 @@ const sections = [
     title: "4. How We Use Your Data",
     useItems: [
       "Match you with other users for in-person activities",
+      "Use your profile gender to control access to women-only activities: only members whose profile gender is Woman can see or join them",
       "Verify your identity and maintain a safe community",
       "Improve our Service through analytics",
       "Comply with legal obligations under PDPA 2010",
@@ -274,6 +275,15 @@ const sections = [
         period:
           "Retained after account deletion, so that deleting an account cannot erase a report",
       },
+      // PF-46, founder answer 7 (2026-10-11). This is a PDPA commitment (see the
+      // header above): the women_only_bans purge was NOT live in prod on
+      // 2026-10-11 (no function or cron job touches the table). Do not deploy
+      // this row until that purge exists and has run.
+      {
+        data: "Women-only ban list (web RSVPs)",
+        period:
+          "If a starter removes you from a women-only activity you joined on the web, we keep your email address and a one-way hash of your phone number for 12 months after the ban ends, then delete them",
+      },
     ],
   },
   {
@@ -332,7 +342,7 @@ export function PrivacyContent() {
       <section className="pt-12 pb-4">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-muted-foreground text-sm">
-            Last Updated: October 5, 2026 &middot; Effective Date: December 10,
+            Last Updated: October 11, 2026 &middot; Effective Date: December 10,
             2025
           </p>
         </div>

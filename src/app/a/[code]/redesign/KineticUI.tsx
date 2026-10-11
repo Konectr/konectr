@@ -69,8 +69,129 @@ export function WhenWhereTiles({
   );
 }
 
+// ── Women-only (PF-46) ──────────────────────────────────────────────────────
+// Board: docs/design/women-only/women-only-board-v2.html (mobile repo), picks
+// locked at rev 2.1: icon I2 "ponytails", web checkbox W2.
+
+export function WomenOnlyGlyph({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="7.5" cy="8.5" r="2.6" />
+      <path d="M5.1 7.3c-1.5-.1-2.4.9-2.4 2.3 0 .9.4 1.7 1.1 2.1M3 20.5V20a4.5 4.5 0 0 1 9 0v.5" />
+      <circle cx="16.5" cy="8.5" r="2.6" />
+      <path d="M18.9 7.3c1.5-.1 2.4.9 2.4 2.3 0 .9-.4 1.7-1.1 2.1M12 20.5V20a4.5 4.5 0 0 1 9 0v.5" />
+    </svg>
+  );
+}
+
+function LockIcon({ className = 'w-3 h-3' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="5" y="11" width="14" height="9" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
+
+// "🔒 time" / "🔒 spot" under a locked tile; the visible word is short by
+// design, the sr-only text says what it means.
+function LockedSub({ word, spoken }: { word: string; spoken: string }) {
+  return (
+    <span className="inline-flex items-center gap-1">
+      <LockIcon />
+      <span aria-hidden="true">{word}</span>
+      <span className="sr-only">{spoken}</span>
+    </span>
+  );
+}
+
+// Before the RSVP a women-only plan shows a day part and an area, never the
+// exact time, venue or a map: the tiles are not tappable.
+export function LockedWhenWhereTiles({ dayPart, area }: { dayPart: string | null; area: string | null }) {
+  return (
+    <div className="flex gap-3">
+      <Tile
+        icon="🗓️"
+        label="WHEN"
+        value={dayPart || 'Coming up'}
+        valueClass="text-[#FF774D]"
+        sub={<LockedSub word="time" spoken="Exact time shared after you RSVP" />}
+      />
+      <Tile
+        icon="📍"
+        label="WHERE"
+        value={area || 'After you RSVP'}
+        sub={<LockedSub word="spot" spoken="Exact place shared after you RSVP" />}
+      />
+    </div>
+  );
+}
+
+export function WomenOnlyBanner() {
+  return (
+    <div className="flex items-start gap-[10px] bg-[#FFF4F1] border border-[#F3E4DD] rounded-[14px] px-3 py-[10px]">
+      <WomenOnlyGlyph className="w-[18px] h-[18px] mt-[1px] shrink-0 text-[#C2410C]" />
+      <div>
+        <b className="block text-[13.5px] text-[#1F1F1F]">Women-only activity</b>
+        <span className="text-[12px] text-[#616161]">
+          Open to women only. The exact time, place and crew show once you RSVP.
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// Founder pick R5 (2026-09-28): no crew names or head-count before the RSVP.
+// Only the group size is shown.
+export function LockedCrewRow({ groupSize }: { groupSize: number }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-[#F5F3F1] text-[#8A8580]">
+        <LockIcon className="w-4 h-4" />
+      </span>
+      <div className="flex-1 min-w-0 text-[13.5px] text-[#616161]">Crew shown after you RSVP</div>
+      {groupSize > 0 && (
+        <span className="shrink-0 bg-[#FFF4F1] text-[#B4441F] font-extrabold text-[11.5px] px-[11px] py-[6px] rounded-full whitespace-nowrap">
+          Up to {groupSize}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// Web checkbox, pick W2: the consequence stays in view at the moment she attests.
+export function AttestCheckbox({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="mt-3 flex items-start gap-[9px] text-[13px] leading-[1.35] text-[#1F1F1F] cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        required
+        aria-required="true"
+        className="peer sr-only"
+      />
+      <span
+        aria-hidden="true"
+        className={`mt-[1px] w-[18px] h-[18px] shrink-0 rounded-[5px] border-[1.5px] grid place-items-center peer-focus-visible:ring-2 peer-focus-visible:ring-[#FF774D] peer-focus-visible:ring-offset-2 ${
+          checked ? 'bg-[#FF774D] border-[#FF774D]' : 'bg-white border-[#9E9E9E]'
+        }`}
+      >
+        {checked && (
+          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="#1F1F1F" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12.5l4.5 4.5L19 7.5" />
+          </svg>
+        )}
+      </span>
+      <span>
+        <b className="font-bold">I&apos;m a woman.</b> Misuse means a ban.
+      </span>
+    </label>
+  );
+}
+
 function Tile({ icon, label, value, valueClass = '', sub, onClick, actionHint }: {
-  icon: string; label: string; value: string; valueClass?: string; sub?: string | null;
+  icon: string; label: string; value: string; valueClass?: string; sub?: ReactNode;
   onClick?: () => void; actionHint?: string;
 }) {
   const cls = 'flex-1 min-w-0 bg-white border border-[#F0EEEC] rounded-[18px] p-4 shadow-[0_12px_30px_-20px_rgba(31,31,31,0.28)]';

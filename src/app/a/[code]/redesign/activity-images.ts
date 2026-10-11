@@ -53,17 +53,41 @@ const VIBE_FALLBACK: Record<VibeKey, string> = {
   social:    '/images/email/friends-group.jpg',
 };
 
+// PF-46: a women-only plan's hero never shows men. These are the only images
+// checked (2026-10-11) to show no people, or women only: art, basketball, cowork,
+// pottery and trx have nobody in them; yoga is one woman. Every other photo in
+// the set shows men or people who can't be told apart (hands, distant figures).
+// Re-check an image before adding it here.
+const WOMEN_ONLY_SAFE = new Set(['art', 'basketball', 'cowork', 'pottery', 'trx', 'yoga']);
+// Vibe fallback for a women-only plan no keyword matched; vibes without a safe
+// photo get the pattern.
+const WOMEN_ONLY_VIBE: Partial<Record<VibeKey, string>> = {
+  focus: 'cowork',
+  creative: 'art',
+  active: 'yoga',
+};
+// Brand gradient + dot grid, no people (women-only.jpg, 1200²).
+export const WOMEN_ONLY_PATTERN = '/images/activities/women-only.jpg';
+
 export function activityImage(opts: {
   vibe: VibeKey;
   venueName?: string | null;
   title?: string | null;
   purpose?: string | null;
   category?: string | null;
+  womenOnly?: boolean;
 }): string {
   const hay = [opts.venueName, opts.title, opts.purpose, opts.category]
     .filter(Boolean).join(' ').toLowerCase();
   for (const [re, key] of KEYWORD_RULES) {
-    if (re.test(hay)) return `/images/activities/${key}.jpg`;
+    if (re.test(hay)) {
+      if (opts.womenOnly && !WOMEN_ONLY_SAFE.has(key)) return WOMEN_ONLY_PATTERN;
+      return `/images/activities/${key}.jpg`;
+    }
+  }
+  if (opts.womenOnly) {
+    const key = WOMEN_ONLY_VIBE[opts.vibe];
+    return key ? `/images/activities/${key}.jpg` : WOMEN_ONLY_PATTERN;
   }
   return VIBE_FALLBACK[opts.vibe];
 }

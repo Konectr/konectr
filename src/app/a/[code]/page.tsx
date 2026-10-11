@@ -5,10 +5,11 @@ import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { after } from 'next/server';
 import { getActivityByShareCode, getIndexablePlans, getUpcomingPublicPlans, type SharedActivity } from '@/lib/supabase';
-import { SHARE_OG_IMAGE } from '@/lib/metadata';
 import { recordShareLinkView } from '@/lib/shareLinkTelemetry';
-import { formatWeekdayDate, formatTime, isActivityEnded, isLateWithdrawal } from '@/lib/datetime';
+import { isLateWithdrawal } from '@/lib/datetime';
 import ActivityRsvpPage from './ActivityRsvpPage';
+import { buildShareMetadata } from './shareMetadata';
+import { isPlanOver } from './planStatus';
 
 type Props = {
   params: Promise<{ code: string }>;
@@ -47,60 +48,7 @@ function eventJsonLd(activity: SharedActivity, code: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
   const activity = await getActivityByShareCode(code);
-
-  // A dead or mistyped share code still gets pasted into WhatsApp, so this
-  // branch needs the preview card too.
-  if (!activity) {
-    return {
-      title: 'Activity Not Found - Konectr',
-      description: 'This activity could not be found.',
-      openGraph: {
-        title: 'Konectr',
-        description: 'This activity could not be found.',
-        url: `https://konectr.app/a/${code}`,
-        type: 'website',
-        images: [SHARE_OG_IMAGE],
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: 'Konectr',
-        description: 'This activity could not be found.',
-        images: [SHARE_OG_IMAGE.url],
-        site: '@konectrapp',
-      },
-    };
-  }
-
-  const venueName = activity.venue_name || 'TBD';
-  // Spots framing matches the landing page + share message ("X spots left"), not
-  // "joined/cap" — "0/10 spots" read as if the activity were empty/unavailable.
-  const spotsLeft = Math.max(0, activity.max_participants - Number(activity.current_participants));
-  const spotsText = activity.max_participants > 0
-    ? (spotsLeft === 0 ? 'Full' : `${spotsLeft} ${spotsLeft === 1 ? 'spot' : 'spots'} left`)
-    : `${activity.current_participants} joined`;
-  const richDescription = `${formatWeekdayDate(activity.start_time)}, ${formatTime(activity.start_time)} at ${venueName} · ${spotsText} · Join ${activity.creator_name} on Konectr`;
-
-  return {
-    title: `${activity.title} - Join on Konectr`,
-    description: richDescription,
-    alternates: {
-      canonical: `https://konectr.app/a/${code}`,
-    },
-    openGraph: {
-      title: `${activity.title} - Konectr`,
-      description: richDescription,
-      url: `https://konectr.app/a/${code}`,
-      type: 'website',
-      images: [SHARE_OG_IMAGE],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${activity.title} - Konectr`,
-      description: richDescription,
-      images: [SHARE_OG_IMAGE.url],
-      site: '@konectrapp',
-    },
-  };
+  return buildShareMetadata(activity, code);
 }
 
 export default async function ActivityPreviewPage({ params }: Props) {
@@ -119,18 +67,18 @@ export default async function ActivityPreviewPage({ params }: Props) {
 
   // Late-withdrawal prediction for the withdraw copy (computed server-side to keep
   // the client render pure; the cancel_web_rsvp RPC is the authoritative gate).
-  const isLate = activity ? isLateWithdrawal(activity.start_time) : false;
+  // A redacted women-only plan has no start_time here; the client works it out
+  // once the guest's plan is unlocked.
+  const isLate = activity?.start_time ? isLateWithdrawal(activity.start_time) : false;
 
   // Dead-end states (23% of human views landed on an ended plan, 30d to
   // 2026-09-23) get the next few joinable plans. Same "over" rule as the client.
-  const isOver =
-    !activity ||
-    activity.status === 'expired' ||
-    activity.status === 'cancelled' ||
-    isActivityEnded(activity.end_time);
+  const isOver = !activity || isPlanOver(activity.status, activity.end_time);
   const upcomingPlans = isOver ? await getUpcomingPublicPlans(code) : [];
+  // No Event JSON-LD for a women-only plan, whatever the indexable list says.
   const indexable =
     !isOver &&
+    !activity?.women_only &&
     (await getIndexablePlans()).some((p) => p.share_code.toUpperCase() === code.toUpperCase());
 
   return (
