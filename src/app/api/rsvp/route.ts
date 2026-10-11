@@ -41,6 +41,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { share_code, guest_name, phone_number, country_code, email } = body;
+    // PF-46: the "I'm a woman" checkbox. The DB is the gate (it rejects a
+    // women-only RSVP without it); anything but a literal true counts as unticked.
+    const attestWoman = body.attest_woman === true;
 
     // Validate required fields
     if (!share_code || typeof share_code !== 'string') {
@@ -133,7 +136,7 @@ export async function POST(request: NextRequest) {
       utm_source: sanitizeUtm(body.utm_source),
       utm_medium: sanitizeUtm(body.utm_medium),
       utm_campaign: sanitizeUtm(body.utm_campaign),
-    });
+    }, attestWoman);
 
     return NextResponse.json(result);
   } catch (err: unknown) {
@@ -141,6 +144,21 @@ export async function POST(request: NextRequest) {
 
     // Map known errors to appropriate status codes. Dedupe fires on email OR
     // phone, so the copy stays field-agnostic.
+    // PF-46: raised by the web_rsvps trigger (enforce_women_only_web_rsvp).
+    if (message.includes('women_only_attestation_required')) {
+      return NextResponse.json(
+        { error: "This activity is for women only. Tick \"I'm a woman\" to grab a spot." },
+        { status: 400 }
+      );
+    }
+    // A web guest has no profile, so "not eligible" here means this email or
+    // phone was removed from a women-only activity and is on the ban list.
+    if (message.includes('women_only_not_eligible')) {
+      return NextResponse.json(
+        { error: "You can't join women-only activities with this email or phone. If you think that's a mistake, email support@konectr.app." },
+        { status: 403 }
+      );
+    }
     if (message.includes('Already RSVP')) {
       return NextResponse.json(
         { error: "You've already grabbed a spot for this one — check the device you RSVP'd from." },

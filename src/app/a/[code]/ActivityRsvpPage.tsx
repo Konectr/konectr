@@ -4,8 +4,14 @@
 // Proprietary and confidential.
 
 import { useState, useEffect, useCallback } from 'react';
-import type { SharedActivity, UpcomingPlan } from '@/lib/supabase';
-import { getActivityRsvpTeaser, cleanParticipantNames, verifyWebRsvpEmail, type RsvpTeaserResponse } from '@/lib/supabase';
+import type { SharedActivity, UpcomingPlan, UnlockedPlan } from '@/lib/supabase';
+import {
+  getActivityRsvpTeaser,
+  getWebGuestPlan,
+  cleanParticipantNames,
+  verifyWebRsvpEmail,
+  type RsvpTeaserResponse,
+} from '@/lib/supabase';
 import { detectPlatform, getSmartProfileLinkProps, type Platform } from '@/lib/smartLink';
 import { isValidEmail } from '@/lib/utils';
 import { getUtmFields } from '@/lib/attribution';
@@ -14,7 +20,7 @@ import {
   formatTime,
   getRelativeDayPhrase,
   formatShortDate,
-  isActivityEnded,
+  isLateWithdrawal,
 } from '@/lib/datetime';
 import {
   getStoredRsvp,
@@ -35,6 +41,7 @@ import ClaimScreen from './redesign/ClaimScreen';
 import ChattingScreen from './redesign/ChattingScreen';
 import WithdrawSheet from './redesign/WithdrawSheet';
 import SimpleStateLayout from './redesign/SimpleStateLayout';
+import { isPlanNotHappening, isPlanOver } from './planStatus';
 
 // The web RSVP is this site's main conversion; before 2026-09-26 it fired no
 // PostHog event, so share-link → RSVP could not be funnelled. No PII: the share
@@ -87,6 +94,14 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
     'idle' | 'confirming' | 'working' | 'withdrawn' | 'error'
   >('idle');
   const [cancelError, setCancelError] = useState<string | null>(null);
+  // PF-46 women-only: the required attestation, and the venue/time released to
+  // this guest after her RSVP (from create_web_rsvp, or get_web_guest_plan on
+  // reload). The share payload never carries them for a women-only plan.
+  const [attested, setAttested] = useState(false);
+  const [unlocked, setUnlocked] = useState<UnlockedPlan | null>(null);
+  // isLate for the withdraw copy, worked out once the start time is known
+  // (the server-side prop can't: the share payload has no start_time).
+  const [unlockedIsLate, setUnlockedIsLate] = useState<boolean | null>(null);
 
   // Detect platform on mount (SSR-safe)
   useEffect(() => {
@@ -136,7 +151,31 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
     }
 
     const existing = getStoredRsvp(shareCode);
-    if (existing) {
+    if (existing && activity.redacted && existing.guestToken) {
+      // PF-46: a returning guest's women-only plan unlocks from her own token.
+      // The skeleton holds until it answers, so the locked tiles never flash.
+      getWebGuestPlan(existing.guestToken)
+        .then((plan) => {
+          if (plan === null) {
+            // Withdrawn elsewhere, or removed by the starter: the RSVP is gone.
+            removeStoredRsvp(shareCode);
+            setError('Your RSVP for this plan is no longer active.');
+            setRsvpState('pre-rsvp');
+            return;
+          }
+          if (plan.activity_id === activity.id) {
+            setUnlocked(plan);
+            setUnlockedIsLate(isLateWithdrawal(plan.start_time));
+          }
+          setStoredRsvp(existing);
+          setRsvpState('post-rsvp');
+        })
+        .catch(() => {
+          // Outage: still her RSVP, the tiles just stay locked.
+          setStoredRsvp(existing);
+          setRsvpState('post-rsvp');
+        });
+    } else if (existing) {
       setStoredRsvp(existing);
       setRsvpState('post-rsvp');
     } else {
@@ -144,7 +183,10 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
     }
 
     // Fresh teaser data for both states so participant names + spot count
-    // reflect reality (B2 fix: stale snapshot after first-to-RSVP).
+    // reflect reality (B2 fix: stale snapshot after first-to-RSVP). A redacted
+    // plan's teaser is always empty for the web (anon is never eligible), so
+    // the crew there comes from the guest's own RSVP response instead.
+    if (activity.redacted) return;
     getActivityRsvpTeaser(activity.id).then((data) => {
       if (data) setTeaserData(data);
     });
@@ -152,7 +194,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
 
   // Poll teaser every 5s while visible (B4 fix: live "X, Y joining" + spots).
   useEffect(() => {
-    if (!activity) return;
+    if (!activity || activity.redacted) return;
     const id = setInterval(() => {
       if (typeof document !== 'undefined' && document.hidden) return;
       getActivityRsvpTeaser(activity.id).then((data) => {
@@ -164,16 +206,19 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
 
   const handleRsvp = useCallback(async () => {
     if (!guestName.trim() || !isValidEmail(email) || !activity) return;
+    if (activity.women_only && !attested) return;
 
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const body: Record<string, string> = {
+      const body: Record<string, string | boolean> = {
         share_code: shareCode,
         guest_name: guestName.trim(),
         email: email.trim(),
       };
+      // PF-46: only a women-only plan carries the attestation.
+      if (activity.women_only) body.attest_woman = true;
       // Phone is optional — only send it (with its country code) when supplied.
       if (phoneNumber.trim()) {
         body.phone_number = phoneNumber.trim();
@@ -206,6 +251,11 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
       };
       storeRsvp(shareCode, rsvpData);
       setStoredRsvp(rsvpData);
+      // PF-46, the D5 unlock: venue and time arrive with the RSVP itself.
+      if (data.activity) {
+        setUnlocked(data.activity);
+        setUnlockedIsLate(isLateWithdrawal(data.activity.start_time));
+      }
 
       storeUserProfile({
         guestName: guestName.trim(),
@@ -222,7 +272,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
     } finally {
       setIsSubmitting(false);
     }
-  }, [guestName, email, phoneNumber, countryCode, activity, shareCode]);
+  }, [guestName, email, phoneNumber, countryCode, activity, shareCode, attested]);
 
   const copyClaimCode = useCallback(async () => {
     if (!storedRsvp) return;
@@ -256,7 +306,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
       if (data?.outcome === 'withdrawn' || data?.outcome === 'already_withdrawn') {
         removeStoredRsvp(shareCode);
         setCancelPhase('withdrawn');
-        if (activity) getActivityRsvpTeaser(activity.id).then((d) => d && setTeaserData(d));
+        if (activity && !activity.redacted) getActivityRsvpTeaser(activity.id).then((d) => d && setTeaserData(d));
       } else {
         setCancelError((data && data.error) || 'Something went wrong. Please try again.');
         setCancelPhase('error');
@@ -289,8 +339,10 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
   // A plan that expired or was cancelled before its start time is over too:
   // the DB rejects RSVPs on it ("Activity is not active"), so the page must
   // not keep showing a live roster and an RSVP button (E1D8A507, 2026-09-18).
-  const notHappening = activity.status === 'expired' || activity.status === 'cancelled';
-  const ended = notHappening || isActivityEnded(activity.end_time);
+  const notHappening = isPlanNotHappening(activity.status);
+  // A redacted women-only plan has no end_time until the guest's plan unlocks;
+  // before that, an ended one arrives as status 'ended'.
+  const ended = isPlanOver(activity.status, activity.end_time ?? unlocked?.end_time ?? null);
   const deepLink = `konectr://activity/${shareCode}`;
   // Host row: tap tries the app profile, falls back to the store.
   const creatorLink = activity.user_id ? getSmartProfileLinkProps(activity.user_id) : null;
@@ -327,7 +379,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
     teaserData?.participant_names || storedRsvp?.participantNames || []
   );
   const participantCount = teaserData?.participant_count
-    ?? storedRsvp?.participantCount ?? activity.current_participants;
+    ?? storedRsvp?.participantCount ?? activity.current_participants ?? 0;
   const spotsRemaining = teaserData?.spots_remaining
     ?? (activity.max_participants > 0 ? activity.max_participants - participantCount : -1);
   const isFull = spotsRemaining <= 0 && activity.max_participants > 0;
@@ -336,7 +388,8 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
   const canSubmit =
     guestName.trim().length > 0 &&
     isValidEmail(email) &&
-    (phoneNumber.trim().length === 0 || phoneNumber.trim().length >= 7);
+    (phoneNumber.trim().length === 0 || phoneNumber.trim().length >= 7) &&
+    (!activity.women_only || attested);
   const isReturning = hasStoredIdentity && !editing;
   const emailError =
     emailBlurred && email.trim().length > 0 && !isValidEmail(email)
@@ -346,27 +399,45 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
   // ── Redesign props (Kinetic system). Heading auto = venue name (no host role);
   // the "Here for…" purpose lives in details (description is legacy, empty since
   // build 38); hero image keys to the activity. ──
-  const purposeText = activity.details || activity.description;
+  // PF-46: a redacted women-only plan fills these from the guest's unlocked
+  // plan after her RSVP; until then they are null and the screens render locked.
+  const locked = activity.redacted && !unlocked;
+  const title = activity.title ?? unlocked?.title ?? null;
+  const venueName = activity.venue_name ?? unlocked?.venue_name ?? null;
+  const startTime = activity.start_time ?? unlocked?.start_time ?? null;
+  // The redacted payload's coords are rounded to ~1 km: never a pin.
+  const venueLat = activity.redacted ? unlocked?.location_lat ?? null : activity.location_lat;
+  const venueLng = activity.redacted ? unlocked?.location_lng ?? null : activity.location_lng;
+  const purposeText = activity.details || unlocked?.details || activity.description;
   const vibe = resolveVibe(activity.category);
   const posterPhoto = activityImage({
     vibe: vibe.key,
-    venueName: activity.venue_name,
-    title: activity.title,
+    venueName,
+    title,
     purpose: purposeText,
     category: activity.category,
+    womenOnly: activity.women_only,
   });
   // Poster heading = activity title, matching the mobile app's activity screen
   // (was venue name in the Kinetic redesign; the two views read as different
   // activities). Venue stays on the WHERE tile + directions via venueShort.
-  const venueShort = activity.venue_name || activity.title;
-  const heading = activity.title || venueShort;
-  const purpose = purposeText && purposeText !== activity.title ? purposeText : null;
-  const timeLabel = formatTime(activity.start_time);
-  const whenDay = `${getRelativeDayPhrase(activity.start_time)} · ${formatShortDate(activity.start_time)}`;
+  // Founder pick R4: an untitled women-only plan reads "Women-only <vibe> plan".
+  const venueShort = venueName || title || '';
+  const heading = title || venueShort || `Women-only ${vibe.name.toLowerCase()} plan`;
+  const purpose = purposeText && purposeText !== title ? purposeText : null;
+  const timeLabel = startTime ? formatTime(startTime) : '';
+  const whenDay = startTime ? `${getRelativeDayPhrase(startTime)} · ${formatShortDate(startTime)}` : '';
   const spotsLeft = isFull || activity.max_participants <= 0 ? 0 : spotsRemaining;
+  const lockedTiles = locked ? { dayPart: activity.day_part, area: activity.area } : undefined;
 
   const handleAddToCalendar = () => {
-    if (typeof window !== 'undefined') window.open(`/api/calendar/${shareCode}`, '_blank');
+    if (typeof window === 'undefined') return;
+    // PF-46: a women-only plan's .ics is built from the guest's own token.
+    const token = activity.women_only ? storedRsvp?.guestToken : undefined;
+    window.open(
+      token ? `/api/calendar/${shareCode}?token=${encodeURIComponent(token)}` : `/api/calendar/${shareCode}`,
+      '_blank'
+    );
   };
   const handleShare = async () => {
     if (typeof window === 'undefined') return;
@@ -390,7 +461,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
   // returning RSVP'd user from flashing the claim form before localStorage reads.
   if (rsvpState === 'loading') {
     return (
-      <RsvpLayout vibe={vibe} photo={posterPhoto} venueName={heading}>
+      <RsvpLayout vibe={vibe} photo={posterPhoto} venueName={heading} womenOnly={activity.women_only}>
         <div className="flex gap-3">
           <div className="flex-1 h-[116px] rounded-[18px] bg-[#F0EEEC] animate-pulse" />
           <div className="flex-1 h-[116px] rounded-[18px] bg-[#F0EEEC] animate-pulse" />
@@ -415,8 +486,10 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
           timeLabel={timeLabel}
           dayLabel={whenDay}
           venueShort={venueShort}
-          venueLat={activity.location_lat}
-          venueLng={activity.location_lng}
+          venueLat={venueLat}
+          venueLng={venueLng}
+          womenOnly={activity.women_only}
+          locked={lockedTiles}
           guestName={storedRsvp.guestName}
           justClaimed={justClaimed}
           crewNames={participantNames}
@@ -471,8 +544,8 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
         {cancelPhase !== 'idle' && (
           <WithdrawSheet
             phase={cancelPhase}
-            isLate={isLate}
-            venueShort={venueShort}
+            isLate={unlockedIsLate ?? isLate}
+            venueShort={venueShort || 'this plan'}
             errorMessage={cancelError}
             onConfirm={handleCancelRsvp}
             onRetry={handleCancelRsvp}
@@ -480,6 +553,9 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
             onDone={() => {
               removeStoredRsvp(shareCode);
               setStoredRsvp(null);
+              setUnlocked(null);
+              setUnlockedIsLate(null);
+              setAttested(false);
               setCancelPhase('idle');
               setRsvpState('pre-rsvp');
             }}
@@ -500,8 +576,10 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
       timeLabel={timeLabel}
       dayLabel={whenDay}
       venueShort={venueShort}
-      venueLat={activity.location_lat}
-      venueLng={activity.location_lng}
+      venueLat={venueLat}
+      venueLng={venueLng}
+      womenOnly={activity.women_only}
+      locked={lockedTiles && { ...lockedTiles, groupSize: activity.max_participants }}
       crewNames={participantNames}
       crewTotal={participantCount}
       spotsLeft={spotsLeft}
@@ -538,6 +616,7 @@ export default function ActivityRsvpPage({ activity, shareCode, isLate = false, 
         isSubmitting,
         error,
         onSubmit: handleRsvp,
+        attest: activity.women_only ? { checked: attested, onChange: setAttested } : undefined,
       }}
     />
   );

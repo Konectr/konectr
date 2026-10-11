@@ -15,6 +15,9 @@ const safetyFeaturesMeta = [
   { key: "threeStrikeSystem", icon: "⚖️" },
   { key: "privateMessaging", icon: "🔒" },
   { key: "photoVerification", icon: "📸", comingSoon: true },
+  // PF-46. Full row so the grid stays even. Drop comingSoon once the app's
+  // "Women" option ships on both stores.
+  { key: "womenOnly", icon: "👭", comingSoon: true, wide: true },
 ] as const;
 
 const guidelinesMeta = ["beRespectful", "beHonest", "beSafe"] as const;
@@ -53,7 +56,9 @@ export function SafetyContent() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-card rounded-2xl p-6 border border-border/50"
+                className={`bg-card rounded-2xl p-6 border border-border/50${
+                  "wide" in feature && feature.wide ? " sm:col-span-2 lg:col-span-3" : ""
+                }`}
               >
                 <span className="text-4xl block mb-4">{feature.icon}</span>
                 <h3
@@ -128,6 +133,25 @@ export function SafetyContent() {
               );
             })}
           </div>
+
+          {/* PF-46 policy line (founder-approved 2026-10-11). Anchor is linked from the FAQ. */}
+          <motion.div
+            id="women-only"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-8 bg-card rounded-2xl p-8 border border-border/50 scroll-mt-24"
+          >
+            <h3
+              className="text-xl font-bold text-foreground mb-4"
+              style={{ fontFamily: "'Satoshi', sans-serif" }}
+            >
+              {t("guidelines.womenOnly.title")}
+            </h3>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {t("guidelines.womenOnly.body")}
+            </p>
+          </motion.div>
         </div>
       </section>
 

@@ -165,6 +165,10 @@ export const faqCategories: FAQCategory[] = [
         answer: "Do: Show up when committed, be inclusive, communicate if plans change. Don't: Ghost, harass, share others' contact info, discriminate, use for dating. Violations = warnings, suspension, or bans."
       },
       {
+        question: "What are women-only activities?",
+        answer: "Women-only activities are open only to members whose profile gender is Woman. Starters, participants and Konectr can remove anyone from a women-only activity. Misrepresenting your gender to access a women-only space is a Community Guidelines violation and results in immediate suspension. You can change your profile gender once; after that, changes require contacting support. Joining from a shared link without the app? You'll confirm you're a woman before you RSVP, and the exact time and place show once you're in."
+      },
+      {
         question: "Where can I read the Terms of Service and Privacy Policy?",
         answer: "You can read our full Terms of Service at konectr.app/terms and our Privacy Policy at konectr.app/privacy. Both are accessible from the app settings and from the footer of our website. We believe in transparency — no hidden clauses."
       }

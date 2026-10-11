@@ -32,6 +32,10 @@
       "photoVerification": {
         "title": "Photo Verification",
         "description": "AI-powered selfie matching to prevent catfishing."
+      },
+      "womenOnly": {
+        "title": "Women-Only Activities",
+        "description": "A starter can make an activity women-only. Only members whose profile gender is Woman can join, and the exact place and time stay hidden until you're in."
       }
     }
   },
@@ -61,6 +65,10 @@
         "Trust your instincts",
         "Report anything that feels wrong"
       ]
+    },
+    "womenOnly": {
+      "title": "Women-only activities",
+      "body": "Women-only activities are open only to members whose profile gender is Woman. Starters, participants and Konectr can remove anyone from a women-only activity. Misrepresenting your gender to access a women-only space is a Community Guidelines violation and results in immediate suspension. You can change your profile gender once; after that, changes require contacting support."
     }
   },
   "tips": {

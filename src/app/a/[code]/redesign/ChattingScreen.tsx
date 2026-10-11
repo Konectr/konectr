@@ -5,7 +5,7 @@
 import type { MouseEvent, ReactNode } from 'react';
 import type { Vibe } from './vibes';
 import RsvpLayout from './RsvpLayout';
-import { WhenWhereTiles, HereFor, CrewStack, StartedByRow } from './KineticUI';
+import { WhenWhereTiles, HereFor, CrewStack, StartedByRow, LockedWhenWhereTiles } from './KineticUI';
 
 export interface ChattingScreenProps {
   vibe: Vibe;
@@ -38,6 +38,10 @@ export interface ChattingScreenProps {
   onWithdraw?: () => void;
   onAddToCalendar?: () => void;
   onShare?: () => void;
+  /** PF-46: women-only plan (poster line). */
+  womenOnly?: boolean;
+  /** PF-46: the guest's plan couldn't be unlocked yet — keep the tiles locked. */
+  locked?: { dayPart: string | null; area: string | null };
 }
 
 // State 2 — confirmed & chatting. Same shell as claim; the poster now reads
@@ -45,7 +49,7 @@ export interface ChattingScreenProps {
 // affordance sits at the bottom (no host to "cancel on" — you withdraw yourself).
 export default function ChattingScreen(p: ChattingScreenProps) {
   return (
-    <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.heading || p.venueName} posterKicker="You're in">
+    <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.heading || p.venueName} posterKicker="You're in" womenOnly={p.womenOnly}>
       {/* Confirmation line — one-time celebration, only right after claiming.
           Returning visitors land straight on the tiles (the poster already says "You're in"). */}
       {p.justClaimed && (
@@ -67,15 +71,19 @@ export default function ChattingScreen(p: ChattingScreenProps) {
       )}
 
       <div>
-        <WhenWhereTiles
-          timeLabel={p.timeLabel}
-          dayLabel={p.dayLabel}
-          venueShort={p.venueShort}
-          areaLabel={p.areaLabel}
-          venueName={p.venueName}
-          venueLat={p.venueLat}
-          venueLng={p.venueLng}
-        />
+        {p.locked ? (
+          <LockedWhenWhereTiles dayPart={p.locked.dayPart} area={p.locked.area} />
+        ) : (
+          <WhenWhereTiles
+            timeLabel={p.timeLabel}
+            dayLabel={p.dayLabel}
+            venueShort={p.venueShort}
+            areaLabel={p.areaLabel}
+            venueName={p.venueName}
+            venueLat={p.venueLat}
+            venueLng={p.venueLng}
+          />
+        )}
         {/* venueName above is the real venue (maps query); the poster h1 uses heading. */}
       </div>
 

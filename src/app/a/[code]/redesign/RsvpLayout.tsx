@@ -5,7 +5,7 @@
 import type { ReactNode } from 'react';
 import Image from 'next/image';
 import type { Vibe } from './vibes';
-import { KonectrLogo, VibeChip } from './KineticUI';
+import { KonectrLogo, VibeChip, WomenOnlyGlyph } from './KineticUI';
 
 // One unified shell for every RSVP state (claim · chatting · withdraw), across
 // mobile and desktop. Mobile (<lg): full-bleed photo hero on top, content sheet
@@ -17,6 +17,8 @@ export interface RsvpLayoutProps {
   venueName: string;
   /** Optional status word over the poster, e.g. "You're in" on the chatting state. */
   posterKicker?: string;
+  /** PF-46: "Women only" line over the vibe chip. */
+  womenOnly?: boolean;
   children: ReactNode;
 }
 
@@ -25,7 +27,7 @@ const HERO_GRADIENT =
 const HERO_GRADIENT_DESKTOP =
   'linear-gradient(180deg,rgba(12,10,8,.30) 0%,rgba(12,10,8,0) 34%,rgba(10,9,7,.50) 78%,rgba(10,9,7,.90) 100%)';
 
-export default function RsvpLayout({ vibe, photo, venueName, posterKicker, children }: RsvpLayoutProps) {
+export default function RsvpLayout({ vibe, photo, venueName, posterKicker, womenOnly, children }: RsvpLayoutProps) {
   return (
     <div className="min-h-screen bg-[#FAFAFA] lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] lg:min-h-screen">
       {/* ── Poster ─────────────────────────────────────────────── */}
@@ -62,6 +64,12 @@ export default function RsvpLayout({ vibe, photo, venueName, posterKicker, child
             <div className="mb-[11px] flex w-fit items-center gap-[7px] text-[12.5px] font-[family-name:var(--font-heading)] font-extrabold text-[#FFC845] lg:text-[14px]">
               <span className="w-[7px] h-[7px] rounded-full bg-[#FFC845] shadow-[0_0_10px_2px_rgba(255,200,69,0.6)]" />
               {posterKicker}
+            </div>
+          )}
+          {womenOnly && (
+            <div className="mb-[11px] flex w-fit items-center gap-[7px] text-[12.5px] font-[family-name:var(--font-heading)] font-extrabold text-white lg:text-[14px]">
+              <WomenOnlyGlyph className="w-[15px] h-[15px] text-[#FFC845]" />
+              Women only
             </div>
           )}
           <VibeChip vibe={vibe} />

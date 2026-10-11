@@ -5,7 +5,10 @@
 import type { MouseEvent, ReactNode } from 'react';
 import type { Vibe } from './vibes';
 import RsvpLayout from './RsvpLayout';
-import { WhenWhereTiles, HereFor, CrewStack, TrustLine, StartedByRow } from './KineticUI';
+import {
+  WhenWhereTiles, HereFor, CrewStack, TrustLine, StartedByRow,
+  LockedWhenWhereTiles, WomenOnlyBanner, LockedCrewRow, AttestCheckbox,
+} from './KineticUI';
 
 export interface CountryCode {
   code: string;
@@ -37,6 +40,15 @@ export interface ClaimForm {
   isSubmitting: boolean;
   error?: string | null;
   onSubmit: () => void;
+  /** PF-46: the required "I'm a woman" attestation, only on a women-only plan. */
+  attest?: { checked: boolean; onChange: (v: boolean) => void };
+}
+
+/** What a redacted women-only plan shows before the RSVP (PF-46, D5). */
+export interface LockedDetails {
+  dayPart: string | null;
+  area: string | null;
+  groupSize: number;
 }
 
 export interface ClaimScreenProps {
@@ -68,6 +80,10 @@ export interface ClaimScreenProps {
   appCta?: ReactNode;
   /** Deep-link for existing app users; hidden when absent. */
   openInAppHref?: string;
+  /** PF-46: women-only plan (poster line). */
+  womenOnly?: boolean;
+  /** PF-46: venue, time and crew are hidden; show day part, area and group size. */
+  locked?: LockedDetails;
 }
 
 // State 1 — claim a spot. Poster + responsive split handled by RsvpLayout.
@@ -78,16 +94,25 @@ export default function ClaimScreen(p: ClaimScreenProps) {
   };
 
   return (
-    <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.heading || p.venueName}>
-      <WhenWhereTiles
-        timeLabel={p.timeLabel}
-        dayLabel={p.dayLabel}
-        venueShort={p.venueShort}
-        areaLabel={p.areaLabel}
-        venueName={p.venueName}
-        venueLat={p.venueLat}
-        venueLng={p.venueLng}
-      />
+    <RsvpLayout vibe={p.vibe} photo={p.photo} venueName={p.heading || p.venueName} womenOnly={p.womenOnly}>
+      {p.locked ? (
+        <>
+          <LockedWhenWhereTiles dayPart={p.locked.dayPart} area={p.locked.area} />
+          <div className="mt-3">
+            <WomenOnlyBanner />
+          </div>
+        </>
+      ) : (
+        <WhenWhereTiles
+          timeLabel={p.timeLabel}
+          dayLabel={p.dayLabel}
+          venueShort={p.venueShort}
+          areaLabel={p.areaLabel}
+          venueName={p.venueName}
+          venueLat={p.venueLat}
+          venueLng={p.venueLng}
+        />
+      )}
 
       {p.purpose && (
         <div className="mt-5">
@@ -107,7 +132,11 @@ export default function ClaimScreen(p: ClaimScreenProps) {
       )}
 
       <div className="mt-5">
-        <CrewStack names={p.crewNames} total={p.crewTotal} spotsLeft={p.spotsLeft} />
+        {p.locked ? (
+          <LockedCrewRow groupSize={p.locked.groupSize} />
+        ) : (
+          <CrewStack names={p.crewNames} total={p.crewTotal} spotsLeft={p.spotsLeft} />
+        )}
       </div>
 
       {p.isFull ? (
@@ -229,6 +258,8 @@ export default function ClaimScreen(p: ClaimScreenProps) {
               )}
             </>
           )}
+
+          {f.attest && <AttestCheckbox checked={f.attest.checked} onChange={f.attest.onChange} />}
 
           <TrustLine />
 

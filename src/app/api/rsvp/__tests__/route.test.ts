@@ -16,6 +16,7 @@ vi.mock('@/lib/supabase', () => ({
 
 // Import after mocks are set up
 import { POST } from '../route';
+import { REDACTED_SHARE_ROW, ATTESTED_RSVP_RESPONSE } from '@/lib/__tests__/fixtures/women-only';
 
 function makeRequest(body: Record<string, unknown>, headers?: Record<string, string>) {
   return new Request('http://localhost/api/rsvp', {
@@ -200,7 +201,8 @@ describe('POST /api/rsvp', () => {
         expect.any(String),
         null,
         'jordan@example.com',
-        { utm_source: null, utm_medium: null, utm_campaign: null }
+        { utm_source: null, utm_medium: null, utm_campaign: null },
+        false // attestWoman: not a women-only RSVP
       );
     });
   });
@@ -224,7 +226,8 @@ describe('POST /api/rsvp', () => {
         expect.any(String),
         null, // phoneHash
         'jordan@example.com',
-        { utm_source: null, utm_medium: null, utm_campaign: null }
+        { utm_source: null, utm_medium: null, utm_campaign: null },
+        false // attestWoman: not a women-only RSVP
       );
     });
 
@@ -242,7 +245,8 @@ describe('POST /api/rsvp', () => {
         expect.any(String),
         expect.stringMatching(/^[a-f0-9]{64}$/), // phoneHash
         'jordan@example.com',
-        { utm_source: null, utm_medium: null, utm_campaign: null }
+        { utm_source: null, utm_medium: null, utm_campaign: null },
+        false // attestWoman: not a women-only RSVP
       );
     });
 
@@ -310,7 +314,8 @@ describe('POST /api/rsvp', () => {
         expect.any(String),
         null, // phoneHash — phone is optional and was not supplied
         'jordan@example.com', // normalizedEmail (required)
-        { utm_source: null, utm_medium: null, utm_campaign: null }
+        { utm_source: null, utm_medium: null, utm_campaign: null },
+        false // attestWoman: not a women-only RSVP
       );
     });
 
@@ -439,7 +444,8 @@ describe('POST /api/rsvp', () => {
         expect.stringMatching(/^[a-f0-9]{64}$/), // SHA-256 hex (IP)
         null, // phoneHash — no phone supplied
         'jordan@example.com',
-        { utm_source: null, utm_medium: null, utm_campaign: null }
+        { utm_source: null, utm_medium: null, utm_campaign: null },
+        false // attestWoman: not a women-only RSVP
       );
     });
 
@@ -457,7 +463,8 @@ describe('POST /api/rsvp', () => {
         expect.stringMatching(/^[a-f0-9]{64}$/), // SHA-256 hex (IP)
         null, // phoneHash — no phone supplied
         'jordan@example.com',
-        { utm_source: null, utm_medium: null, utm_campaign: null }
+        { utm_source: null, utm_medium: null, utm_campaign: null },
+        false // attestWoman: not a women-only RSVP
       );
     });
 
@@ -482,6 +489,84 @@ describe('POST /api/rsvp', () => {
       const hash2 = mockCreateWebRsvp.mock.calls[0][2];
 
       expect(hash1).toBe(hash2);
+    });
+  });
+
+  // =========================================================================
+  // Women-only plans (PF-46)
+  // =========================================================================
+
+  describe('women-only plans', () => {
+    it('RSVPs a redacted women-only plan by its id and passes the attestation', async () => {
+      mockGetActivityByShareCode.mockResolvedValue(REDACTED_SHARE_ROW);
+      mockCreateWebRsvp.mockResolvedValue(ATTESTED_RSVP_RESPONSE);
+
+      const req = makeRequest(
+        { share_code: 'K7Q2WXYZ', guest_name: 'Aisha', ...VALID_IDENTITY, attest_woman: true },
+        { 'x-forwarded-for': '1.2.3.4' }
+      );
+      const res = await POST(req);
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(mockCreateWebRsvp).toHaveBeenCalledWith(
+        REDACTED_SHARE_ROW.id,
+        'Aisha',
+        expect.any(String),
+        null,
+        'jordan@example.com',
+        { utm_source: null, utm_medium: null, utm_campaign: null },
+        true
+      );
+      // The unlock travels back to the page untouched.
+      expect(body.women_only).toBe(true);
+      expect(body.activity.venue_name).toBe('Bukit Kiara Trail');
+      expect(body.activity.start_time).toBe('2026-10-17T11:00:00+00:00');
+    });
+
+    it('only a literal true counts as ticked', async () => {
+      for (const attest_woman of ['true', 1, 'yes', null]) {
+        mockCreateWebRsvp.mockClear();
+        const req = makeRequest(
+          { share_code: 'K7Q2WXYZ', guest_name: 'Aisha', ...VALID_IDENTITY, attest_woman },
+          { 'x-forwarded-for': '1.2.3.4' }
+        );
+        await POST(req);
+        expect(mockCreateWebRsvp.mock.calls[0][6]).toBe(false);
+      }
+    });
+
+    it('maps women_only_attestation_required to 400 with checkbox copy', async () => {
+      mockGetActivityByShareCode.mockResolvedValue(REDACTED_SHARE_ROW);
+      mockCreateWebRsvp.mockRejectedValue(new Error('women_only_attestation_required'));
+
+      const req = makeRequest(
+        { share_code: 'K7Q2WXYZ', guest_name: 'Aisha', ...VALID_IDENTITY },
+        { 'x-forwarded-for': '1.2.3.4' }
+      );
+      const res = await POST(req);
+      const body = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(body.error).toContain('women only');
+      expect(body.error).toContain("I'm a woman");
+      expect(body.error).not.toContain('women_only_');
+    });
+
+    it('maps women_only_not_eligible to 403 with a support route', async () => {
+      mockGetActivityByShareCode.mockResolvedValue(REDACTED_SHARE_ROW);
+      mockCreateWebRsvp.mockRejectedValue(new Error('women_only_not_eligible'));
+
+      const req = makeRequest(
+        { share_code: 'K7Q2WXYZ', guest_name: 'Aisha', ...VALID_IDENTITY, attest_woman: true },
+        { 'x-forwarded-for': '1.2.3.4' }
+      );
+      const res = await POST(req);
+      const body = await res.json();
+
+      expect(res.status).toBe(403);
+      expect(body.error).toContain('support@konectr.app');
+      expect(body.error).not.toContain('women_only_');
     });
   });
 });

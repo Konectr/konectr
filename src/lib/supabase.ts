@@ -8,11 +8,19 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Type for activity from get_activity_by_share_code RPC
+// Type for activity from get_activity_by_share_code RPC.
+//
+// PF-46: a women-only plan the viewer can't see comes back `redacted: true`. The
+// web is always anonymous, so on this site every women-only plan is redacted
+// until the guest RSVPs. Redacted rows null out user_id, title (only when it
+// would name the place: equal to the venue, the location text or "New Activity"),
+// description, details, venue_name, start_time, end_time, current_participants
+// (founder pick R5: no crew count) and the starter's name and photo. Lat/lng are
+// rounded to 2 decimals, not nulled: never render them as a pin.
 export interface SharedActivity {
   id: string;
-  user_id: string;
-  title: string;
+  user_id: string | null;
+  title: string | null;
   description: string | null;
   details: string | null; // "Here for…" purpose text (description is legacy, empty since build 38)
   category: string;
@@ -20,14 +28,20 @@ export interface SharedActivity {
   venue_name: string | null;
   location_lat: number | null;
   location_lng: number | null;
-  start_time: string;
-  end_time: string;
+  start_time: string | null;
+  end_time: string | null;
   max_participants: number;
-  current_participants: number;
+  current_participants: number | null;
   status: string;
   share_code: string;
-  creator_name: string;
+  creator_name: string | null;
   creator_photo_url: string | null;
+  women_only: boolean;
+  redacted: boolean;
+  /** "Saturday evening" in KL time. Set on every row, redacted or not. */
+  day_part: string | null;
+  /** The plan's city (`user_availability.city`); null on most plans. */
+  area: string | null;
 }
 
 // Fetch activity by share code
@@ -48,14 +62,9 @@ export async function getActivityByShareCode(shareCode: string): Promise<SharedA
       return null;
     }
 
-    // Return first result if array, otherwise return as-is
+    // Return first result if array, otherwise return as-is. A redacted
+    // women-only plan is returned as-is: callers render the locked state.
     const activity = Array.isArray(data) ? data[0] : data;
-    // A women-only plan this visitor can't see comes back redacted (no
-    // start_time, venue or starter). Treat it as not found rather than render
-    // a 1970 date.
-    // ponytail: hides the plan from eligible women too; PF-46 web phase owns the
-    // "open it in the app" state.
-    if (activity?.redacted) return null;
     return activity as SharedActivity;
   } catch (err) {
     console.error('Error fetching activity:', err);
@@ -66,6 +75,21 @@ export async function getActivityByShareCode(shareCode: string): Promise<SharedA
 // ============================================================================
 // Web RSVP Types & Helpers
 // ============================================================================
+
+/**
+ * The venue and time of a women-only plan, released to a guest once she has
+ * RSVP'd (PF-46, the D5 unlock). `create_web_rsvp` returns it as `activity`
+ * (no title); `get_web_guest_plan` returns it on reload (with title).
+ */
+export interface UnlockedPlan {
+  venue_name: string | null;
+  start_time: string;
+  end_time: string;
+  location_lat: number | null;
+  location_lng: number | null;
+  details: string | null;
+  title?: string | null;
+}
 
 export interface WebRsvpResponse {
   /** Short RSVP-XXXX code: only redeemable in the app by a signed-in user. */
@@ -79,16 +103,21 @@ export interface WebRsvpResponse {
   participant_names: (string | null)[];
   spots_remaining: number;
   message_count: number;
+  /** Present (true) only on a women-only plan, together with `activity`. */
+  women_only?: boolean;
+  activity?: UnlockedPlan;
 }
 
 export interface RsvpTeaserResponse {
-  participant_count: number;
+  /** Null on a women-only plan: the web viewer is anonymous, so never eligible. */
+  participant_count: number | null;
   /** May contain nulls — a participant whose profile has no display_name yet. */
   participant_names: (string | null)[];
   creator_name: string;
-  spots_remaining: number;
+  spots_remaining: number | null;
   max_participants: number;
   message_count: number;
+  women_only?: boolean;
 }
 
 export async function createWebRsvp(
@@ -97,7 +126,8 @@ export async function createWebRsvp(
   ipHash: string | null,
   phoneHash: string | null = null,
   email: string | null = null,
-  utm: { utm_source?: string | null; utm_medium?: string | null; utm_campaign?: string | null } = {}
+  utm: { utm_source?: string | null; utm_medium?: string | null; utm_campaign?: string | null } = {},
+  attestWoman = false
 ): Promise<WebRsvpResponse> {
   const { data, error } = await supabase.rpc('create_web_rsvp', {
     p_activity_id: activityId,
@@ -108,6 +138,9 @@ export async function createWebRsvp(
     p_utm_source: utm.utm_source ?? null,
     p_utm_medium: utm.utm_medium ?? null,
     p_utm_campaign: utm.utm_campaign ?? null,
+    // Sent only when ticked, so a mixed-plan call stays the 8-argument call it
+    // was before PF-46 (the parameter defaults to false server-side).
+    ...(attestWoman ? { p_attest_woman: true } : {}),
   });
 
   if (error) {
@@ -115,6 +148,27 @@ export async function createWebRsvp(
   }
 
   return data as WebRsvpResponse;
+}
+
+// Row from get_web_guest_plan(p_guest_token): the plan behind a guest token,
+// or null when the token is unknown or the RSVP is no longer pending/claimed
+// (withdrawn, or removed from a women-only plan by its starter).
+export interface WebGuestPlan extends UnlockedPlan {
+  activity_id: string;
+  share_code: string;
+  title: string | null;
+  women_only: boolean;
+}
+
+/** Throws on an RPC error, so callers can tell "no access" (null) from an outage. */
+export async function getWebGuestPlan(guestToken: string): Promise<WebGuestPlan | null> {
+  const { data, error } = await supabase.rpc('get_web_guest_plan', {
+    p_guest_token: guestToken,
+  });
+  if (error) {
+    throw new Error(error.message);
+  }
+  return (data as WebGuestPlan) ?? null;
 }
 
 // Result of cancel_web_rsvp RPC. The spot is ALWAYS released; `late` (inside the
