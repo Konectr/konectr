@@ -8,7 +8,7 @@ import type { VibeKey } from '../redesign/vibes';
 const VIBES: VibeKey[] = ['chill', 'active', 'focus', 'creative', 'adventure', 'social'];
 // One title per keyword rule, plus nothing-matches.
 const TITLES = [
-  'Padel night', 'Batting cage', 'Badminton doubles', 'Tennis rally', 'Coffee & brunch',
+  'Padel night', 'Batting cage', 'Bowling night', 'Badminton doubles', 'Tennis rally', 'Coffee & brunch',
   'Gym session', 'Bukit Kiara hike', 'Rooftop sunset', 'Cocktail bar', 'Lunch at TRX',
   'Makan dinner', 'Morning run', 'Yoga flow', 'Hoops', 'Futsal', 'Bouldering',
   'Pottery wheel throw', 'Paint and sip', 'Cowork Friday', 'Hang out',
@@ -52,5 +52,32 @@ describe('activityImage — mixed plans unchanged', () => {
     [{ vibe: 'social' as VibeKey, title: 'Hang out', womenOnly: false }, '/images/email/friends-group.jpg'],
   ])('%o', (opts, expected) => {
     expect(activityImage(opts)).toBe(expected);
+  });
+});
+
+describe('activityImage — bowling + title before purpose', () => {
+  // Live plans, 2026-10-12.
+  const bowlingPurpose =
+    'Bowl, cheer, laugh. Gutter balls welcome. 4:00 PM – 6:00 PM (dinner after). Supreme Cosmic Bowl, Mid Valley';
+
+  it.each([
+    // 34F50405: "dinner after" in the purpose used to win the restaurant photo.
+    [{ vibe: 'social' as VibeKey, title: '☕ 🎳 STRIKES, SPARES & NEW FRIENDS!', venueName: 'Supreme Bowl - Mid Valley Megamall, KL', purpose: bowlingPurpose, category: 'entertainment' }, 'bowling'],
+    // 8995C545: same plan filed under the cafe category.
+    [{ vibe: 'chill' as VibeKey, title: '🎳 STRIKES, SPARES & NEW FRIENDS!', venueName: 'Supreme Bowl - Mid Valley Megamall, KL', purpose: bowlingPurpose, category: 'cafe' }, 'bowling'],
+    [{ vibe: 'social' as VibeKey, title: 'Let’s Go bowling! 🎳', venueName: 'Sunway Pyramid Bowling' }, 'bowling'],
+    // Bowling named only in the purpose still matches when the title says nothing.
+    [{ vibe: 'social' as VibeKey, title: 'Saturday plan', purpose: 'Ten-pin at Megalanes' }, 'bowling'],
+    // 40DCB4C3: the title wins over a passing mention in the purpose.
+    [{ vibe: 'social' as VibeKey, title: 'BAR HUNT: FAIRY EDITION!', venueName: 'The Iron Fairies', purpose: 'Skipped bowling? Join anyway' }, 'bar'],
+    // A bare "bowl" is food, not bowling.
+    [{ vibe: 'social' as VibeKey, title: 'Ramen slurping competition', purpose: 'Who can finish a bowl fastest?', category: 'Restaurant' }, 'restaurant'],
+    [{ vibe: 'active' as VibeKey, title: 'Yoga in the Park', purpose: 'We usually grab acai bowls after!' }, 'yoga'],
+  ])('%o', (opts, key) => {
+    expect(activityImage(opts)).toBe(`/images/activities/${key}.jpg`);
+  });
+
+  it('keeps a women-only bowling plan on the pattern (the photo shows men)', () => {
+    expect(activityImage({ vibe: 'social', title: 'Bowling night', womenOnly: true })).toBe(WOMEN_ONLY_PATTERN);
   });
 });

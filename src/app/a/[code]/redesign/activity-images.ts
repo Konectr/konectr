@@ -12,8 +12,10 @@
 
 import type { VibeKey } from './vibes';
 
-// Keyword → image key, checked in order (most specific first). Matched against the
-// venue name + title + purpose + category, lowercased.
+// Keyword → image key, checked in order (most specific first). Two passes, lowercased:
+// venue name + title first, then with purpose + category added. The title says what
+// the plan is; the purpose often names side things ("dinner after", "skipped bowling?
+// join anyway") that would otherwise steal the photo.
 const KEYWORD_RULES: Array<[RegExp, string]> = [
   // ⚠️ PADEL: no true padel stock asset yet (glass-court sport). Using the tennis
   // court as the closest racquet-sport proxy — swap in a real ASCARO/venue padel
@@ -22,6 +24,10 @@ const KEYWORD_RULES: Array<[RegExp, string]> = [
   // Indoor batting cages (e.g. "SWING FOR IT — BASEBALL CAGE!" @ Swing! Batting
   // Centre, Melawati Mall). baseball.jpg = founder-supplied indoor cage photo (1200²).
   [/baseball|softball|batting/, 'baseball'],
+  // Ten-pin bowling (e.g. "STRIKES, SPARES & NEW FRIENDS!" @ Supreme Bowl, Mid Valley).
+  // Never bare "bowl": live plans say "a bowl of ramen" and "acai bowls".
+  // bowling.jpg = Unsplash MdN5h3QCiTw by Brittani Burns (Unsplash License), 1200×1500.
+  [/bowling|ten-?pin|🎳|mega ?lanes|\b(?:cosmic|supreme) ?bowl\b|superbowl/, 'bowling'],
   [/badminton|shuttle/, 'badminton'],
   [/tennis|squash/, 'tennis'],
   [/\bcaf[eé]\b|coffee|kopi|matcha|brunch|latte/, 'cafe'],
@@ -69,6 +75,14 @@ const WOMEN_ONLY_VIBE: Partial<Record<VibeKey, string>> = {
 // Brand gradient + dot grid, no people (women-only.jpg, 1200²).
 export const WOMEN_ONLY_PATTERN = '/images/activities/women-only.jpg';
 
+function matchKey(...parts: Array<string | null | undefined>): string | null {
+  const hay = parts.filter(Boolean).join(' ').toLowerCase();
+  for (const [re, key] of KEYWORD_RULES) {
+    if (re.test(hay)) return key;
+  }
+  return null;
+}
+
 export function activityImage(opts: {
   vibe: VibeKey;
   venueName?: string | null;
@@ -77,13 +91,11 @@ export function activityImage(opts: {
   category?: string | null;
   womenOnly?: boolean;
 }): string {
-  const hay = [opts.venueName, opts.title, opts.purpose, opts.category]
-    .filter(Boolean).join(' ').toLowerCase();
-  for (const [re, key] of KEYWORD_RULES) {
-    if (re.test(hay)) {
-      if (opts.womenOnly && !WOMEN_ONLY_SAFE.has(key)) return WOMEN_ONLY_PATTERN;
-      return `/images/activities/${key}.jpg`;
-    }
+  const key = matchKey(opts.venueName, opts.title)
+    ?? matchKey(opts.venueName, opts.title, opts.purpose, opts.category);
+  if (key) {
+    if (opts.womenOnly && !WOMEN_ONLY_SAFE.has(key)) return WOMEN_ONLY_PATTERN;
+    return `/images/activities/${key}.jpg`;
   }
   if (opts.womenOnly) {
     const key = WOMEN_ONLY_VIBE[opts.vibe];
