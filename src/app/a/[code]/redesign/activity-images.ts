@@ -2,37 +2,90 @@
 // Proprietary and confidential.
 
 // Activity-type image library. The vibe is locked (colour/emoji/name), but the HERO
-// IMAGE keys to the *specific* activity/venue — padel → padel, cafe → cafe, hike →
-// trail — so the photo actually complements what people are matching into. Falls back
-// to the vibe-level photo when no specific type is detected.
+// IMAGE keys to the *specific* activity — padel → padel, cafe → cafe, hike → trail —
+// so the photo actually complements what people are matching into.
 //
-// Assets live in public/images/activities/. To add a type: drop <key>.jpg in that
-// folder and add a keyword row below. Curate/replace with licensed or venue-supplied
-// photography over time (see PADEL note).
+// Hashtags (CANONICAL §12.2): every plan carries one curated hashtag, and every
+// hashtag has one standard default photo (founder, 2026-10-12). A Captain's own
+// cover (PF-12) overrides it on the app's plan screen only; this page keeps the
+// hashtag's photo. Plans without a hashtag (older builds) fall back to keywords,
+// then to the vibe-level photo.
+//
+// Assets live in public/images/activities/, named by hashtag slug. To add one: drop
+// <slug>.jpg there (1200 wide, 4:5 or 3:2, q82), add it to HASHTAG_IMAGE and give it
+// a keyword row. Stock photos are Unsplash License (free commercial use, no credit
+// required); provenance is in the konectr-web CLAUDE.md version history.
 
 import type { VibeKey } from './vibes';
+
+// Hashtag slug (lib/constants/activity_hashtags.dart in the app) → image key. A tag
+// missing here has no photo of its own yet and falls through to keywords. squash,
+// futsal, frisbee, hyrox and trailrun share the closest sport's photo, as their
+// keywords already did.
+export const HASHTAG_IMAGE: Readonly<Record<string, string>> = {
+  coffee: 'cafe',
+  pickleball: 'pickleball',
+  badminton: 'badminton',
+  workout: 'gym',
+  hiking: 'hike',
+  streetfood: 'streetfood',
+  brunch: 'brunch',
+  running: 'run',
+  golf: 'golf',
+  padel: 'padel',
+  boardgames: 'games',
+  movies: 'movies',
+  hyrox: 'gym',
+  trailrun: 'hike',
+  bouldering: 'climb',
+  tennis: 'tennis',
+  futsal: 'football',
+  football: 'football',
+  basketball: 'basketball',
+  tabletennis: 'tabletennis',
+  squash: 'tennis',
+  yoga: 'yoga',
+  kayaking: 'kayaking',
+  dragonboat: 'dragonboat',
+  frisbee: 'football',
+  photowalk: 'photowalk',
+  gokart: 'gokart',
+  bowling: 'bowling',
+  pottery: 'pottery',
+};
 
 // Keyword → image key, checked in order (most specific first). Two passes, lowercased:
 // venue name + title first, then with purpose + category added. The title says what
 // the plan is; the purpose often names side things ("dinner after", "skipped bowling?
 // join anyway") that would otherwise steal the photo.
 const KEYWORD_RULES: Array<[RegExp, string]> = [
-  // ⚠️ PADEL: no true padel stock asset yet (glass-court sport). Using the tennis
-  // court as the closest racquet-sport proxy — swap in a real ASCARO/venue padel
-  // photo at public/images/activities/padel.jpg and change 'tennis' → 'padel' here.
-  [/\bpadel\b/, 'tennis'],
+  [/\bpadel\b/, 'padel'],
+  // "Pickle ball" is how half the live pickleball plans spell it.
+  [/pickle ?ball/, 'pickleball'],
   // Indoor batting cages (e.g. "SWING FOR IT — BASEBALL CAGE!" @ Swing! Batting
   // Centre, Melawati Mall). baseball.jpg = founder-supplied indoor cage photo (1200²).
   [/baseball|softball|batting/, 'baseball'],
   // Ten-pin bowling (e.g. "STRIKES, SPARES & NEW FRIENDS!" @ Supreme Bowl, Mid Valley).
   // Never bare "bowl": live plans say "a bowl of ramen" and "acai bowls".
-  // bowling.jpg = Unsplash MdN5h3QCiTw by Brittani Burns (Unsplash License), 1200×1500.
   [/bowling|ten-?pin|🎳|mega ?lanes|\b(?:cosmic|supreme) ?bowl\b|superbowl/, 'bowling'],
+  // Before tennis, which would otherwise take "table tennis".
+  [/table tennis|ping ?pong/, 'tabletennis'],
   [/badminton|shuttle/, 'badminton'],
   [/tennis|squash/, 'tennis'],
-  [/\bcaf[eé]\b|coffee|kopi|matcha|brunch|latte/, 'cafe'],
+  [/\bgolf|driving range/, 'golf'],
+  [/go-?kart|karting/, 'gokart'],
+  [/dragon ?boat/, 'dragonboat'],
+  // Before hike: "whitewater rafting, waterfall pit stop" is a day on the water.
+  [/kayak|paddleboard|rafting|canoe/, 'kayaking'],
+  [/photo ?walk|photography/, 'photowalk'],
+  // No bare "film": a creative circle whose details mention film took the movies photo.
+  [/\bmovies?\b|cinema|film (?:night|screening)/, 'movies'],
+  [/street ?food|food street|hawker|mamak/, 'streetfood'],
+  // Before cafe: a brunch plan is about the table, not the coffee.
+  [/brunch/, 'brunch'],
+  [/\bcaf[eé]\b|coffee|kopi|matcha|latte/, 'cafe'],
   [/\bgym\b|fitness|crossfit|hiit|workout|strength|lift/, 'gym'],
-  [/hike|hiking|trail|bukit|mountain|waterfall|kayak/, 'hike'],
+  [/hike|hiking|trail|bukit|mountain|waterfall/, 'hike'],
   [/rooftop|sky ?bar/, 'rooftop'],
   [/\bbar\b|\bpub\b|cocktail|drinks|beer|wine|mixolog/, 'bar'],
   // TRX / The Exchange TRX (Tun Razak Exchange) — landmark photo of the Exchange 106
@@ -45,6 +98,7 @@ const KEYWORD_RULES: Array<[RegExp, string]> = [
   [/football|futsal|soccer|frisbee/, 'football'],
   [/climb|boulder|belay/, 'climb'],
   [/pottery|ceramic|\bclay\b|wheel throw/, 'pottery'],
+  [/board ?games?|card games?/, 'games'],
   [/\bart\b|paint|draw|sketch|craft|creative studio/, 'art'],
   [/cowork|co-work|study|library|deep work|focus session/, 'cowork'],
 ];
@@ -60,11 +114,11 @@ const VIBE_FALLBACK: Record<VibeKey, string> = {
 };
 
 // PF-46: a women-only plan's hero never shows men. These are the only images
-// checked (2026-10-11) to show no people, or women only: art, basketball, cowork,
-// pottery and trx have nobody in them; yoga is one woman. Every other photo in
-// the set shows men or people who can't be told apart (hands, distant figures).
-// Re-check an image before adding it here.
-const WOMEN_ONLY_SAFE = new Set(['art', 'basketball', 'cowork', 'pottery', 'trx', 'yoga']);
+// checked to show no people, or women only: art, basketball, cowork, pottery and
+// trx have nobody in them; yoga, padel and golf are one woman (padel and golf
+// checked 2026-10-12). Every other photo in the set shows men or people who can't
+// be told apart (hands, distant figures). Re-check an image before adding it here.
+const WOMEN_ONLY_SAFE = new Set(['art', 'basketball', 'cowork', 'golf', 'padel', 'pottery', 'trx', 'yoga']);
 // Vibe fallback for a women-only plan no keyword matched; vibes without a safe
 // photo get the pattern.
 const WOMEN_ONLY_VIBE: Partial<Record<VibeKey, string>> = {
@@ -89,9 +143,17 @@ export function activityImage(opts: {
   title?: string | null;
   purpose?: string | null;
   category?: string | null;
+  // `user_availability.tags`: the hashtag plus hub keys and markers (cafe-hub,
+  // test-seed), so only catalog slugs in HASHTAG_IMAGE count. Tags are free text
+  // any signed-in user can write, hence the own-key check.
+  tags?: string[] | null;
   womenOnly?: boolean;
 }): string {
-  const key = matchKey(opts.venueName, opts.title)
+  const tagKey = opts.tags
+    ?.map((tag) => String(tag).toLowerCase())
+    .find((tag) => Object.hasOwn(HASHTAG_IMAGE, tag));
+  const key = (tagKey && HASHTAG_IMAGE[tagKey])
+    ?? matchKey(opts.venueName, opts.title)
     ?? matchKey(opts.venueName, opts.title, opts.purpose, opts.category);
   if (key) {
     if (opts.womenOnly && !WOMEN_ONLY_SAFE.has(key)) return WOMEN_ONLY_PATTERN;
