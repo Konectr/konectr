@@ -11,7 +11,7 @@ const TITLES = [
   'Padel night', 'Batting cage', 'Bowling night', 'Badminton doubles', 'Tennis rally', 'Coffee & brunch',
   'Gym session', 'Bukit Kiara hike', 'Rooftop sunset', 'Cocktail bar', 'Lunch at TRX',
   'Makan dinner', 'Morning run', 'Yoga flow', 'Hoops', 'Futsal', 'Bouldering',
-  'Pottery wheel throw', 'Paint and sip', 'Cowork Friday', 'Hang out',
+  'Pottery wheel throw', 'Paint and sip', 'Cowork Friday', 'Nights of Fright', 'Hang out',
 ];
 const SAFE = ['art', 'basketball', 'cowork', 'pottery', 'trx', 'yoga'].map((k) => `/images/activities/${k}.jpg`);
 
@@ -79,5 +79,19 @@ describe('activityImage — bowling + title before purpose', () => {
 
   it('keeps a women-only bowling plan on the pattern (the photo shows men)', () => {
     expect(activityImage({ vibe: 'social', title: 'Bowling night', womenOnly: true })).toBe(WOMEN_ONLY_PATTERN);
+  });
+});
+
+describe('activityImage — Nights of Fright poster', () => {
+  it('shows the event poster for the live plan (share 395AAF96)', () => {
+    expect(activityImage({
+      vibe: 'adventure', title: 'Night of Frights! 12 @ Sunway Lagoon', venueName: 'Sunway Lagoon',
+      purpose: 'Nights of Fright 12 at Sunway Lagoon. Haunted houses, scare zones.', category: 'outdoors',
+    })).toBe('/images/activities/nights-of-fright.jpg');
+  });
+
+  it('keeps other Sunway Lagoon plans off the horror poster', () => {
+    expect(activityImage({ vibe: 'adventure', title: 'Water park day', venueName: 'Sunway Lagoon' }))
+      .not.toBe('/images/activities/nights-of-fright.jpg');
   });
 });
