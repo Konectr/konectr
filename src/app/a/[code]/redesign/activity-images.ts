@@ -28,6 +28,11 @@ const KEYWORD_RULES: Array<[RegExp, string]> = [
   // Never bare "bowl": live plans say "a bowl of ramen" and "acai bowls".
   // bowling.jpg = Unsplash MdN5h3QCiTw by Brittani Burns (Unsplash License), 1200×1500.
   [/bowling|ten-?pin|🎳|mega ?lanes|\b(?:cosmic|supreme) ?bowl\b|superbowl/, 'bowling'],
+  // Nights of Fright (Sunway Lagoon Halloween festival, e.g. "Night of Frights! 12 @
+  // Sunway Lagoon", share 395AAF96). nights-of-fright.jpg = founder-made event poster
+  // (1080×1440). Keyed to the event name, not the venue: Sunway Lagoon also hosts
+  // daytime water-park plans that must not get a horror poster.
+  [/nights? of frights?/, 'nights-of-fright'],
   [/badminton|shuttle/, 'badminton'],
   [/tennis|squash/, 'tennis'],
   [/\bcaf[eé]\b|coffee|kopi|matcha|brunch|latte/, 'cafe'],
